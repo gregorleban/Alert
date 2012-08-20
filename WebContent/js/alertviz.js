@@ -1019,7 +1019,6 @@ var AlertViz = function(options) {
 									}
 								});
 								
-								
 								// display just the current months and their left and right neighbours
 								// the months are already ordered
 								var daysPerCol = selectedMonths.length;

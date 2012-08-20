@@ -1,0 +1,32 @@
+.layer1 {
+margin: 10px;
+padding: 0;
+width: 100%-20px;
+}
+.heading {
+margin: 1px;
+color: #fff;
+padding: 3px 10px;
+cursor: pointer;
+position: relative;
+background-color:#7BA857;
+width:100%;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.content {
+padding: 5px 10px;
+background-color:#fafafa;
+}
+p { padding: 5px 0; }
+.title_desc {
+	font-weight:bold;
+	width:30%;
+}
+.title_comm {
+	font-weight:bold;
+	width:60%;
+}
+.data {
+	font-weight:bold;
+}

@@ -1,0 +1,23 @@
+-resize on window resize
+-timeline bugs
+
+-Define templates for different post types
+
+For "find similar items" add <conditions><postTypes>issues</postTypes></conditions> inside the <query ></query>
+
+Item list
+    Bottom of the list should display the total number of results. We should also have buttons Next and Previous that change different items
+    If keywords are specified in the search query then highlight them
+    Templates for different item types
+        Source code commits
+            Don't have subject, just body text
+            Items don't have "from" attribute. Instead use "author" attribute
+
+Timeline
+    Modify the functionality to support two types of interactions. One type is zooming in and out. The other type is selecting a subset of timeline and refine the query using an additional constraint
+    Clicking on one bar zooms in to -1 -2
+
+Wordcloud
+    Make the size of the cloud appropriate for the width of the window part (don't show the scrollbar)
+    Clicking a word adds it to the search condition
+

@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Alert</title>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+	<meta name="description" content="Active support and reaL-time coordination based on Event pRocessing in FLOSS developmenT" />
+	<meta name="keywords" content="keywords, goes, here" />
+	<meta name="robots" content="index, follow, noarchive" />
+	<meta name="googlebot" content="noarchive" />
+	<link type="text/css" rel="stylesheet" href="css/layout-default-latest.css" />
+	<link type="text/css" rel="stylesheet" href="css/flick/jquery-ui-1.8.17.custom.css" />
+	<link type="text/css" rel="stylesheet" href="css/autoSuggest.css" />
+	<link type="text/css" rel="stylesheet" href="css/jqcloud.css" />
+	<link type="text/css" rel="stylesheet" href="css/tabber.css" />
+	<link type="text/css" rel="stylesheet" href="css/main.css" media="screen" />
+	
+	<script type="application/javascript" src="js/jquery-1.7.1.js"></script>
+	<script type="application/javascript" src="js/jquery.layout-latest.js"></script>
+	<script type="application/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
+	<script type="application/javascript" src="js/jquery.ba-bbq.min.js"></script>
+	<script type="application/javascript" src="js/jquery.autoSuggest.js"></script>
+	<script type="application/javascript" src="js/jquery.bpopup-0.7.0.min.js"></script>
+	<script type="application/javascript" src="js/arbor.js"></script>
+	<script type="application/javascript" src="js/kinetic-v3.10.0.js"></script>
+	<script type="application/javascript" src="js/graphics.js"></script>
+	<script type="application/javascript" src="js/jqcloud-1.0.0.js"></script>		
+	<script type="application/javascript" src="js/highcharts.js"></script>
+	<script type="application/javascript" src="js/dynamicgraph.js"></script>
+	<script type="application/javascript" src="js/alertviz.js"></script>
+	<script type="text/javascript" src="js/tabber.js"></script>
+	<script type="text/javascript" src="js/popbox.js"></script>	
+	<script type="text/javascript" src="js/sliding.form.js"></script>
+	<script type="application/javascript">
+		<!--
+		var viz;
+		$(document).ready(function(){
+			$('#tabs').tabs();														
+			viz = AlertViz();			
+			$('#btnShowMore').click(function(){
+				viz.increaseGraph();
+			});			
+			$('#btnShowLess').click(function(){
+				viz.decreaseGraph();
+			});			
+			$('#from_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});
+			$('#to_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});			
+			loadState();
+		});
+		-->
+	</script>
+	<script type="text/javascript" charset="utf-8">
+  	  $(document).ready(function(){
+ 	     $('.popbox').popbox();
+ 	   });
+	</script>
+	<script type="text/javascript">
+		document.write('<style type="text/css">.tabber{display:none;}<\/style>');
+	</script>
+</head>
+<body>
+	<div id="header-wrap">
+		<div id="header" class="container_wide">
+			<div id="nav">
+				<ul>
+				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;"></img></li>
+				     <li><img src="img/spacer.gif" height="8" width="20" style="padding:0;border:0;opacity:0;"></img></li>
+					 <li id="current"><a href="index.html">Browse</a></li>
+					 <li><a href="visualization.html">Subscribe</a></li>
+					 <li><a href="recommendation.html">Project overview</a></li>
+					 <li><img src="img/spacer.gif" height="8" width="170" style="padding:0;border:0;opacity:0;"></img></li>
+					 <li><div class='popbox'>
+				  		 <a class="open" href="#" style="text-transform:lowercase;width:160px;margin-top:8px;height:20px;line-height:20px;font-weight:normal;font-size:12px;position:relative;float:left;">ursic.jure@gmail.com</a>
+					 		<div class='collapse'>
+ 					 			<div class='box'>
+   					 				<div class='arrow'></div>
+     		 		 				<div class='arrow-border'></div>
+        			 				<form method="post" id="subForm">
+        				 				<p>
+<a href="#" style="float:right;text-transform:normalcase;">Logout</a>
+<script type="text/javascript" src="http://output21.rssinclude.com/output?type=js&amp;id=526079&amp;hash=ee25e8943dc9de3f8d68f5bf9e0b5c5c"></script>
+		 								</p>
+     			    				</form>
+     			     			</div>
+     			     		</div>
+     			     	</div>
+     			     </li>
+     			     <li><img src="img/spacer.gif" height="8" width="200" style="padding:0;border:0;opacity:0;"></img></li>
+     			     <li><img src="img/sfp.png" style="width:60px;height:40px;"></img></li>
+     			 </ul>
+     		</div>
+     	</div>
+     </div>
+     				 <div id="container_main" class="container_main">
+						<div id="container" class="container_wide">
+							<div id="advanced_div">
+								<div id="tabscontent">
+									<div id="tabswrapper">
+										<div id="navigation" style="display: none;">
+											<ul>
+												<li class="selected"><a href="#">General search</a></li>
+												<li><a href="#">Duplicate issue detection</a></li>
+												<li><a href="#">Issues related to my code</a></li>
+												<li><a href="#">Suggest issues for a developer</a></li>
+											</ul>
+										</div>
+										<div id="steps">
+											<form id="formElem" action="" method="post">
+												<fieldset class="step">
+													<p>
+														<input type="text" class="text" id="keyword_text" name="keywords" style="float:left;"/>
+														
+													</p>
+													<p style="position:relative;">
+														<input type="text" class="text" id="other_text" name="other"/> 
+													</p>
+													<p>
+														<label for="from_text">Between: </label>
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input type="text" id="from_text" class="text" onchange="updateUrl();" style="width:120px;"/>
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<label for="to_text" style="float:center;">and</label>
+														<input type="text" id="to_text" class="text" onchange="updateUrl();" style="width:120px;"/>
+														<img src="img/spacer.gif" height="8" width="28" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();" /> Issues 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();" /> Commits 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();" /> Forums
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();" /> Mailing lists
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();" /> Wiki
+														<img src="img/spacer.gif" height="8" width="28" style="padding:0;border:0;opacity:0;"></img>
+														<button style="height:36px;" onclick="return viz.searchGeneral();">Search</button>
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Duplicate issue detection</legend>
+													<p>
+														<input type="text" id="issue_id_text" class="text"/>
+													</p>
+													<p style="float:center;">
+														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
+														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
+														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
+														<button id="issue_search" style="height:36px;" onclick="return viz.searchIssueId();">Search</button>
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Issues related to my code</legend>
+													<p>
+														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
+														<img src="img/spacer.gif" height="22" width="36" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
+														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
+														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
+														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
+														<button class="taller_btn" style="height:36px;" onclick="return return viz.search();">Search</button>
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Suggest issues for a developer</legend>
+													<p>
+														<input id="person_text" name="other" style="width:780px;"/>
+														<img src="img/spacer.gif" height="8" width="30" style="padding:0;border:0;opacity:0;"></img>
+														<button class="taller_btn" style="height:36px;" onclick="return viz.search();">Search</button>
+													</p>
+												</fieldset>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+<div id="container" class="container_wide">
+	<div id="container" class="item_left">
+		<div id="items-div">
+		</div>
+	</div>
+	<div id="container" class="item_right">
+	<div class="tabber">
+ 	<div class="tabbertab">
+	 <h2>Item details</h2>
+	  	<div id="item-div">
+			<table id="item_details">
+				<tr>
+					<td class="btns"><input type="button" id="btn-source" value="Show Source" /></td>
+					<td class="btns"><input type="button" id="btn-related" value="Show Related Issues" /></td>
+					<td class="btns"><input type="button" id="btn-suggest-developer" value="Suggest Developers" /></td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div id="item-accordion">
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+     </div>
+     <div class="tabbertab">
+	  <h2>Social graph</h2>
+		<div id="graph-controls-div">
+			<button class="zoom_btns" id="btnShowMore">+</button>
+			<button class="zoom_btns" id="btnShowLess">-</button>
+		</div>
+			<div id="graph-div"></div>
+    	</div>
+     <div class="tabbertab">
+	  <h2>Word cloud</h2>
+		<div id="wordcloud-div">
+		</div>
+     </div>
+</div>
+</div>
+
+<div id="container" class="container_wide">
+	<div id="container" class="timeline">
+		<div id="chart-div">
+		</div>
+	</div>
+</div>
+<div id="footer-wrapper">
+	<div id="footer-content">
+Copyleft...
+	</div>
+</div>
+</div>
+</body>
+</html>

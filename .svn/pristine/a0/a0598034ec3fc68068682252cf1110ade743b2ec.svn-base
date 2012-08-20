@@ -1,0 +1,25 @@
+var amq = org.activemq.Amq;
+
+function alertSendInit(){
+    var topic = "topic://ALERT.VIZ"; 
+            
+    var handler = function(message){
+        //var txt = (new XMLSerializer()).serializeToString(message);        
+        //$('#resp').html(txt)
+        
+    }
+    
+    amq.addListener('test', topic, handler);
+    
+    amq.sendMessage(topic, 'hello');
+    
+    
+    $('#btnSend').click(function(){
+        //alert($('#txtMsg').val());
+        amq.sendMessage(topic, $('textarea').val());
+    }) 
+
+    $('#sendXml').click(function(){
+        amq.sendMessage(topic, '<mata>tactu</mata>')
+    })
+}

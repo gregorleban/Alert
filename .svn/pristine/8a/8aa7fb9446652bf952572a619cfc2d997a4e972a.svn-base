@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Alert</title>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+	<meta name="description" content="Active support and reaL-time coordination based on Event pRocessing in FLOSS developmenT" />
+	<meta name="keywords" content="keywords, goes, here" />
+	<meta name="robots" content="index, follow, noarchive" />
+	<meta name="googlebot" content="noarchive" />
+	
+	<link type="text/css" rel="stylesheet" href="css/layout-default-latest.css" />
+	<link type="text/css" rel="stylesheet" href="css/flick/jquery-ui-1.8.17.custom.css" />
+	<link type="text/css" rel="stylesheet" href="css/autoSuggest.css" />
+	<link type="text/css" rel="stylesheet" href="css/alertviz.css" />
+	<link type="text/css" rel="stylesheet" href="css/jqcloud.css" />
+	<link type="text/css" rel="stylesheet" href="css/main.css" media="screen" />
+	<link type="text/css" rel="stylesheet" href="css/tabs.css" media="screen" />
+	
+	<script type="application/javascript" src="js/jquery-1.7.1.js"></script>
+	<script type="application/javascript" src="js/jquery.layout-latest.js"></script>
+	<script type="application/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
+	<script type="application/javascript" src="js/arbor.js"></script>
+	<script type="application/javascript" src="js/kinetic-v3.10.0.js"></script>
+	<script type="application/javascript" src="js/dynamicgraph.js"></script>
+	<script type="application/javascript" src="js/graphics.js"></script>
+	<script type="application/javascript" src="js/renderer.js"></script>
+	<script type="application/javascript" src="js/jqcloud-1.0.0.js"></script>
+	<script type="application/javascript" src="js/highcharts.js"></script>
+	<script type="application/javascript" src="js/alertviz.js"></script>
+	<script type="application/javascript" src="js/jquery.autoSuggest.js"></script>
+	
+	<script type="text/javascript" src="js/sliding.form.js"></script>
+	
+	<script type="application/javascript">
+		<!--
+		var outerLayout;
+		var innerLayout;
+		var westLayout;
+		var viz;
+		
+		$(document).ready(function(){
+			outerLayout = $('#wrapper').layout({
+				center: {
+					paneSelector: '#outer-center',
+					size: 'auto'
+				},
+				
+				north: {
+					paneSelector: '#outer-north',
+					closable: false,
+					resizable: false
+				},
+				
+				west: {
+					paneSelector: '#outer-west',
+					size: 400,
+					resizeWhileDragging: false,
+					closable: false
+				}
+			});
+			
+			innerLayout = $('#outer-center').layout({
+				center: {
+					paneSelector: '#inner-center',
+					size: 'auto'
+				},
+				
+				south: {
+					paneSelector: '#inner-south',
+					size: 200,
+					resizeWhileDragging: true,
+					closable: false,
+					resizable: false
+				}
+			});
+			
+			westLayout = $('#outer-west').layout({
+				center: {
+					paneSelector: '#outer-west-center',
+					size: 'auto',
+				},
+				north: {
+					paneSelector: '#outer-west-north',
+					size: 380,
+					resizeWhileDragging: false,
+					closable: true,
+					initClosed: false,
+					resizable: false
+				}
+			});
+			
+			$('#tabs').tabs();											
+			
+			viz = AlertViz({
+				inTopic: 'topic://ALERT.KEUI.Response',
+				outTopic: 'topic://ALERT.*.KEUIRequest'
+			});
+			
+			$('#btnShowMore').click(function(){
+				viz.increaseGraph();
+			});
+			
+			$('#btnShowLess').click(function(){
+				viz.decreaseGraph();
+			});
+			
+			$('#from_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});
+			$('#to_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});
+		});
+		-->
+	</script>
+</head>
+<body>
+	<div id="header-wrap">
+		<div id="header" class="container_16">
+			<h1 id="logo-text">
+				<a href="index.html" title="">Alert</a>
+			</h1>
+			<p id="intro">Active support and reaL-time coordination based on
+				Event pRocessing in FLOSS developmenT</p>
+			<div id="nav">
+				<ul>
+					<li id="current"><a href="search/index.html" target="iframe">Search</a></li>
+					<li><a href="visualization/index.html" target="iframe">Visualization</a></li>
+					<li><a href="recommendation/index.html" target="iframe">Recommendation
+							service</a></li>
+					<li><a href="notification/index.html" target="iframe">Notification</a></li>
+					<li><a href="panteon/index.html" target="iframe">Panteon</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="content-outer">
+		<div id="content-wrapper" class="container_16">
+			<div id="main" class="grid_8">
+				<div id="wrapper">
+					<div id="outer-center">
+						<div id="inner-center">
+							<div id="tabs">
+								<ul>
+									<li><a href="#tabs-graph">Social Graph</a></li>
+									<li><a href="#tabs-wordcloud">Word Cloud</a></li>
+									<li><a href="#tabs-item">Item Details</a></li>
+								</ul>
+								<div id="tabs-graph">
+									<div id="graph-div"></div>
+									<div id="graph-controls-div">
+										<button id="btnShowMore">+</button>
+										<button id="btnShowLess">-</button>
+									</div>
+								</div>
+								<div id="tabs-wordcloud"></div>
+								<div id="tabs-item"></div>
+							</div>
+						</div>
+						<div id="inner-south">
+							<div id="chart-div"></div>
+						</div>
+					</div>
+					<div id="outer-west">
+						<div id="outer-west-north">
+							<div id="advanced_div">
+								<div id="tabscontent">
+									<div id="tabswrapper">
+										<div id="steps">
+											<form id="formElem" name="formElem" action="" method="post">
+												<fieldset class="step">
+													<legend>General search</legend>
+													<p>
+														<input type="text" id="keyword_text" name="keywords" placeholder="keywords,..." />
+														<button id="general_search" class="taller_btn" onclick="viz.search();">Search</button>
+													</p>
+													<p>
+														<input type="text" id="other_text" name="other" placeholder="people, products, sources, components, issue IDs,..." />
+														<button id="general_search" class="taller_btn" onclick="viz.search();">Add</button>
+													</p>
+													<p>
+														<label for="from_text">Between: </label>
+														<input type="text" id="from_text" class="text" onchange="updateUrl();" />
+														<label for="to_text">and </label>
+														<input type="text" id="to_text" class="text" onchange="updateUrl();" />
+													</p>
+													<p>
+														<input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();" /> Issues 
+														<input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();" /> Commits 
+														<input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();" /> Forums
+														<input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();" /> Mailing lists
+														<input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();" /> Wiki
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Duplicate issue detection</legend>
+													<p>
+														<input type="text" id="issue_id_text" class="text" placeholder="issue ID" />
+														<button id="issue_search" onclick="viz.searchIssueID();">Search</button>
+													</p>
+													<p>
+														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed 
+														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
+														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
+														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
+													</p>
+													<p>
+														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
+														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me
+														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
+														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
+														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Issues related to my code</legend>
+													<p>
+														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed
+														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
+														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
+														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
+													</p>
+													<p>
+														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
+														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me 
+														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
+														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
+														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
+													</p>
+													<p>
+														<button id="general_search" class="taller_btn" onclick="viz.search();">Search</button>
+													</p>
+												</fieldset>
+												<fieldset class="step">
+													<legend>Suggest issues for a developer</legend>
+													<p>
+														<input id="tperson_text" name="other" placeholder="person name" />
+														<button id="general_search" class="taller_btn" onclick="viz.search();">Search</button>
+													</p>
+												</fieldset>
+											</form>
+										</div>
+										<div id="navigation" style="display: none;">
+											<ul>
+												<li class="selected"><a href="#">General</a></li>
+												<li><a href="#">Duplicate</a></li>
+												<li><a href="#">Related</a></li>
+												<li><a href="#">Suggest</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div id="outer-west-center"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="footer-wrapper" class="container_16">
+					<div id="footer-content"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	
+		<title>Test Layout</title>
+		<link type="text/css" rel="stylesheet" href="css/layout-default-latest.css" />
+		<link type="text/css" rel="stylesheet" href="css/flick/jquery-ui-1.8.17.custom.css" />
+		<link type="text/css" rel="stylesheet" href="css/autoSuggest.css" />
+		<link type="text/css" rel="stylesheet" href="css/alertviz.css" />
+		<link type="text/css" rel="stylesheet" href="css/jqcloud.css" />
+		
+		<script type="application/javascript" src="js/jquery-1.7.1.js"></script>
+		<script type="application/javascript" src="js/jquery.layout-latest.js"></script>
+		<script type="application/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
+		<script type="application/javascript" src="js/jquery.ba-bbq.min.js"></script>
+		<script type="application/javascript" src="js/jquery.autoSuggest.js"></script>
+		<script type="application/javascript" src="js/jquery.bpopup-0.7.0.min.js"></script>
+		<script type="application/javascript" src="js/arbor.js"></script>
+		<script type="application/javascript" src="js/kinetic-v3.10.0.js"></script>
+		<script type="application/javascript" src="js/graphics.js"></script>
+		<script type="application/javascript" src="js/renderer.js"></script>
+		<script type="application/javascript" src="js/jqcloud-1.0.0.js"></script>		
+		<script type="application/javascript" src="js/highcharts.js"></script>
+		<script type="application/javascript" src="js/dynamicgraph.js"></script>
+		<script type="application/javascript" src="js/alertviz.js"></script>
+		<script type="application/javascript">
+								
+			var outerLayout;
+			var innerLayout;
+			var westLayout;
+			var viz;
+			
+			$(document).ready(function(){
+				outerLayout = $('#wrapper').layout({
+					center: {
+						paneSelector: '#outer-center',
+						size: 'auto'
+					},
+					
+					north: {
+						paneSelector: '#outer-north',
+						closable: false,
+						resizable: false
+					},
+					
+					west: {
+						paneSelector: '#outer-west',
+						size: 500,
+						resizeWhileDragging: true,
+						closable: false
+					}
+				});
+				
+				innerLayout = $('#outer-center').layout({
+					center: {
+						paneSelector: '#inner-center',
+						size: 'auto'
+					},
+					
+					south: {
+						paneSelector: '#inner-south',
+						size: 200,
+						resizeWhileDragging: true,
+						closable: false,
+						resizable: false
+					}
+				});
+				
+				westLayout = $('#outer-west').layout({
+					center: {
+						paneSelector: '#outer-west-center',
+						size: 'auto',
+					},
+					north: {
+						paneSelector: '#outer-west-north',
+						size: 225,
+						resizeWhileDragging: false,
+						closable: true,
+						initClosed: false,
+						resizable: false
+					}
+				});
+				
+				$('#tabs').tabs();
+				
+				viz = AlertViz({
+					inTopic: 'topic://ALERT.KEUI.Response',
+					outTopic: 'topic://ALERT.*.KEUIRequest'
+				});
+				
+				$('#btnShowMore').click(function(){
+					viz.increaseGraph();
+				});
+				
+				$('#btnShowLess').click(function(){
+					viz.decreaseGraph();
+				});
+				
+				$('#from_text').datepicker({constrainInput: true});
+				$('#to_text').datepicker({constrainInput: true});
+				
+				$('#item-accordion').accordion({autoHeight: false});
+				
+				loadState();
+			});
+			
+		</script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="outer-center">
+				<div id="inner-center"> 					
+					<div id="tabs">
+						<ul>
+							<li><a href="#tabs-graph">Social Graph</a></li>
+							<li><a href="#tabs-wordcloud">Word Cloud</a></li>
+							<li><a href="#tabs-item">Item Details</a></li>
+						</ul>
+						<div id="tabs-graph">
+							<div id="graph-div"></div>
+							<div id="graph-controls-div">
+								<button id="btnShowMore">+</button>
+								<button id="btnShowLess">-</button>
+							</div>
+						</div>
+						<div id="tabs-wordcloud"></div>
+						<div id="tabs-item">
+							<table>
+								<tr>
+									<td><input type="button" id="btn-source" value="Show Source" /></td>
+									<td><input type="button" id="btn-related" value="Show Related Issues" /></td>
+									<td><input type="button" id="btn-suggest-developer" value="Suggest Developers" /></td>
+								</tr>
+								<tr>
+									<td colspan="3">
+										<div id="item-accordion" style="visibility: hidden;">
+											<h3><a href="#">Issue Description</a></h3>
+											<div id="item-description"></div>
+											<h3><a href="#">Issue Commments</a></h3>
+											<div id="item-comments">HELLO WORLD</div>
+											<h3 id="item-related"><a href="#">Related Posts</a></h3>
+											<div id="item-related">HELLO</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div id="inner-south">
+					<div id="chart-div"></div>
+				</div>
+			</div>
+			<div id="outer-west">
+				<div id="outer-west-north">
+						<div id="advanced_div">
+							<fieldset class="advanced_fieldset">
+								<legend>General Search</legend>
+								<table class="advanced_table">
+									<tbody>
+										<tr>
+											<td class="name">Keyword: </td>
+											<td colspan="3"><input type="text" id="keyword_text" class="text" /></td>
+										</tr>
+										<tr>
+											<td class="name">Other: </td>
+											<td colspan="3"><input type="text" id="other_text" class="text" /></td>
+										</tr>
+										<tr>
+											<td class="name">Between: </td>
+											<td><input type="text" id="from_text" class="text"></td>
+											<td class="between">and</td>
+											<td><input type="text" id="to_text" class="text" /></td>
+										</tr>
+										<tr>
+											<td colspan="4">
+												<input type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();" />Issues
+												<input type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();" />Commits
+												<input type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();" />Forums
+												<input type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();" />Mailing lists
+												<input type="checkbox" id="wikis_check"checked="checked" onchange="updateUrl();" />Wikis
+											</td>
+										</tr>
+										<tr>
+											<td colspan="4" class="button_td"><button id="general_search" class="taller_btn" onclick="viz.search();">Search</button></td>
+										</tr>
+									</tbody>
+								</table>
+							</fieldset>
+						</div>
+				</div>
+				<div id="outer-west-center">
+					<ul></ul>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div id="popup_search" style="display: none;">
+			<table>
+				<tr>
+					<td id="popup_search_td"></td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

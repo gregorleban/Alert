@@ -4,15 +4,34 @@ padding: 0;
 width: 100%-20px;
 }
 .heading {
-margin: 1px;
 color: #fff;
-padding: 3px 10px;
+padding: 5px 5px;
 cursor: pointer;
 position: relative;
 background-color:#7BA857;
-width:100%;
+width:575px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+        background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(182,222,143)),
+        color-stop(0.55, rgb(150,200,100)),
+        color-stop(0.78, rgb(182,222,143))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
+     -moz-box-shadow:0px 0px 3px #aaa;
+    -webkit-box-shadow:0px 0px 3px #aaa;
+    box-shadow:0px 0px 3px #aaa;
+    margin-bottom:5px;
 }
 .content {
 padding: 5px 10px;

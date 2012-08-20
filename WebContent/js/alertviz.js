@@ -769,45 +769,52 @@ var AlertViz = function(options) {
     	
     	setItemContent: function (data) {
     		// generate accordion
-    		var previewLength = 250;
-    		
-    		// description
-    		var html = '<h3><a href="#">Description';//<table class="details_short">';
-//    		html += '<tr><td>Issue Description</td></tr>';
-//    		html += '<tr><td class="details_author">Author: ' + data.author.name + '</td></tr>';
-//    		html += '<tr><td class="details_content">' + (data.description.length > previewLength ? data.description.substring(0, previewLength) + '...' : data.description) + '</td></tr>';
-//    		html += '</table>';
-    		html += '</a></h3>';
-    		html += '<div id="item-description"><table class="details_long">';
-    		html += '<tr><td class="details_author">' + data.author.name + '</td></tr>';
-    		html += '<tr><td class="details_content">' + data.description + '</td></tr>';
-    		html += '<tr><td class="details_status">' + data.status + ', ' + data.resolution + '</td></tr>';
-    		html += '</table></div>';
+    		// item description
+    		var html = '<table class="heading"><tr>';
+    		html += '<td class="title_desc">Item description</td>';
+    		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
+    		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.dateOpened).toISOString() + '</div></td>';
+    		html += '<td>Resolution: <div id="resolution_desc" class="data">' + data.resolution + '</div></td>';
+    		html += '<td>Status: <div id="status_desc" class="data">' + data.status + '</div></td>';
+    		html += '</tr></table>';
+    		// content
+    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		
     		// comments
     		var comments = data.comments;
     		for (var i = 0; i < comments.length; i++) {
     			var comment = comments[i];
     			
-    			var date = new Date(comment.commentDate);
-    			
-    			
-    			html += '<h3><a href="#">Comment</a></h3>';
-//    			html += '<table class="details_short">';
-//    			html += '<tr><td class="details_author">Author: ' + comment.person.name + '</td><td class="details_date">' + date.toISOString() + '</td></tr>';
-//    			html += '<tr><td>' + (comment.commentText.length > previewLength ? comment.commentText.substring(0, previewLength) + '...' : comment.commentText) + '</td></tr>';
-//    			html += '</table>';
-//    			html += '</a></h3>';
-    			html += '<div id="item-comment-' + i + '" class="details_comment">';
-    			html += '<table class="details_long">';
-    			html += '<tr><td class="details_author">Author: ' + comment.person.name + '</td><td class="details_date">' + date.toISOString() + '</td></tr>';
-    			html += '<tr><td>' + comment.commentText + '</td></tr>';
-    			html += '</table>';
-    			html += '</div>';
+    			html += '<table class="heading"><tr>';
+    			html += '<td class="title_comm">Comment</td>';
+    			html += '<td>Author: <div id="author_comm" class="data">' + comment.person.name + '</div></td>';
+    			html += '<td>Date: <div id="date_comm" class="data">' + new Date(comment.commentDate).toISOString() + '</div></td>';
+    			html += '</tr></table>';
+    			// content
+    			html += '<div class="content">' + comment.commentText + '</div>';
     		}
     		
-    		$('#layer1').html(html);
-    		$('#item-accordion').accordion({autoHeight: false});
+    		// related issues TODO
+
+    		// insert html
+    		$('#details_wrapper').html(html);
+    		jQuery(".content").hide();
+    		jQuery(".heading").click(function() {
+			    jQuery(this).next(".content").slideToggle(500);
+			});
+    		
+    		/*
+				<table class="heading" style="width:100%;">
+				<tr>
+				<td style="font-weight:bold;">
+				Related issues
+				</td>
+				</tr>
+				</table>
+				<div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit orem ipsum dolor sit amet, consectetuer adipiscing elit</div>*/
+    		
+//    		$('#layer1').html(html);
+//    		$('#item-accordion').accordion({autoHeight: false});
     	},
     
     	

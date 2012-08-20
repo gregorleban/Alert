@@ -57,16 +57,6 @@
 	<script type="text/javascript">
 		document.write('<style type="text/css">.tabber{display:none;}<\/style>');
 	</script>
-	<script type="text/javascript">
-jQuery(document).ready(function() {
-  jQuery(".content").hide();
-  //toggle the componenet with class msg_body
-  jQuery(".heading").click(function()
-  {
-    jQuery(this).next(".content").slideToggle(500);
-  });
-});
-	</script>
 </head>
 <body>
 	<div id="header-wrap">
@@ -220,59 +210,7 @@ jQuery(document).ready(function() {
  	<div class="tabbertab">
 	 <h2>Item details</h2>
 	  	<div id="item-div">
-	  		<div class="layer1">
-				<table class="heading">
-					<tr>
-						<td class="title_desc">
-							Item description
-						</td>
-						<td>
-							Author: <div id="author_desc" class="data">Luka Stopar</div>
-						</td>
-						<td>
-							Date: <div id="date_desc" class="data">20.8.2012</div>
-						</td>
-						<td>
-							Resolution: <div id="resolution_desc" class="data">Resolved</div>
-						</td>
-						<td>
-							Status: <div id="status_desc" class="data">Fixed</div>
-						</td>
-					</tr>
-				</table>
-				<div class="content">
-					<table id="item_details">
-						<tr>
-							<td colspan="3">
-								<div id="item-accordion">
-								</div>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<table class="heading">
-				<tr>
-				<td class="title_comm">
-				Comment
-				</td>
-				<td>
-				Author: <div id="author_comm" class="data">Luka Stopar</div>
-				</td>
-				<td>
-				Date: <div id="date_comm" class="data">20.8.2012</div>
-				</td>
-				</tr>
-				</table>
-				<div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit orem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-				<table class="heading" style="width:100%;">
-				<tr>
-				<td style="font-weight:bold;">
-				Related issues
-				</td>
-				</tr>
-				</table>
-				<div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit orem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-			</div>
+	  		<div id="details_wrapper" class="layer1"></div>
 		</div>
      </div>
      <div class="tabbertab">

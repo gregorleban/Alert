@@ -772,11 +772,11 @@ var AlertViz = function(options) {
     		var previewLength = 250;
     		
     		// description
-    		var html = '<h3><a href="#"><table class="details_short">';
-    		html += '<tr><td>Issue Description</td></tr>';
-    		html += '<tr><td class="details_author">Author: ' + data.author.name + '</td></tr>';
-    		html += '<tr><td class="details_content">' + (data.description.length > previewLength ? data.description.substring(0, previewLength) + '...' : data.description) + '</td></tr>';
-    		html += '</table>';
+    		var html = '<h3><a href="#">Description';//<table class="details_short">';
+//    		html += '<tr><td>Issue Description</td></tr>';
+//    		html += '<tr><td class="details_author">Author: ' + data.author.name + '</td></tr>';
+//    		html += '<tr><td class="details_content">' + (data.description.length > previewLength ? data.description.substring(0, previewLength) + '...' : data.description) + '</td></tr>';
+//    		html += '</table>';
     		html += '</a></h3>';
     		html += '<div id="item-description"><table class="details_long">';
     		html += '<tr><td class="details_author">' + data.author.name + '</td></tr>';
@@ -806,7 +806,7 @@ var AlertViz = function(options) {
     			html += '</div>';
     		}
     		
-    		$('#item-accordion').html(html);
+    		$('#layer1').html(html);
     		$('#item-accordion').accordion({autoHeight: false});
     	},
     

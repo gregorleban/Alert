@@ -1251,6 +1251,7 @@ var AlertViz = function(options) {
     				html += '</tr>';
     			}
 				
+    			
 				// content
 				html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
     			

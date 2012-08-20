@@ -1,13 +1,15 @@
 /* AutoSuggest CSS - Version 1.2 */
 ul.as-selections {
 	list-style-type: none;
-/*	border-top: 1px solid #888;
+	border-top: 1px solid #888;
 	border-bottom: 1px solid #b6b6b6;
 	border-left: 1px solid #aaa;
-	border-right: 1px solid #aaa; */
+	border-right: 1px solid #aaa;
 	padding: 0px 0 0px 0px !important;
 	margin: 0 !important;
-	background-color: #F4F4F4;
+	background-color: white;
+	width: 100%;
+	height: 33px;
 }
 ul.as-selections.loading {
 	background-color: #eee;
@@ -122,10 +124,10 @@ ul.as-selections li.as-original {
 }
 
 ul.as-selections li.as-original input {
-	border: none;
-	outline: none;
+	border: none !important;
+	outline: none !important;
 	font-size: 13px;
-	width: 120px;
+	width: 120px !important;
 	height: 18px !important;
 	padding-top: 0px !important;
 }

@@ -418,6 +418,148 @@ public class MessageUtils {
 		return msg;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public String parseCommitDetailsMessage(String responseMsg) {
+		try {
+			JSONObject result = new JSONObject();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			
+			JSONArray filesArr = new JSONArray();
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			
+			Node respData = doc.getElementsByTagName("s3:responseData").item(0);
+			NodeList propNodes = respData.getChildNodes();
+			for (int nodeIdx = 0; nodeIdx < propNodes.getLength(); nodeIdx++) {
+				Node node = propNodes.item(nodeIdx);
+				String nodeName = node.getNodeName();
+				
+				if ("s3:commitRepositoryUri".equals(nodeName))
+					result.put("repositoryUri", node.getTextContent());
+				else if ("s3:commitRevisionTag".equals(nodeName)) 
+					result.put("revisionTag", Integer.parseInt(node.getTextContent()));
+				else if ("s3:commitDate".equals(nodeName))
+					result.put("commitDate", dateFormat.parse(node.getTextContent()).getTime());
+				else if ("s3:commitMessageLog".equals(nodeName))
+					result.put("message", node.getTextContent());
+				else if ("s3:commitAuthor".equals(nodeName)) {
+					JSONObject authorJSon = new JSONObject();
+					
+					NodeList authorProps = node.getChildNodes();
+					for (int i = 0; i < authorProps.getLength(); i++) {
+						Node prop = authorProps.item(i);
+						String label = prop.getNodeName().substring(3);
+						String value = prop.getTextContent();
+						
+						authorJSon.put(label, value);
+					}
+					result.put("author", authorJSon);
+				}
+				else if ("s3:commitCommitter".equals(nodeName)) {
+					JSONObject authorJSon = new JSONObject();
+
+					NodeList authorProps = node.getChildNodes();
+					for (int i = 0; i < authorProps.getLength(); i++) {
+						Node prop = authorProps.item(i);
+						String label = prop.getNodeName().substring(3);
+						String value = prop.getTextContent();
+						
+						authorJSon.put(label, value);
+					}
+					result.put("committer", authorJSon);
+				}
+				else if ("s3:commitFile".equals(nodeName)) {
+					JSONObject file = new JSONObject();
+					JSONArray modules = new JSONArray();
+					
+					NodeList fileProps = node.getChildNodes();
+					for (int i = 0; i < fileProps.getLength(); i++) {
+						Node fileProp = fileProps.item(i);
+						String label = fileProp.getNodeName();
+						
+						if ("s3:fileId".equals(label))
+							file.put("id", Long.parseLong(fileProp.getTextContent()));
+						else if ("s3:fileUri".equals(label))
+							file.put("uri", fileProp.getTextContent());
+						else if ("s3:fileAction".equals(label))
+							file.put("action", fileProp.getTextContent());
+						else if ("s3:fileName".equals(label))
+							file.put("name", fileProp.getTextContent());
+						else if ("s3:fileBranch".equals(label))
+							file.put("branch", node.getTextContent());
+						else if ("s3:fileModules".equals(label)) {
+							JSONObject module = new JSONObject();
+							JSONArray methods = new JSONArray();
+							
+							NodeList moduleNodes = fileProp.getChildNodes();
+							for (int j = 0; j < moduleNodes.getLength(); j++) {
+								Node moduleProp = moduleNodes.item(j);
+								String moduleLabel = moduleProp.getNodeName();
+								
+								if ("s3:moduleUri".equals(moduleLabel))
+									module.put("uri", moduleProp.getTextContent());
+								else if ("s3:moduleId".equals(moduleLabel))
+									module.put("id", Long.parseLong(moduleProp.getTextContent()));
+								else if ("s3:moduleName".equals(moduleLabel))
+									module.put("name", node.getTextContent());
+								else if ("s3:moduleStartLine".equals(moduleLabel))
+									module.put("startLine", Integer.parseInt(node.getNodeValue()));
+								else if ("s3:moduleEndLine".equals(moduleLabel))
+									module.put("endLine", Integer.parseInt(node.getTextContent()));
+								else if ("s3:moduleMethods".equals(moduleLabel)) {
+									// parse the method
+									JSONObject method = new JSONObject();
+									
+									NodeList methodProps = moduleProp.getChildNodes();
+									for (int k = 0; k < methodProps.getLength(); k++) {
+										Node methodProp = methodProps.item(k);
+										String methodLabel = methodProp.getNodeName();
+										
+										if ("s3:methodId".equals(methodLabel))
+											method.put("id", Long.parseLong(methodProp.getTextContent()));
+										else if ("s3:methodStartLine".equals(methodLabel))
+											method.put("startLine", Integer.parseInt(methodProp.getTextContent()));
+										else if ("s3:methodEndLine".equals(methodLabel))
+											method.put("endLine", Integer.parseInt(methodProp.getTextContent()));
+										else 
+											method.put(moduleLabel.substring(3), methodProp.getTextContent());
+									}
+									
+									
+								}
+							}
+							module.put("methods", methods);
+							modules.add(module);
+						} 
+					}
+					
+					file.put("modules", modules);
+					filesArr.add(file);
+				}
+				else if ("s3:commitProduct".equals(nodeName)) {
+					JSONObject product = new JSONObject();
+					
+					NodeList prodProps = node.getChildNodes();
+					for (int i = 0; i < prodProps.getLength(); i++) {
+						Node prodProp = prodProps.item(i);
+						String label = prodProp.getNodeName().substring(3);
+						
+						product.put(label, prodProp.getTextContent());
+					}
+				}
+				
+				
+				result.put("files", filesArr);
+			}
+			
+			return result.toJSONString();
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing issue details response message!", t);
+		}
+	}
+	
 	/**
 	 * Parses issue details response message.
 	 * 
@@ -437,14 +579,14 @@ public class MessageUtils {
 			JSONArray commentsJSon = new JSONArray();
 			JSONArray activitiesJSon = new JSONArray();
 			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			
 			// parse assigned to
 			Node dataEl = doc.getElementsByTagName("s3:responseData").item(0);
 			NodeList propNodes = dataEl.getChildNodes();
 			for (int nodeIdx = 0; nodeIdx < propNodes.getLength(); nodeIdx++) {
 				Node node = propNodes.item(nodeIdx);
 				String nodeName = node.getNodeName();
-				
-				SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
 				
 				if ("s3:issueDependsOnid".equals(nodeName))	// parse depends on
 					result.put("dependsOnId", Utils.parseLong(node.getTextContent()));
@@ -583,7 +725,7 @@ public class MessageUtils {
 			
 			return result.toJSONString();
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("An unexpected exception occurred while parsing the response message!", t);
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing issue details response message!", t);
 		}
 	}
 

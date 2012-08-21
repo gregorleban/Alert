@@ -1,4 +1,5 @@
 var monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var defaultDateFormat = "isoDate";
 
 var settingManually = false;
 
@@ -502,6 +503,10 @@ var AlertViz = function(options) {
     	currentQueryOpts: null,
     	socialGraph: null,
     	
+    	cleanData: function () {
+    		$('#details_wrapper').html('');
+    	},
+    	
     	addToSearchField: function (fieldId, data) {
     		generalSearch.addToSearch(data);
         	
@@ -511,15 +516,39 @@ var AlertViz = function(options) {
         	$(selector).change();
     	},
     	
-    	searchItemContent: function (itemId) {
+    	searchItemDetails: function (itemId) {
     		$.ajax({
     			type: 'GET',
     			url: 'query',
-    			data: {type: 'itemFull', query: itemId},
+    			data: {type: 'itemDetails', query: itemId},
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				that.setItemContent(data);
+    				that.setItemDetails(data);
+    			}
+    		});
+    	},
+    	
+    	searchIssueDetails: function (itemId) {
+    		$.ajax({
+    			type: 'GET',
+    			url: 'query',
+    			data: {type: 'issueDetails', query: itemId},
+    			dataType: 'json',
+    			async: true,
+    			success: function (data, textStatus, jqXHR) {
+    				that.setIssueDetails(data);
+    			}
+    		});
+    	},
+    	
+    	searchCommitDetails: function (itemUri) {
+    		$.ajax({
+    			type: 'GET',
+    			url: 'query',
+    			data: {type: 'commitDetails', query: itemUri},
+    			success: function (data, textStatus, jqXHR) {
+    				that.setCommitDetails(data);
     			}
     		});
     	},
@@ -651,6 +680,7 @@ var AlertViz = function(options) {
 			that.searchPeopleGeneral(queryOpts);
 			
 			that.currentQueryOpts = queryOpts;
+			that.cleanData();
 			return false;
     	},
     	
@@ -744,6 +774,8 @@ var AlertViz = function(options) {
     		that.searchKeywordIssue(queryOpts);
     		that.searchItemsIssue(queryOpts, 0, 100);
     		
+    		that.cleanData();
+    		
     		return false;
     	},
     	
@@ -767,13 +799,13 @@ var AlertViz = function(options) {
     		return false;
     	},
     	
-    	setItemContent: function (data) {
+    	setIssueDetails: function (data) {
     		// generate accordion
     		// item description
     		var html = '<table class="heading"><tr>';
     		html += '<td class="title_desc">Item description</td>';
     		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
-    		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.dateOpened).toISOString() + '</div></td>';
+    		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.dateOpened).format(defaultDateFormat) + '</div></td>';
     		html += '<td>Resolution: <div id="resolution_desc" class="data">' + data.resolution + '</div></td>';
     		html += '<td>Status: <div id="status_desc" class="data">' + data.status + '</div></td>';
     		html += '</tr></table>';
@@ -787,8 +819,8 @@ var AlertViz = function(options) {
     			
     			html += '<table class="heading"><tr>';
     			html += '<td class="title_comm">Comment</td>';
-    			html += '<td>Author: <div id="author_comm" class="data">' + comment.person.name + '</div></td>';
-    			html += '<td>Date: <div id="date_comm" class="data">' + new Date(comment.commentDate).toISOString() + '</div></td>';
+    			html += '<td>Author: <div id="author_comm_' + i + '" class="data">' + comment.person.name + '</div></td>';
+    			html += '<td>Date: <div id="date_comm_' + i + '" class="data">' + new Date(comment.commentDate).format(defaultDateFormat) + '</div></td>';
     			html += '</tr></table>';
     			// content
     			html += '<div class="content">' + comment.commentText + '</div>';
@@ -812,11 +844,89 @@ var AlertViz = function(options) {
 				</tr>
 				</table>
 				<div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit orem ipsum dolor sit amet, consectetuer adipiscing elit</div>*/
-    		
-//    		$('#layer1').html(html);
-//    		$('#item-accordion').accordion({autoHeight: false});
     	},
-    
+    	
+    	setCommitDetails: function (data) {
+    		
+    		// header
+    		var html = '<table class="heading"><tr>';
+    		html += '<td class="title_desc">Commit comment</td>';
+    		
+    		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';	// TODO change class
+    		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
+    		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.commitDate).format(defaultDateFormat) + '</div></td>';
+    		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';		// TODO change class
+    		
+    		html += '</tr></table>';
+    		// content
+    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '</div></td></tr></table></div>';
+    		
+    		// files
+    		var files = data.files;
+    		for (var fileIdx = 0; fileIdx < files.length; fileIdx++) {
+    			var file = files[fileIdx];
+    			var modules = file.modules;
+    			
+    			html += '<table class="heading"><tr>';
+    			html += '<td class="title_comm">File</td>';
+    			html += '<td>Name: <div id="name_file_' + fileIdx + '" class="data">' + file.name + '</div></td>';
+    			html += '<td>Action: <div id="action_file_' + fileIdx + '" class="data">' + file.action + '</div></td>';
+    			html += '</tr></table>';
+    			// modules
+    			html += '<div class="content"><table class="module_table">';
+    			
+    			for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
+    				var module = modules[moduleIdx];
+    				var methods = module.methods;
+    				
+    				html += '<tr>';
+    				html += '<table>';
+    				html +='<tr><td>Start line: ' + module.startLine + '</td><td>' + module.endLine + '</td></tr>';
+    				html += '<tr><td colspan="2">Name: ' + module.name + '</td></tr>';
+    				html += '<tr><td>Methods</td></tr>';
+    				html += '<tr><td><ul class="methods_ul">';
+    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
+    					var method = methods[methodIdx];
+    					
+    					html += '<li><table class="method_table">';
+    					html += '<tr><td>Start line: ' + method.startLine + '</td><td>End line: ' + method.endLine + '</td></tr>';
+    					html += '<tr><td colspan="2">' + method.moduleMethods + '</td></tr>';
+    					html += '</table></li>';
+    				}
+    				html += '</ul></td></tr>';
+    				html += '</table>';
+    				html += '</tr>';
+    			}
+    			
+    			html += '</table></div>';
+    		}
+    		
+    		$('#details_wrapper').html(html);
+    		jQuery(".content").hide();
+    		jQuery(".heading").click(function() {
+			    jQuery(this).next(".content").slideToggle(500);
+			});
+    	},
+    	
+    	setItemDetails: function (data) {
+    		var html = '<table class="item_details_table">';
+    		
+    		// from/to
+    		if (data.to != null)
+    			html += '<tr><td class="author_td">' + data.from.name + ' to ' + data.to.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
+    		else
+    			html += '<tr><td class="author_td">' + data.from.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
+    		
+    		// subject
+    		if (data.subject != null)
+    			html += '<tr><td colspan="2">' + data.subject + '</td></tr>';
+    		if (data.content != null)
+    			html += '<tr><td colspan="2">' + data.content + '</td></tr>';
+    		
+    		
+    		html += '</table>';
+    		$('#details_wrapper').html(html);
+    	},
     	
     	createWordCloud: function(data) {
     		var width = $('#wordcloud-div').width();
@@ -1202,39 +1312,76 @@ var AlertViz = function(options) {
     	},
     	
     	createItems: function(data) {
+    		var Type = {"email": 10, "post": 11, "bugDescription": 12, "bugComment": 13, "commit": 14, "wikiPost": 15};
+    		
     		$('#items-div').html('');
     		var html = '<ul>';
 			
 			var peopleH = data.persons;
 			var items = data.items;
-    		for(var i = 0; i < data.items.length; i++){
+    		
+			// generate HTML
+			for(var i = 0; i < data.items.length; i++){
     			var item = items[i];
     			html += '<li>';
-    			html += '<div class="item-wrapper" onclick="viz.searchItemContent(' + item.id + ')"><table class="item_table">';
     			
-    			if (item.type != '14') {
-					// from/to + date
+    			switch (item.type) {
+    			case Type.email:
+    				html += '<div class="item-wrapper email" onclick="viz.searchItemDetails(' + item.id + ')"><table class="item_table">';
+    				
+    				// sender receiver
+    				html += '<tr>';
+    				var toNameList = [];
+    				var toIdList = item.recipientIDs;
+    				for (var j = 0; j < toIdList.length; j++)
+    					toNameList.push(peopleH[toIdList[j]].name);
+    				
+    				html += '<td class="item_header">' + peopleH[item.senderID].name + ' to ' + toNameList.join(', ') + '</td>';
+    				
+    				// date
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '</tr>';
+					
+					// subject
 					html += '<tr>';
-					var senderReceiverText = "";
-					if (item.senderID != null) {
-						var fromName = peopleH[item.senderID].name;
-						senderReceiverText += fromName;
-					}
+					if (item.url != null)
+						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+					html += '</tr>';
+    				
+    				// content
+					html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+	    			html += '</table></div>';
+    				break;
+    			case Type.post:
+    				html += '<div class="item-wrapper email" onclick="viz.searchItemDetails(' + item.id + ')"><table class="item_table">';
+    				
+    				// author + date
+    				html += '<tr>';
+    				html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+    				html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '</tr>';
 					
-					if (item.recipientIDs != null) {
-		    			var toNameList = [];
-		    			var toList = item.recipientIDs;
-		    			for (var j = 0; j < toList.length; j++)
-		    				toNameList.push(peopleH[toList[j]].name);
-		    			
-		    			senderReceiverText += ' to ' + toNameList.join(', ');
-					}
-					html += '<td class="item_header">' + senderReceiverText + '</td>';
-	
-	    			
+					// subject TODO does this belong here???
+					html += '<tr>';
+					if (item.url != null)
+						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+					html += '</tr>';
+    				
+					// content
+					html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+	    			html += '</table></div>';
+    				break;
+    			case Type.bugDescription:
+    				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.id + ')"><table class="item_table">';
 					
-					var date = new Date(item.time);
-					html += '<td class="item_date">' + date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + '</td>';
+    				// from + date
+					html += '<tr>';
+					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 	    			
 					// subject + similarity
@@ -1248,30 +1395,73 @@ var AlertViz = function(options) {
 					if (item.similarity != null)
 						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
 					html += '</tr>';
-    			} else {
+					
+					// content
+					html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+	    			html += '</table></div>';
+    				break;
+    			case Type.bugComment:
+    				html += '<div class="item-wrapper comment" onclick="viz.searchIssueDetails(' + item.issueID + ')"><table class="item_table">';
+    				
+    				// from + date
+    				html += '<tr>';
+					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '</tr>';
+					
+					// subject + similarity
+					html += '<tr>';
+					if (item.url != null)
+						html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td class="item_subject">' + item.subject + '</td>';
+					
+					// similarity
+					if (item.similarity != null)
+						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					html += '</tr>';
+    				
+					// content
+					html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+	    			html += '</table></div>';
+    				break;
+    			case Type.commit:
+    				html += '<div class="item-wrapper commit" onclick="viz.searchCommitDetails(\'' + item.entryID + '\')"><table class="item_table">';
+    				
     				// author + date
     				html += '<tr>';
-    				var author = peopleH[item.authorID];
-    				html += '<td class="item_header">' + author.name + '</td>';
-    				var date = new Date(item.time);
-					html += '<td class="item_date">' + date.toISOString() + '</td>';
-    				html += '</tr>';
+					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '</tr>';
+    				
+					// content
+    				html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+        			html += '</table></div>';
+    				break;
+    			case Type.wikiPost:
+    				html += '<div class="item-wrapper comment" onclick="viz.searchItemDetails(' + item.id + ')"><table class="item_table">';
+    				
+    				// author + date
+    				html += '<tr>';
+					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '</tr>';
+    				
+					// content
+    				html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
+        			html += '</table></div>';
+    				break;
     			}
 				
-    			
-				// content
-				html += '<tr><td colspan="2" class="item_content">' + item.content + '</td></tr>';
-    			
-    			html += '</table></div>';
     			html += '</li>';
     		}
     		
     		var info = data.info;
     		var navHtml = info.offset + ' to ' + (info.offset + data.items.length) + ' of ' + info.totalCount;
     		if (info.offset > 0)
-    			navHtml = '<a onclick="viz.searchItems(viz.currentQueryOpts, ' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
+    			navHtml = '<a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
     		if (info.offset + info.limit < info.totalCount)
-    			navHtml += ' <a onclick="viz.searchItems(viz.currentQueryOpts, ' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
+    			navHtml += ' <a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
     		
     		html += '<li id="nav">' + navHtml + '</li>';
 

@@ -333,10 +333,10 @@
 							if (!opts.matchCase){ str = str.toLowerCase(); }				
 							if(str.search(query) != -1 && values_input.val().search(","+data[num][opts.selectedValuesProp]+",") == -1){
 								forward = true;
-							}	
+							}
 						}
 						if(forward){
-							var formatted = $('<li class="as-result-item" id="as-result-item-'+num+'"></li>').click(function(){
+							var formatted = $('<li class="as-result-item ' + data[i].type + '" id="as-result-item-'+num+'"></li>').click(function(){
 									var raw_data = $(this).data("data");
 									var number = raw_data.num;
 									if($("#as-selection-"+number, selections_holder).length <= 0 && !tab_press){

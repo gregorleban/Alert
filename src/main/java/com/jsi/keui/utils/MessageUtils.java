@@ -15,6 +15,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,6 +47,24 @@ import org.xml.sax.SAXException;
  *
  */
 public class MessageUtils {
+	
+	private enum ItemType {
+		EMAIL(10),
+		POST(11),
+		BUG_DESCRIPTION(12),
+		BUG_COMMENT(13),
+		COMMIT(14),
+		WIKI_POST(15);
+		
+		public final int value;
+		
+		ItemType(int value) {
+			this.value = value;
+		}
+		public int getValue() {
+			return value;
+		}
+	}
 	
 	private static final Comparator<String> MONTH_LABEL_COMPARATOR = new Comparator<String>() {
 		@Override
@@ -198,6 +218,37 @@ public class MessageUtils {
 		}
 	}
 	
+	public String genKEUIItemDetailsMessage(String itemId, String requestId) {
+		try {
+			SOAPMessage msg = getKEUITemplate("GeneralQuery", requestId);
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+			
+			SOAPElement data = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
+			
+			SOAPElement query = data.addChildElement("query");
+			SOAPElement queryArgs = query.addChildElement("queryArgs");
+			SOAPElement conditions = queryArgs.addChildElement("conditions");
+			conditions.addChildElement("itemIds").setTextContent(itemId);
+			
+			SOAPElement params = query.addChildElement("params");
+			params.addAttribute(envelope.createName("offset"), "0");
+			params.addAttribute(envelope.createName("maxCount"), "1");
+			params.addAttribute(envelope.createName("resultData"), "itemData");
+			params.addAttribute(envelope.createName("includeAttachments"), "0");
+			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
+			params.addAttribute(envelope.createName("itemDataSnipLen"), "-1");
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "1");
+			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
+			params.addAttribute(envelope.createName("includePeopleData"), "1");
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An error occurred while generating KEUI item details message!", t);
+		}
+	}
+	
 	private SOAPMessage getKEUITemplate(String requestType, String requestId) throws DOMException, SOAPException {
 		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/keui", "KEUIRequest");
 		
@@ -320,6 +371,27 @@ public class MessageUtils {
 	}
 	
 	/**
+	 * Generates a commit details request which can be sent to the API component.
+	 * 
+	 * @param itemId
+	 * @return
+	 * @throws SOAPException 
+	 * @throws IOException 
+	 */
+	public String getCommitDetailsMsg(String commitURI) throws SOAPException, IOException {
+		SOAPMessage msg = getAPITemplate();
+		
+		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
+		
+		inputEl.addChildElement("name", "s2").setTextContent("commitUri");
+		inputEl.addChildElement("value", "s2").setTextContent(commitURI);
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		msg.writeTo(out);
+		return new String(out.toByteArray());
+	}
+	
+	/**
 	 * Generates a issue details request which can be sent to the API component.
 	 * 
 	 * @param issueId
@@ -328,7 +400,7 @@ public class MessageUtils {
 	 * @throws IOException
 	 */
 	public String genIssueDetailsMsg(String issueId) throws SOAPException, IOException {
-		SOAPMessage msg = getSearchTemplate();
+		SOAPMessage msg = getAPITemplate();
 		
 		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
 		
@@ -403,7 +475,7 @@ public class MessageUtils {
 		return soapMsg;
 	}
 	
-	private SOAPMessage getSearchTemplate() throws DOMException, SOAPException {
+	private SOAPMessage getAPITemplate() throws DOMException, SOAPException {
 		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", "ALERT.Search.APICallRequest");
 		
 		SOAPBody body = msg.getSOAPBody();
@@ -493,9 +565,9 @@ public class MessageUtils {
 							JSONObject module = new JSONObject();
 							JSONArray methods = new JSONArray();
 							
-							NodeList moduleNodes = fileProp.getChildNodes();
-							for (int j = 0; j < moduleNodes.getLength(); j++) {
-								Node moduleProp = moduleNodes.item(j);
+							NodeList moduleProps = fileProp.getChildNodes();
+							for (int j = 0; j < moduleProps.getLength(); j++) {
+								Node moduleProp = moduleProps.item(j);
 								String moduleLabel = moduleProp.getNodeName();
 								
 								if ("s3:moduleUri".equals(moduleLabel))
@@ -503,11 +575,11 @@ public class MessageUtils {
 								else if ("s3:moduleId".equals(moduleLabel))
 									module.put("id", Long.parseLong(moduleProp.getTextContent()));
 								else if ("s3:moduleName".equals(moduleLabel))
-									module.put("name", node.getTextContent());
+									module.put("name", moduleProp.getTextContent());
 								else if ("s3:moduleStartLine".equals(moduleLabel))
-									module.put("startLine", Integer.parseInt(node.getNodeValue()));
+									module.put("startLine", Integer.parseInt(moduleProp.getTextContent()));
 								else if ("s3:moduleEndLine".equals(moduleLabel))
-									module.put("endLine", Integer.parseInt(node.getTextContent()));
+									module.put("endLine", Integer.parseInt(moduleProp.getTextContent()));
 								else if ("s3:moduleMethods".equals(moduleLabel)) {
 									// parse the method
 									JSONObject method = new JSONObject();
@@ -527,7 +599,7 @@ public class MessageUtils {
 											method.put(moduleLabel.substring(3), methodProp.getTextContent());
 									}
 									
-									
+									methods.add(method);
 								}
 							}
 							module.put("methods", methods);
@@ -556,7 +628,7 @@ public class MessageUtils {
 			
 			return result.toJSONString();
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("An unexpected exception occurred while parsing issue details response message!", t);
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing commit details response message!", t);
 		}
 	}
 	
@@ -726,6 +798,75 @@ public class MessageUtils {
 			return result.toJSONString();
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing issue details response message!", t);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String parseItemDetailsMsg(String responseMsg) {
+		try {
+			JSONObject result = new JSONObject();
+			
+			Map<Long, JSONObject> personH = new HashMap<Long, JSONObject>();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			
+			Element results = (Element) doc.getElementsByTagName("results").item(0);
+			
+			// parse people
+			NodeList peopleNodes = results.getElementsByTagName("person");
+			for (int i = 0; i < peopleNodes.getLength(); i++) {
+				Node personNode = peopleNodes.item(i);
+				JSONObject person = new JSONObject();
+				
+				NamedNodeMap attributes = personNode.getAttributes();
+				for (int j = 0; j < attributes.getLength(); j++) {
+					Node attribute = attributes.item(j);
+					String attrName = attribute.getNodeName();
+					
+					if ("id".equals(attrName))
+						person.put("id", Long.parseLong(attribute.getNodeValue()));
+					else person.put(attrName, attribute.getNodeValue());
+				}
+				
+				long id = (Long) person.get("id");
+				personH.put(id, person);
+			}
+			
+			// parse content
+			Element item = (Element) results.getElementsByTagName("item").item(0);
+			
+			long id = Long.parseLong(item.getAttribute("id"));
+			int type = Integer.parseInt(item.getAttribute("itemType"));
+			long time = Long.parseLong(item.getAttribute("time")) - 11644473600000L;
+			String entryId = item.getAttribute("entryId");
+			long threadId = Long.parseLong(item.getAttribute("threadId"));
+			int count = Integer.parseInt(item.getAttribute("count"));
+			JSONObject from = personH.get(Long.parseLong(item.getAttribute("from")));
+			JSONObject to = personH.get(Utils.parseLong(item.getAttribute("to")));
+			String content = item.getElementsByTagName("fullContent").item(0).getTextContent().replaceAll("\n", "<br />");
+			String subject = item.getElementsByTagName("subject").item(0).getTextContent();
+			
+			JSONArray tags = new JSONArray();
+			String[] tagsV = item.getAttribute("tags").split(",");
+			for (String tag : tagsV)
+				tags.add(Long.parseLong(tag));
+			
+			result.put("id", id);
+			result.put("type", type);
+			result.put("time", time);
+			result.put("entryID", entryId);
+			result.put("threadID", threadId);
+			result.put("count", count);
+			result.put("from", from);
+			result.put("to", to);
+			result.put("content", content);
+			result.put("subject", subject);
+			result.put("tags", tags);
+			
+			return result.toJSONString();
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing item details response message!", t);
 		}
 	}
 
@@ -978,7 +1119,7 @@ public class MessageUtils {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public String parseKEUIItemsRespose(String responseMsg) {
+	public String parseKEUIItemsResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
@@ -1025,6 +1166,7 @@ public class MessageUtils {
 			NodeList itemNodes = doc.getElementsByTagName("item");
 			for (int i = 0; i < itemNodes.getLength(); i++) {
 				Element itemNode = (Element) itemNodes.item(i);
+				JSONObject itemJSon = new JSONObject();
 				
 				long id = Long.parseLong(itemNode.getAttribute("id"));
 				int  type = Integer.parseInt(itemNode.getAttribute("itemType"));
@@ -1036,21 +1178,22 @@ public class MessageUtils {
 				JSONArray tagsArr = new JSONArray();
 				tagsArr.addAll(Arrays.asList(tags));
 				
+				
 				if (!keywords.isEmpty()) {
 					for (String keyword : keywords)
-						content = content.replaceAll(keyword, "<span class=\"highlight\">" + keyword + "</span>");
+						content = content.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
 				}
 				
-				if (type != 14) {
+				if (type != ItemType.COMMIT.getValue()) {
 					long threadId = Long.parseLong(itemNode.getAttribute("threadId"));
 					int count = Integer.parseInt(itemNode.getAttribute("count"));
 					long senderId = Long.parseLong(itemNode.getAttribute("from"));
-					String url = itemNode.getElementsByTagName("url").item(0).getTextContent();
+					String url = itemNode.getElementsByTagName("url").getLength() > 0 ? itemNode.getElementsByTagName("url").item(0).getTextContent() : null;
 					
 					String subject = itemNode.getElementsByTagName("subject").item(0).getTextContent();
 					if (!keywords.isEmpty()) {
 						for (String keyword : keywords)
-							subject = subject.replaceAll(keyword, "<span class=\"highlight\">" + keyword + "</span>");
+							subject = subject.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
 					}
 					
 					Double similarity = null;
@@ -1064,9 +1207,14 @@ public class MessageUtils {
 							recipients.add(Long.parseLong(recIdStr));
 					}
 					
+					// metadata
+					if (itemNode.getElementsByTagName("metaData").getLength() > 0) {
+						Element metadata = (Element) itemNode.getElementsByTagName("metaData").item(0);
+						if (metadata.getElementsByTagName("issueId").getLength() > 0)
+							itemJSon.put("issueID", Long.parseLong(metadata.getElementsByTagName("issueId").item(0).getTextContent()));
+					}
 					
 					
-					JSONObject itemJSon = new JSONObject();
 					itemJSon.put("id", id);
 					itemJSon.put("type", type);
 					itemJSon.put("time", time);
@@ -1084,7 +1232,6 @@ public class MessageUtils {
 					items.add(itemJSon);
 				} else {
 					long authorId = Long.parseLong(itemNode.getAttribute("author"));
-					JSONObject itemJSon = new JSONObject();
 					itemJSon.put("id", id);
 					itemJSon.put("type", type);
 					itemJSon.put("time", time);

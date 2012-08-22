@@ -553,6 +553,32 @@ var AlertViz = function(options) {
     		});
     	},
     	
+    	setQueryResults: function (data) {
+    		if (data.type == 'peopleData') {
+        		var nodeH = data.nodeH;
+        		var nodeV = [];
+        		for (var key in nodeH) {
+        			var node = nodeH[key];
+        			var neighbourIds = node.neighbours;
+        			var neighbours = [];
+        			for (var i = 0; i < neighbourIds.length; i++) {
+        				neighbours.push(nodeH[neighbourIds[i]]);
+        			}
+        			node.neighbours = neighbours;
+        			nodeV.push(node);
+        		}
+        		
+        		data.nodes = nodeV;
+        		that.createGraph(data);
+        	} else if (data.type == 'timelineData') {
+        		that.createTimeline(data);
+        	} else if (data.type == 'keywordData') {
+        		that.createWordCloud(data.data);
+        	} else if (data.type == 'itemData') {
+        		that.createItems(data);
+        	}
+    	},
+    	
     	searchQueryGeneral: function (queryType, queryOpts) {
     		$.ajax({
                 type: "GET",
@@ -576,27 +602,7 @@ var AlertViz = function(options) {
                 dataType: "json",
                 async: true,
                 success: function (data, textStatus, jqXHR) {
-                	if (data.type == 'peopleData') {
-                		var nodeH = data.nodeH;
-                		var nodeV = [];
-                		for (var key in nodeH) {
-                			var node = nodeH[key];
-                			var neighbourIds = node.neighbours;
-                			var neighbours = [];
-                			for (var i = 0; i < neighbourIds.length; i++) {
-                				neighbours.push(nodeH[neighbourIds[i]]);
-                			}
-                			node.neighbours = neighbours;
-                			nodeV.push(node);
-                		}
-                		
-                		data.nodes = nodeV;
-                		that.createGraph(data);
-                	} else if (data.type == 'timelineData') {
-                		that.createTimeline(data);
-                	} else if (data.type == 'keywordData') {
-                		that.createWordCloud(data.data);
-                	}
+                	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
             });
@@ -629,7 +635,7 @@ var AlertViz = function(options) {
                 dataType: "json",
                 async: true,
                 success: function (data, textStatus, jqXHR) {
-                	that.createItems(data);
+                	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
             });
@@ -701,10 +707,10 @@ var AlertViz = function(options) {
                 	wondChk: queryOpts.fixedChk,
                 	duplicateChk: queryOpts.duplicateChk
                 },
-                dataType: "xml",
+                dataType: "json",
                 async: true,
-                success: function (xml, textStatus, jqXHR) {
-                	that.parseResponse(xml);
+                success: function (data, textStatus, jqXHR) {
+                	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
             });
@@ -732,10 +738,10 @@ var AlertViz = function(options) {
                 	offset: offset,
                 	limit: limit
                 },
-                dataType: "xml",
+                dataType: "json",
                 async: true,
-                success: function (xml, textStatus, jqXHR) {
-                	that.parseResponse(xml);
+                success: function (data, textStatus, jqXHR) {
+                	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
             });

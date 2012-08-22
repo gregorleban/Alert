@@ -126,13 +126,16 @@
     box-shadow:0px 0px 3px #aaa;
     margin:5px;
 }
+#steps form table td{
+	padding:10px;
+}
 #steps form table label{
     line-height:33px;
     color:#666;
     text-shadow:1px 1px 1px #fff;
 }
 .cells{
-	padding:8px 8px 8px 20px;
+	vertical-align:middle;
 }
 #steps form input:not([type=checkbox]),
 #steps form textarea,
@@ -147,7 +150,7 @@
     border-radius: 5px;
     color: #ffffff;
     cursor:pointer;
-    margin: 0px auto;
+    margin: 0px;
     clear:both;
     padding: 5px 20px;
     text-shadow: 0 1px 1px #777;
@@ -158,6 +161,7 @@
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
     background:#93b876;
+    float:right;
 }
 #steps form button:hover {
     background:#d8d8d8;

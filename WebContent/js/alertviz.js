@@ -1457,7 +1457,7 @@ var AlertViz = function(options) {
     		}
     		
     		var info = data.info;
-    		var navHtml = info.offset + ' to ' + (info.offset + data.items.length) + ' of ' + info.totalCount;
+    		var navHtml = (info.offset + 1) + ' to ' + (info.offset + data.items.length) + ' of ' + info.totalCount;
     		if (info.offset > 0)
     			navHtml = '<a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
     		if (info.offset + info.limit < info.totalCount)

@@ -110,13 +110,12 @@
     border-bottom:1px solid #fff;
     border-top:1px solid #d9d9d9;
 }
-#steps form p{
+#steps form table{
     float:left;
     clear:both;
     margin:0px 0px;
     background-color:#f4f4f4;
-    border:1px solid #fff;
-    width:912px;
+    width:99%;
     padding:8px;
     margin-left:22px;
     -moz-border-radius: 5px;
@@ -127,40 +126,18 @@
     box-shadow:0px 0px 3px #aaa;
     margin:5px;
 }
-#steps form p label{
-    width:40px;
-    float:left;
-    text-align:right;
-    margin-right:15px;
-    line-height:36px;
+#steps form table label{
+    line-height:33px;
     color:#666;
     text-shadow:1px 1px 1px #fff;
-    font-weight:bold;
+}
+.cells{
+	padding:8px 8px 8px 20px;
 }
 #steps form input:not([type=checkbox]),
 #steps form textarea,
-#steps form select{
-    background: #ffffff;
-    border: 1px solid #ddd;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    outline: none;
-    padding: 5px;
-    width: 900px;
-}
-#steps form input:focus{
-    -moz-box-shadow:0px 0px 3px #aaa;
-    -webkit-box-shadow:0px 0px 3px #aaa;
-    box-shadow:0px 0px 3px #aaa;
-    background-color:#f8f8f8;
-}
 #steps form p.submit{
-    background:none;
-    border:none;
-    -moz-box-shadow:none;
-    -webkit-box-shadow:none;
-    box-shadow:none;
+    background:white;
 }
 #steps form button {
 	border:none;

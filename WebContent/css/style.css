@@ -1,5 +1,5 @@
 body {
-	font: 11px/165% 'Lucida Grande', Verdana, Helvetica, sans-serif;
+	font: 11px/165% "Century Gothic", Helvetica, sans-serif;
 	color: #666; 	
 	margin: 0; 
 	padding: 0; 
@@ -24,7 +24,7 @@ a:hover.more-link {
 	text-decoration: none;
 }
 h1, h2, h3, h4 {
-	font: bold 1em/1.5em Georgia, 'Times New Roman', Times, serif;
+	font: bold 1em/1.5em "Century Gothic", Helvetica, sans-serif;
 	color: #444;
 	padding: 10px 15px 7px 15px;	 
 }
@@ -40,7 +40,7 @@ blockquote {
 	font-size: 17px;
 	line-height: 1.5em;
 	font-style: italic;
-	font-family: Georgia, 'Times New Roman', Times, Serif;	
+	font-family: "Century Gothic", Helvetica, sans-serif;	
 	color: #555;	
 }
 strong { 
@@ -78,7 +78,7 @@ input, select, textarea {
 	border-width: 1px;
 	border-style: solid;
   	border-color: #d4d4d4 #ebebeb #ebebeb #d4d4d4; 	
-	font: 11px "Century Gothic", Helvetica, sans-serif;
+	font: 14px "Century Gothic", Helvetica, sans-serif;
 }
 input:focus, select:focus, textarea:focus {
 	color: #7BA857;
@@ -86,7 +86,7 @@ input:focus, select:focus, textarea:focus {
 }
 input.button { 
 	font: bold 12px "Century Gothic", Helvetica, sans-serif;
-	height: 30px;
+	height: 33px;
 	margin: 0;
 	padding: 2px 3px; 
 	color: #fff;
@@ -207,7 +207,7 @@ input.button {
 }
 #footer-wrapper h3 {
 	color: #444;
-	font: normal 1.8em Georgia, 'Times New Roman', Times, Serif;
+	font: normal 1.8em "Century Gothic", Helvetica, sans-serif;
 	text-transform: none;
 	letter-spacing: -0.5px;	
 }
@@ -242,7 +242,7 @@ input.button {
 #footer-wrapper ul.footer-list li a span {
 	font-style: italic;
 	font-weight: normal;
-	font-family: Georgia, 'Times New Roman', Times, Serif;
+	font-family: "Century Gothic", Helvetica, sans-serif;
 }
 #footer-wrapper ul.footer-list li a:hover,
 #footer-wrapper ul.footer-list li a:hover span {

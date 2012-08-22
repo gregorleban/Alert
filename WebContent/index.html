@@ -108,92 +108,82 @@
 										<div id="steps">
 											<form id="formElem" action="" method="post">
 												<fieldset class="step">
-													<p>
-														<input type="text" class="text" id="keyword_text" name="keywords" style="float:left;"/>
-														
-													</p>
-													<p style="position:relative;">
-														<input type="text" class="text" id="other_text" name="other"/> 
-													</p>
-													<p>
-														<label for="from_text">Between: </label>
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input type="text" id="from_text" class="text" onchange="updateUrl();" style="width:120px;"/>
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<label for="to_text" style="float:center;">and</label>
-														<input type="text" id="to_text" class="text" onchange="updateUrl();" style="width:120px;"/>
-														<img src="img/spacer.gif" height="8" width="28" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();" /> Issues 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();" /> Commits 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();" /> Forums
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();" /> Mailing lists
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();" /> Wiki
-														<img src="img/spacer.gif" height="8" width="28" style="padding:0;border:0;opacity:0;"></img>
-														<button style="height:36px;" onclick="return viz.searchGeneral();">Search</button>
-													</p>
+													<table>
+														<tr>
+															<td><input type="text" class="text" id="keyword_text" name="keywords" style="float:left;"/></td>
+														</tr>
+													</table>
+													<table style="position:relative;">
+														<tr>
+															<td><input type="text" class="text" id="other_text" name="other"/></td>
+														</tr>
+													</table>
+													<table>
+														<tr>
+															<td class="cells"><label for="from_text">Between:</label>
+																<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
+																<label for="to_text">and</label>
+																<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
+															<td class="cells"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
+															<td class="cells"><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
+															<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
+															<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
+															<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
+															<td class="cells"><button style="height:33px;" onclick="return viz.searchGeneral();">Search</button></td>
+														</tr>
+													</table>
 												</fieldset>
 												<fieldset class="step">
 													<legend>Duplicate issue detection</legend>
-													<p>
-														<input type="text" id="issue_id_text" class="text"/>
-													</p>
-													<p style="float:center;">
-														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
-														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
-														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
-														<button id="issue_search" style="height:36px;" onclick="return viz.searchIssueId();">Search</button>
-													</p>
+													<table>
+														<tr>
+															<td><input type="text" id="issue_id_text" class="text_issue"/></td>
+														</tr>
+													</table>
+													<table>
+														<tr>
+															<td><input class="check" type="checkbox" id="unconfirmed_check" checked="checked"/><label> Uncomfirmed</label></td>
+															<td><input class="check" type="checkbox" id="new_check" checked="checked"/><label> New</label></td>
+															<td><input class="check" type="checkbox" id="assigned_check" checked="checked"/><label> Assigned</label></td>
+															<td><input class="check" type="checkbox" id="resolved_check" checked="checked"/><label> Resolved</label></td>
+															<td><input class="check" type="checkbox" id="invalid_check" checked="checked"/><label> Invalid</label></td>
+															<td><input class="check" type="checkbox" id="works_check" checked="checked"/><label> Works for me</label></td>
+															<td><input class="check" type="checkbox" id="fixed_check" checked="checked"/><label> Fixed</label></td>
+															<td><input class="check" type="checkbox" id="wond_check" checked="checked"/><label> Wond for</label></td>
+															<td><input class="check" type="checkbox" id="duplicate_check" checked="checked"/><label> Duplicate</label></td>
+															<td><button id="issue_search" style="height:33px;" onclick="return viz.searchIssueId();">Search</button></td>
+														</tr>
+													</table>
 												</fieldset>
 												<fieldset class="step">
 													<legend>Issues related to my code</legend>
-													<p>
-														<input class="check" type="checkbox" id="unconfirmed_check" checked="checked" /> Uncomfirmed 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="new_check" checked="checked" /> New
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="assigned_check" checked="checked" /> Assigned
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="resolved_check" checked="checked" /> Resolved
-														<img src="img/spacer.gif" height="22" width="36" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="invalid_check" checked="checked" /> Invalid
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="works_check" checked="checked" /> Works for me
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="fixed_check" checked="checked" /> Fixed 
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="wond_check" checked="checked" /> Wond for
-														<img src="img/spacer.gif" height="8" width="12" style="padding:0;border:0;opacity:0;"></img>
-														<input class="check" type="checkbox" id="duplicate_check" checked="checked" /> Duplicate
-														<img src="img/spacer.gif" height="8" width="36" style="padding:0;border:0;opacity:0;"></img>
-														<button class="taller_btn" style="height:36px;" onclick="return return viz.search();">Search</button>
-													</p>
+													<table>
+														<tr>
+															<td><input class="check" type="checkbox" id="unconfirmed_check" checked="checked"/><label> Uncomfirmed</label></td>
+															<td><input class="check" type="checkbox" id="new_check" checked="checked"/><label> New</label></td>
+															<td><input class="check" type="checkbox" id="assigned_check" checked="checked"/><label> Assigned</label></td>
+															<td><input class="check" type="checkbox" id="resolved_check" checked="checked"/><label> Resolved</label></td>
+															<td><input class="check" type="checkbox" id="invalid_check" checked="checked"/><label> Invalid</label></td>
+															<td><input class="check" type="checkbox" id="works_check" checked="checked"/><label> Works for me</label></td>
+															<td><input class="check" type="checkbox" id="fixed_check" checked="checked"/><label> Fixed</label></td>
+															<td><input class="check" type="checkbox" id="wond_check" checked="checked"/><label> Wond for</label></td>
+															<td><input class="check" type="checkbox" id="duplicate_check" checked="checked"/><label> Duplicate</label></td>
+															<td><button class="taller_btn" style="height:33px;" onclick="return return viz.search();">Search</button></td>
+														</tr>
+													</table>
 												</fieldset>
 												<fieldset class="step">
 													<legend>Suggest issues for a developer</legend>
-													<p>
-														<input id="person_text" name="other" style="width:780px;"/>
-														<img src="img/spacer.gif" height="8" width="30" style="padding:0;border:0;opacity:0;"></img>
-														<button class="taller_btn" style="height:36px;" onclick="return viz.search();">Search</button>
-													</p>
+													<table>
+														<tr>
+															<td><input id="person_text" name="other"/></td>
+														</tr>
+													</table>
+													<table>
+														<tr>
+															<td><button class="taller_btn" style="height:33px;float:right;" onclick="return viz.search();">Search</button></td>
+														</tr>
+													</table>
 												</fieldset>
 											</form>
 										</div>

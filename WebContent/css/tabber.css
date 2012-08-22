@@ -1,5 +1,7 @@
 .tabberlive .tabbertabhide {
- display:none;
+ visibility:hidden;
+ position: absolute;
+ left: -10000px;
 }
 .tabberlive {
  margin-top:1em;

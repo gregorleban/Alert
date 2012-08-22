@@ -916,6 +916,8 @@ public class MessageUtils {
 			if (fromCountsStr.startsWith("\n")) fromCountsStr = fromCountsStr.substring(1);
 			String[] sentDataV = fromCountsStr.split(",");
 			for (String sentData : sentDataV) {
+				if (sentData.isEmpty()) continue;
+				
 				String[] idCountPr = sentData.split("-");
 				long personId = Long.parseLong(idCountPr[0]);
 				int count = Integer.parseInt(idCountPr[1]);

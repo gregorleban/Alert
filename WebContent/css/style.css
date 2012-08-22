@@ -310,8 +310,8 @@ input.button {
 	background-color: rgba(62, 189, 255, .6);
 }
 #wordcloud-div {
-	width: 606px;
-	height: 460px;
+	width: 606px !important;
+	height: 460px !important;
 }
 ::-webkit-scrollbar {
     width: 8px;

@@ -915,13 +915,13 @@ var AlertViz = function(options) {
     	},
     	
     	setItemDetails: function (data) {
-    		var html = '<table class="item_details_table">';
+    		var html = '<table class="mail_content">';
     		
     		// from/to
     		if (data.to != null)
-    			html += '<tr><td class="author_td">' + data.from.name + ' to ' + data.to.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
+    			html += '<tr class="heading"><td class="author_td">' + data.from.name + ' to ' + data.to.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
     		else
-    			html += '<tr><td class="author_td">' + data.from.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
+    			html += '<tr class="heading"><td class="author_td">' + data.from.name + '</td><td class="date_td">' + new Date(data.time).format(defaultDateFormat) + '</td></tr>';
     		
     		// subject
     		if (data.subject != null)

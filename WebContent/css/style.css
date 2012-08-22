@@ -11,10 +11,12 @@ body {
 }
 a:link, a:visited { 
 	text-decoration: none;
-	color: #AE855C;
+	color: #7BA857;
+	text-shadow:1px 1px 1px #ccc;
 }
 a:hover {
-	font-weight:bold;
+	color: #333;
+	text-shadow:1px 1px 1px #ccc;
 }
 a.more-link {
 	padding-bottom: 2px;
@@ -65,12 +67,8 @@ th {
 }
 td {
 	border-color: #EFEFEF;	
-	padding:1px;	
+	padding:5px;	
 }	
-label {
-	font-weight: bold;
-	color: #7BA857;
-}
 input, select, textarea {
 	margin: 5px 0;
 	padding: 5px;
@@ -124,6 +122,22 @@ input.button {
     background:#93b876;
     float:left;
     position:relative;
+        background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+		color-stop(0.09, rgb(150,200,100)),
+        color-stop(0.55, rgb(182,222,143)),
+        color-stop(0.78, rgb(150,200,100))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
 }
 #content-outer {
 	background: #fff;
@@ -302,12 +316,12 @@ input.button {
 	height: 460px;
 }
 .selected-node {
-	color: yellow;
-	background-color: rgba(30, 116, 255, .6);
+	color: #ddd;
+	background-color: #7BA857;
 }
 .neighbour-node {
-	color: white;
-	background-color: rgba(62, 189, 255, .6);
+	color: #fff;
+	background-color: #666;
 }
 #wordcloud-div {
 	width: 606px !important;

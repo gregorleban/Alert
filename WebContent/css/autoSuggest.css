@@ -51,7 +51,7 @@ ul.as-selections li {
 	margin: 3px 3px 3px 3px !important;
 }
 ul.as-selections li.as-selection-item {
-	color: #93b876;
+	color: #000;
 	font-size: 13px;
 	font-family: "Century Gothic", Helvetica, sans-serif;
 	text-shadow: 0 1px 1px #fff;
@@ -66,8 +66,8 @@ ul.as-selections li.as-selection-item {
 	-moz-box-shadow: 0 1px 1px #ddd;
 }
 ul.as-selections li.as-selection-item.keyword {
-	background-color: #A7FFA2;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#A7FFA2), to(#A6FFA2));
+	background-color: #B6DE8F;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#B6DE8F), to(#7BA857));
 }
 ul.as-selections li.as-selection-item.concept {
 	background-color: #F9FF7E;
@@ -123,7 +123,7 @@ ul.as-selections li.as-selection-item.blur a.as-close {
 ul.as-selections li:hover.as-selection-item {
 	color: #2b3840;
 	background-color: #bbd4f1;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#bbd4f1), to(#a3c2e5));
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#ccc));
 	border-color: #ddd;
 	border-top-color: #eee;
 }

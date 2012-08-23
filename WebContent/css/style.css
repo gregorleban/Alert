@@ -323,6 +323,15 @@ input.button {
 	color: #fff;
 	background-color: #666;
 }
+
+.bar-normal {
+	background-color: rgb(69, 114, 167);
+}
+
+.bar-selected {
+	background-color: #F68B05;
+}
+
 #wordcloud-div {
 	width: 606px !important;
 	height: 460px !important;

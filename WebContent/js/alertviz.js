@@ -905,8 +905,8 @@ var AlertViz = function(options) {
     		
     		var history = ZoomHistory();
     		var selectedRange = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
-    		var normalColor = 'rgb(69, 114, 167)';
-    		var selectedColor = '#F68B05';
+    		var normalColor = getCssValue('bar-normal', 'background-color');
+    		var selectedColor = getCssValue('bar-selected', 'background-color');
     		var ctrlDown = false;
     		$(document).keydown(function (event) {
     			if (event.keyCode == 17)	// CTRL
@@ -1029,7 +1029,7 @@ var AlertViz = function(options) {
 						}
 					}
 				},
-				
+				colors: [normalColor],
 				title: null,				
 				xAxis: {
 					min: minX,

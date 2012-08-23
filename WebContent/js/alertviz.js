@@ -13,7 +13,7 @@ function genCurrentUrl() {
 	if (state != null)
 		return window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
-		return window.location.pathname;
+		return window.location.pathname.replace('index.html', '');
 }
 
 /**
@@ -60,7 +60,7 @@ function getCurrentState() {
 	if (fromDate != null && fromDate != '') result.fromDate = fromDate;
 	if (toDate != null && toDate != '') result.toDate = toDate;
 	
-	return result;
+	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
 
 function updateUrl() {
@@ -1449,15 +1449,13 @@ var AlertViz = function(options) {
     	},
     	
     	decreaseGraph: function() {
-    		if(that.socialGraph){
+    		if(that.socialGraph)
     			that.socialGraph.showLess();
-    		}
     	},
     	
     	increaseGraph: function() {
-    		if(that.socialGraph){
+    		if(that.socialGraph)
     			that.socialGraph.showMore();
-    		}
     	}
     };
     

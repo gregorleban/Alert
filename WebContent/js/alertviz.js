@@ -1297,9 +1297,9 @@ var AlertViz = function(options) {
 					// subject
 					html += '<tr>';
 					if (item.url != null)
-						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						html += '<td colspan="2" class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
 					else
-						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+						html += '<td colspan="2" class="item_subject" colspan="2">' + item.subject + '</td>';
 					html += '</tr>';
     				
     				// content
@@ -1315,12 +1315,11 @@ var AlertViz = function(options) {
     				html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 					
-					// subject TODO does this belong here???
 					html += '<tr>';
 					if (item.url != null)
-						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						html += '<td colspan="2" class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
 					else
-						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+						html += '<td colspan="2 class="item_subject" colspan="2">' + item.subject + '</td>';
 					html += '</tr>';
     				
 					// content
@@ -1338,14 +1337,23 @@ var AlertViz = function(options) {
 	    			
 					// subject + similarity
 					html += '<tr>';
-					if (item.url != null)
-						html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-					else
-						html += '<td class="item_subject">' + item.subject + '</td>';
-					
-					// similarity
-					if (item.similarity != null)
-						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					if (item.similarity != null) {
+						if (item.url != null)
+							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td class="item_subject">' + item.subject + '</td>';
+						
+						// similarity
+						if (item.similarity != null)
+							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					}
+					else {
+						if (item.url != null)
+							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+						
+					}
 					html += '</tr>';
 					
 					// content
@@ -1363,14 +1371,23 @@ var AlertViz = function(options) {
 					
 					// subject + similarity
 					html += '<tr>';
-					if (item.url != null)
-						html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-					else
-						html += '<td class="item_subject">' + item.subject + '</td>';
-					
-					// similarity
-					if (item.similarity != null)
-						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					if (item.similarity != null) {
+						if (item.url != null)
+							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td class="item_subject">' + item.subject + '</td>';
+						
+						// similarity
+						if (item.similarity != null)
+							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					}
+					else {
+						if (item.url != null)
+							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+						
+					}
 					html += '</tr>';
     				
 					// content
@@ -1382,8 +1399,8 @@ var AlertViz = function(options) {
     				
     				// author + date
     				html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
-					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '<td colspan="2" class="item_header">' + peopleH[item.authorID].name + '</td>';
+					html += '<td colspan="2" class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
     				
 					// content

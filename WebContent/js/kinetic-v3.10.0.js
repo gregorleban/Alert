@@ -864,11 +864,9 @@ Kinetic.Node.prototype = {
      */
     moveToTop: function() {
         var index = this.index;
-        if (this.parent != null) {
-	        this.parent.children.splice(index, 1);
-	        this.parent.children.push(this);
-	        this.parent._setChildrenIndices();
-        }
+        this.parent.children.splice(index, 1);
+        this.parent.children.push(this);
+        this.parent._setChildrenIndices();
     },
     /**
      * move node up

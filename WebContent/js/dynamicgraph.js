@@ -273,7 +273,8 @@ function Node(opts) {
 				var neigh = neighbours[i];
 				if (select) {
 					neigh.neighboursSelected++;
-					neigh.prop.moveToTop();
+					if (neigh.id in that.graph.displayedNodes)
+						neigh.prop.moveToTop();
 				} else if(neigh.neighboursSelected > 0) {
 					neigh.neighboursSelected--;
 				}

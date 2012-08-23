@@ -925,9 +925,9 @@ var AlertViz = function(options) {
     		
     		// subject
     		if (data.subject != null)
-    			html += '<tr><td colspan="2">' + data.subject + '</td></tr>';
+    			html += '<tr><td class="subject_td" colspan="2">' + data.subject + '</td></tr>';
     		if (data.content != null)
-    			html += '<tr><td colspan="2">' + data.content + '</td></tr>';
+    			html += '<tr><td class="content_td" colspan="2">' + data.content + '</td></tr>';
     		
     		
     		html += '</table>';

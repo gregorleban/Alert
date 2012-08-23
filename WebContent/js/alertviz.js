@@ -228,12 +228,22 @@ var SocialGraph = function(options){
 					boxColor = 'rgba(255,255,255,0)';
 				}
 				
+				var edgeRadius = Math.min(width, height)/4;
 				context.save();
 				context.beginPath();
 					// draw the rect in the back
 					context.fillStyle = boxColor;
-					context.rect(-width/2, -height/2, width, height);
+					context.moveTo(-width/2 + edgeRadius, -height/2);
+					context.lineTo(width/2 - edgeRadius, -height/2);
+					context.arc(width/2 - edgeRadius, -height/2 + edgeRadius, edgeRadius, 1.5*Math.PI, 2*Math.PI, false);
+					context.lineTo(width/2, height - edgeRadius);
+					context.arc(width/2 - edgeRadius, height/2 - edgeRadius, edgeRadius, 0, .5*Math.PI, false);
+					context.lineTo(-width/2 + edgeRadius, height/2);
+					context.arc(-width/2 + edgeRadius, height/2 - edgeRadius, edgeRadius, .5*Math.PI, Math.PI, false);
+					context.lineTo(-width/2, -height/2 + edgeRadius);
+					context.arc(-width/2 + edgeRadius, -height/2 + edgeRadius, edgeRadius, Math.PI, 1.5*Math.PI, false);
 					context.fill();
+					
 					// draw the label
 					context.fillStyle = textColor;
 					context.textAlign = 'center';

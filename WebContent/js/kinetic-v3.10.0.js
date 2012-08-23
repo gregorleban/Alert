@@ -864,9 +864,11 @@ Kinetic.Node.prototype = {
      */
     moveToTop: function() {
         var index = this.index;
-        this.parent.children.splice(index, 1);
-        this.parent.children.push(this);
-        this.parent._setChildrenIndices();
+        if (this.parent != null) {
+	        this.parent.children.splice(index, 1);
+	        this.parent.children.push(this);
+	        this.parent._setChildrenIndices();
+        }
     },
     /**
      * move node up
@@ -2603,7 +2605,7 @@ Kinetic.Layer = function(config) {
 
     this.canvas = document.createElement('canvas');
     this.context = this.canvas.getContext('2d');
-    this.canvas.style.position = 'absolute';
+//    this.canvas.style.position = 'absolute';
 
     // call super constructors
     Kinetic.Container.apply(this, []);

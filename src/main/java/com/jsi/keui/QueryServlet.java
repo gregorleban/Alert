@@ -30,7 +30,8 @@ public class QueryServlet extends KEUIServlet {
 		ISSUE_DETAILS("issueDetails"),
 		COMMIT_DETAILS("commitDetails"),
 		ITEM_DETAILS("itemDetails"),
-		SUGGEST_PEOPLE("suggestPeople");
+		SUGGEST_PEOPLE("suggestPeople"),
+		DUPLICATE_ISSUE("duplicateIssue");
 		
 		private final String value;
 		
@@ -136,6 +137,20 @@ public class QueryServlet extends KEUIServlet {
 				
 				String responseMsg = getKEUIResponse(requestMsg, requestId);
 				resultJSon = msgUtils.parseItemDetailsMsg(responseMsg);
+			}
+			else if (QueryType.DUPLICATE_ISSUE.getValue().equals(type)) {
+				Properties props = new Properties();
+				for (String key : parameterMap.keySet()) {
+					String value = request.getParameter(key);
+					if (value != null && !value.isEmpty())
+						props.put(key, value);
+				}
+				
+				String requestId = Utils.genRequestID();
+				String requestMsg = msgUtils.genKEUIDuplicateIssueMsg(props, requestId);
+				
+				String responseMsg = getKEUIResponse(requestMsg, requestId);
+				resultJSon = msgUtils.parseKEUIDuplicateResponse(responseMsg);
 			}
 			else if (QueryType.SUGGEST_PEOPLE.getValue().equals(type)) {
 				String people = request.getParameter("people");

@@ -15,8 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -246,6 +244,43 @@ public class MessageUtils {
 			return new String(out.toByteArray());
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An error occurred while generating KEUI item details message!", t);
+		}
+	}
+	
+	/**
+	 * Generates a message for requesting duplicate issue which can be sent to the KEUI component.
+	 * 
+	 * @param issueId
+	 * @param requestId
+	 * @return
+	 */
+	public String genKEUIDuplicateIssueMsg(Properties props, String requestId) {
+		try {
+			String issueId = props.getProperty("issues");
+			String offset = props.getProperty("offset");
+			String limit = props.getProperty("limit");
+			
+			SOAPMessage msg = getKEUITemplate("CustomQuery", requestId);
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+			SOAPElement requestData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
+			
+			SOAPElement query = requestData.addChildElement("query");
+			query.addAttribute(envelope.createName("type"), "similarThreads");
+			query.addAttribute(envelope.createName("threadId"), "-1");
+			query.addAttribute(envelope.createName("bugId"), issueId);
+			query.addAttribute(envelope.createName("count"), "100");
+			query.addAttribute(envelope.createName("includeItemIds"), "1");
+			query.addAttribute(envelope.createName("includeItemData"), "1");
+			query.addAttribute(envelope.createName("includeOnlyFirstInThread"), "1");
+			query.addAttribute(envelope.createName("maxCount"), limit);
+			query.addAttribute(envelope.createName("offset"), offset);
+			query.addAttribute(envelope.createName("includePeopleData"), "1");
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unexpected exception occurred while generating duplicate issue message!", t);
 		}
 	}
 	
@@ -1126,22 +1161,10 @@ public class MessageUtils {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
 			
-			Map<Long, JSONObject> peopleH = new HashMap<Long, JSONObject>();
 			JSONArray items = new JSONArray();
 			
 			// parse people
-			NodeList peopleNodes = doc.getElementsByTagName("person");
-			for (int i = 0; i < peopleNodes.getLength(); i++) {
-				Element node = (Element) peopleNodes.item(i);
-				JSONObject person = new JSONObject();
-				
-				long id = Long.parseLong(node.getAttribute("id"));
-				
-				person.put("id", id);
-				person.put("account", node.getAttribute("account"));
-				person.put("name", node.getAttribute("name"));
-				peopleH.put(id, person);
-			}
+			Map<Long, JSONObject> peopleH = parsePeopleH(doc.getElementsByTagName("person"));
 			
 			Element infoEl = (Element) doc.getElementsByTagName("info").item(0);
 			int totalCount = Integer.parseInt(infoEl.getAttribute("totalCount"));
@@ -1168,82 +1191,27 @@ public class MessageUtils {
 			NodeList itemNodes = doc.getElementsByTagName("item");
 			for (int i = 0; i < itemNodes.getLength(); i++) {
 				Element itemNode = (Element) itemNodes.item(i);
-				JSONObject itemJSon = new JSONObject();
+				JSONObject itemJSon = parseKEUIItem(itemNode);
 				
-				long id = Long.parseLong(itemNode.getAttribute("id"));
-				int  type = Integer.parseInt(itemNode.getAttribute("itemType"));
-				long time = Long.parseLong(itemNode.getAttribute("time")) - 11644473600000L;
-				String[] tags = itemNode.getAttribute("tags").split(",");
-				String entryId = itemNode.getAttribute("entryId");
-				String content = itemNode.getElementsByTagName("shortContent").item(0).getTextContent();
-				
-				JSONArray tagsArr = new JSONArray();
-				tagsArr.addAll(Arrays.asList(tags));
-				
-				
+				// emphasize the keywords
 				if (!keywords.isEmpty()) {
+					String content = (String) itemJSon.get("content");
 					for (String keyword : keywords)
 						content = content.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
-				}
-				
-				if (type != ItemType.COMMIT.getValue()) {
-					long threadId = Long.parseLong(itemNode.getAttribute("threadId"));
-					int count = Integer.parseInt(itemNode.getAttribute("count"));
-					long senderId = Long.parseLong(itemNode.getAttribute("from"));
-					String url = itemNode.getElementsByTagName("url").getLength() > 0 ? itemNode.getElementsByTagName("url").item(0).getTextContent() : null;
 					
-					String subject = itemNode.getElementsByTagName("subject").item(0).getTextContent();
-					if (!keywords.isEmpty()) {
+					itemJSon.put("content", content);
+					if (itemJSon.containsKey("subject")) {
+						String subject = (String) itemJSon.get("subject");
 						for (String keyword : keywords)
 							subject = subject.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
+						itemJSon.put("subject", subject);
 					}
 					
-					Double similarity = null;
-					if (itemNode.getElementsByTagName("similarity").item(0) != null)
-						similarity = Double.parseDouble(itemNode.getElementsByTagName("similarity").item(0).getTextContent());
-					
-					JSONArray recipients = new JSONArray();
-					if (itemNode.getElementsByTagName("to").item(0) != null) {
-						String[] recipientStrV = itemNode.getElementsByTagName("to").item(0).getTextContent().split(",");
-						for (String recIdStr : recipientStrV)
-							recipients.add(Long.parseLong(recIdStr));
-					}
-					
-					// metadata
-					if (itemNode.getElementsByTagName("metaData").getLength() > 0) {
-						Element metadata = (Element) itemNode.getElementsByTagName("metaData").item(0);
-						if (metadata.getElementsByTagName("issueId").getLength() > 0)
-							itemJSon.put("issueID", Long.parseLong(metadata.getElementsByTagName("issueId").item(0).getTextContent()));
-					}
-					
-					
-					itemJSon.put("id", id);
-					itemJSon.put("type", type);
-					itemJSon.put("time", time);
-					itemJSon.put("tags", tagsArr);
-					itemJSon.put("entryID", entryId);
-					itemJSon.put("threadID", threadId);
-					itemJSon.put("count", count);
-					itemJSon.put("senderID", senderId);
-					itemJSon.put("recipientIDs", recipients);
-					itemJSon.put("content", content);
-					itemJSon.put("subject", subject);
-					itemJSon.put("url", url);
-					itemJSon.put("similarity", similarity);
-					
-					items.add(itemJSon);
-				} else {
-					long authorId = Long.parseLong(itemNode.getAttribute("author"));
-					itemJSon.put("id", id);
-					itemJSon.put("type", type);
-					itemJSon.put("time", time);
-					itemJSon.put("tags", tagsArr);
-					itemJSon.put("entryID", entryId);
-					itemJSon.put("authorID", authorId);
-					itemJSon.put("content", content);
-					
-					items.add(itemJSon);
 				}
+				
+				
+				
+				items.add(itemJSon);
 			}
 			
 			JSONObject result = new JSONObject();
@@ -1256,6 +1224,134 @@ public class MessageUtils {
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI items response!!", t);
 		}
+	}
+	
+	/**
+	 * Parses KEUI duplicate issue response.
+	 * 
+	 * @param responseMsg
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String parseKEUIDuplicateResponse(String responseMsg) {
+		try {
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			
+			Element results = (Element) doc.getElementsByTagName("results").item(0);
+			
+			JSONArray items = new JSONArray();
+			Map<Long, JSONObject> peopleH = parsePeopleH(results.getElementsByTagName("person"));
+			
+			NodeList itemNodes = results.getElementsByTagName("item");
+			for (int i = 0; i < itemNodes.getLength(); i++) {
+				Element node = (Element) itemNodes.item(i);
+				
+				JSONObject item = parseKEUIItem(node);
+				items.add(item);
+			}
+			
+			JSONObject info = new JSONObject();
+			info.put("totalCount", items.size());
+			info.put("offset", 0);
+			info.put("limit", items.size());
+			
+			JSONObject result = new JSONObject();
+			result.put("type", "itemData");
+			result.put("persons", new JSONObject(peopleH));
+			result.put("items", items);
+			result.put("info", info);
+			
+			return result.toJSONString();
+		} catch(Throwable t) {
+			throw new IllegalArgumentException("An exception occurred while parsing duplicate issue response!", t);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject parseKEUIItem(Element node) {
+		JSONObject result = new JSONObject();
+		
+		long id = Long.parseLong(node.getAttribute("id"));
+		int  type = Integer.parseInt(node.getAttribute("itemType"));
+		long time = Long.parseLong(node.getAttribute("time")) - 11644473600000L;
+		String[] tags = node.getAttribute("tags").split(",");
+		String entryId = node.getAttribute("entryId");
+		String content = node.getElementsByTagName("shortContent").item(0).getTextContent();
+		
+		JSONArray tagsArr = new JSONArray();
+		tagsArr.addAll(Arrays.asList(tags));
+		
+		if (type != ItemType.COMMIT.getValue()) {
+			long threadId = Long.parseLong(node.getAttribute("threadId"));
+			int count = Integer.parseInt(node.getAttribute("count"));
+			long senderId = Long.parseLong(node.getAttribute("from"));
+			String url = node.getElementsByTagName("url").getLength() > 0 ? node.getElementsByTagName("url").item(0).getTextContent() : null;
+			
+			String subject = node.getElementsByTagName("subject").item(0).getTextContent();
+			
+			Double similarity = null;
+			if (node.getElementsByTagName("similarity").item(0) != null)
+				similarity = Double.parseDouble(node.getElementsByTagName("similarity").item(0).getTextContent());
+			
+			JSONArray recipients = new JSONArray();
+			if (node.getElementsByTagName("to").item(0) != null) {
+				String[] recipientStrV = node.getElementsByTagName("to").item(0).getTextContent().split(",");
+				for (String recIdStr : recipientStrV)
+					recipients.add(Long.parseLong(recIdStr));
+			}
+			
+			// metadata
+			if (node.getElementsByTagName("metaData").getLength() > 0) {
+				Element metadata = (Element) node.getElementsByTagName("metaData").item(0);
+				if (metadata.getElementsByTagName("issueId").getLength() > 0)
+					result.put("issueID", Long.parseLong(metadata.getElementsByTagName("issueId").item(0).getTextContent()));
+			}
+			
+			
+			result.put("id", id);
+			result.put("type", type);
+			result.put("time", time);
+			result.put("tags", tagsArr);
+			result.put("entryID", entryId);
+			result.put("threadID", threadId);
+			result.put("count", count);
+			result.put("senderID", senderId);
+			result.put("recipientIDs", recipients);
+			result.put("content", content);
+			result.put("subject", subject);
+			result.put("url", url);
+			result.put("similarity", similarity);
+		} else {
+			long authorId = Long.parseLong(node.getAttribute("author"));
+			result.put("id", id);
+			result.put("type", type);
+			result.put("time", time);
+			result.put("tags", tagsArr);
+			result.put("entryID", entryId);
+			result.put("authorID", authorId);
+			result.put("content", content);
+		}
+		
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Long, JSONObject> parsePeopleH(NodeList peopleNodes) {
+		Map<Long, JSONObject> result = new HashMap<Long, JSONObject>();
+		for (int i = 0; i < peopleNodes.getLength(); i++) {
+			Element node = (Element) peopleNodes.item(i);
+			JSONObject person = new JSONObject();
+			
+			long id = Long.parseLong(node.getAttribute("id"));
+			
+			person.put("id", id);
+			person.put("account", node.getAttribute("account"));
+			person.put("name", node.getAttribute("name"));
+			result.put(id, person);
+		}
+		
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

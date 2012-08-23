@@ -505,6 +505,9 @@ var AlertViz = function(options) {
     	
     	cleanData: function () {
     		$('#details_wrapper').html('');
+    		$('#wordcloud-div').html('');
+    		if (that.socialGraph != null)
+    			that.socialGraph.clear();
     	},
     	
     	addToSearchField: function (fieldId, data) {
@@ -690,95 +693,38 @@ var AlertViz = function(options) {
 			return false;
     	},
     	
-    	searchQueryIssue: function (queryType, queryOpts) {
-    		$.ajax({
-                type: "GET",
-                url: "query",
-                data: {
-                	type: queryType,
-        			issues: queryOpts.issues,
-        			unconfirmedChk: queryOpts.unconfirmedChk,
-                	newChk: queryOpts.newChk,
-                	assignedChk: queryOpts.assignedChk,
-                	resolveChk: queryOpts.resolveChk,
-                	invalidChk: queryOpts.invalidChk,
-                	worksChk: queryOpts.worksChk,
-                	fixedChk: queryOpts.unconfirmedChk,
-                	wondChk: queryOpts.fixedChk,
-                	duplicateChk: queryOpts.duplicateChk
-                },
-                dataType: "json",
-                async: true,
-                success: function (data, textStatus, jqXHR) {
-                	that.setQueryResults(data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
-            });
-    	},
-    	
-    	/*
-    	 * Items is special because it contains offset and limit
-    	 */
-    	searchItemsIssue: function (queryOpts, offset, limit) {
-    		$.ajax({
-                type: "GET",
-                url: "query",
-                data: {
-                	type: 'itemData',
-        			issues: queryOpts.issues,
-        			unconfirmedChk: queryOpts.unconfirmedChk,
-                	newChk: queryOpts.newChk,
-                	assignedChk: queryOpts.assignedChk,
-                	resolveChk: queryOpts.resolveChk,
-                	invalidChk: queryOpts.invalidChk,
-                	worksChk: queryOpts.worksChk,
-                	fixedChk: queryOpts.unconfirmedChk,
-                	wondChk: queryOpts.fixedChk,
-                	duplicateChk: queryOpts.duplicateChk,
-                	offset: offset,
-                	limit: limit
-                },
-                dataType: "json",
-                async: true,
-                success: function (data, textStatus, jqXHR) {
-                	that.setQueryResults(data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
-            });
-    	},
-    	
-    	searchPeopleIssue: function (queryOpts) {
-    		that.searchQueryIssue('peopleData', queryOpts);
-    	},
-    	
-    	searchKeywordIssue: function (queryOpts) {
-    		that.searchQueryIssue('keywordData', queryOpts);
-    	},
-    	
-    	searchTimelineIssue: function (queryOpts) {
-    		that.searchQueryIssue('timelineData', queryOpts);
-    	},
-    	
-    	searchIssueId: function () {
+    	searchIssueId: function (offset, limit) {
     		var issues = $('#issue_id_text').val();
     		
-    		var queryOpts = {
-    			issues: issues,
-    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
-            	newChk: $('#new_check').attr('checked') == 'checked',
-            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
-            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
-            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
-            	worksChk: $('#works_check').attr('checked') == 'checked',
-            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
-            	wondChk: $('#wond_check').attr('checked') == 'checked',
-            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked'
-    		};
-    		
-    		that.searchPeopleIssue(queryOpts);
-    		that.searchTimelineIssue(queryOpts);
-    		that.searchKeywordIssue(queryOpts);
-    		that.searchItemsIssue(queryOpts, 0, 100);
+    		try {
+	    		$.ajax({
+	                type: "GET",
+	                url: "query",
+	                data: {
+	                	type: 'duplicateIssue',
+		    			issues: issues,
+		    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
+		            	newChk: $('#new_check').attr('checked') == 'checked',
+		            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
+		            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
+		            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
+		            	worksChk: $('#works_check').attr('checked') == 'checked',
+		            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
+		            	wondChk: $('#wond_check').attr('checked') == 'checked',
+		            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
+		            	offset: offset,
+		            	limit: limit
+	                },
+	                dataType: "json",
+	                async: true,
+	                success: function (data, textStatus, jqXHR) {
+	    				that.setQueryResults(data);
+	    			},
+	                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
+	            });
+    		} catch (e) {
+    			alert(e);
+    		}
     		
     		that.cleanData();
     		

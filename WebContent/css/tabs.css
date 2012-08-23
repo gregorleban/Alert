@@ -64,7 +64,7 @@
 #navigation ul{
     list-style:none;
 	padding:0px;
-	margin-left:12px;
+	margin-left:10px;
 	font-size:14px;
 }
 #navigation ul li{
@@ -82,7 +82,7 @@
     font-weight:bold;
     text-decoration:none;
     line-height:42px;
-    padding:0px 32px;
+    padding:0px 28px;
     background:#f0f0f0;
     text-shadow:1px 1px 1px #ccc;
     background:

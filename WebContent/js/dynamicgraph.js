@@ -321,12 +321,12 @@ function Node(opts) {
 				prop.on('dragmove', function (event) {
 					event.cancelBubble = true;
 	
-					var pos = that.graph.stage.getUserPosition();
+					var pos = that.prop.getPosition();
 					var s = arbor.Point(pos.x, pos.y);
 					var sys = that.graph.particleSystem;
 					var p = sys.fromScreen(s);
 	
-					that.sysNode.p = {x: p.x, y: p.y};
+					that.sysNode.p = arbor.Point(p.x,p.y);
 				});
 				prop.on('dragstart', function (event) {
 					event.cancelBubble = true;
@@ -405,6 +405,13 @@ function ArborRenderer(opts) {
 				
 				if (!node.data.prop.isDragging())
 					node.data.prop.setPosition(pt.x, pt.y);
+				else {	// fix
+					var pos = node.data.prop.getPosition();
+					var s = arbor.Point(pos.x, pos.y);
+					var p = that.particleSystem.fromScreen(s);
+					
+					node.p = p;
+				}
 			});
 
 			// draw the edges

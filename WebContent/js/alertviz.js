@@ -28,7 +28,13 @@ function genCurrentUrl() {
  */
 function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
-	var searchPerson = viz.searchStatePerson;
+	var searchPerson = viz.searchStatePerson;	// TODO
+	
+	var result = {};
+	var general = {};
+	var duplicate = {};
+	var myCode = {};
+	
 	
 	// general search
 	// search terms
@@ -39,39 +45,85 @@ function getCurrentState() {
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
 	
-	var result = {};
 	
-	if (people.length > 0) result.people = people;
-	if (keywords.length > 0) result.keywords = keywords;
-	if (concepts.length > 0) result.concepts = concepts;
-	if (sources.length > 0) result.sources = sources;
-	if (products.length > 0) result.products = products;
-	if (issues.length > 0) result.issues = issues;
+	
+	if (people.length > 0) general.people = people;
+	if (keywords.length > 0) general.keywords = keywords;
+	if (concepts.length > 0) general.concepts = concepts;
+	if (sources.length > 0) general.sources = sources;
+	if (products.length > 0) general.products = products;
+	if (issues.length > 0) general.issues = issues;
 	
 	// checkboxes
-	var issueChk = $('#issues_check').attr('checked');
-	var commitsChk = $('#commits_check').attr('checked');
-	var forumsChk = $('#forums_check').attr('checked');
-	var mailingChk = $('#mailing_check').attr('checked');
-	var wikisChk = $('#wikis_check').attr('checked');
+	var issueChk = $('#issues_check').attr('checked') == 'checked';
+	var commitsChk = $('#commits_check').attr('checked') == 'checked';
+	var forumsChk = $('#forums_check').attr('checked') == 'checked';
+	var mailingChk = $('#mailing_check').attr('checked') == 'checked';
+	var wikisChk = $('#wikis_check').attr('checked') == 'checked';
 	
-	if (!issueChk) result.issueChk = false;
-	if (!commitsChk) result.commitsChk = false;
-	if (!forumsChk) result.forumsChk = false;
-	if (!mailingChk) result.mailingChk = false;
-	if (!wikisChk) result.wikisChk = false;
+	if (!issueChk) general.is = false;
+	if (!commitsChk) general.c = false;
+	if (!forumsChk) general.fi = false;
+	if (!mailingChk) general.m = false;
+	if (!wikisChk) general.wo = false;
 	
 	// dates
 	var fromDate = $('#from_text').val();
 	var toDate = $('#to_text').val();
 	
-	if (fromDate != null && fromDate != '') result.fromDate = fromDate;
-	if (toDate != null && toDate != '') result.toDate = toDate;
+	if (fromDate != null && fromDate != '') general.from = fromDate;
+	if (toDate != null && toDate != '') general.to = toDate;
 	
 	// duplicate issue
 	var issueId = $('#issue_id_text').val();
-	if (issueId.length > 0) result.issueId = issueId;
+	if (issueId.length > 0) duplicate.iid = issueId;
 	
+	var duplUnconfirmedChk = $('#dup_unconfirmed_check').attr('checked') == 'checked';
+	var duplNewChk = $('#dup_new_check').attr('checked') == 'checked';
+	var duplAssignedChk = $('#dup_assigned_check').attr('checked') == 'checked';
+	var duplResolvedChk = $('#dup_resolved_check').attr('checked') == 'checked';
+	var duplInvalidChk = $('#dup_invalid_check').attr('checked') == 'checked';
+	var duplWorksChk = $('#dup_works_check').attr('checked') == 'checked';
+	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
+	var duplWondChk = $('#dup_wond_check').attr('checked') == 'checked';
+	var duplDuplicateChk = $('#dup_duplicate_check').attr('checked') == 'checked';
+	
+	if (!duplUnconfirmedChk) duplicate.u = false;
+	if (!duplNewChk) duplicate.n = false;
+	if (!duplAssignedChk) duplicate.a = false;
+	if (!duplResolvedChk) duplicate.r = false;
+	if (!duplInvalidChk) duplicate.i = false;
+	if (!duplWorksChk) duplicate.w = false;
+	if (!duplFixedChk) duplicate.f = false;
+	if (!duplWondChk) duplicate.wnd = false;
+	if (!duplDuplicateChk) duplicate.d = false;
+	
+	// issues related to my code
+	var myUnconfirmedChk = $('#my_unconfirmed_check').attr('checked') == 'checked';
+	var myNewChk = $('#my_new_check').attr('checked') == 'checked';
+	var myAssignedChk = $('#my_assigned_check').attr('checked') == 'checked';
+	var myResolvedChk = $('#my_resolved_check').attr('checked') == 'checked';
+	var myInvalidChk = $('#my_invalid_check').attr('checked') == 'checked';
+	var myWorksChk = $('#my_works_check').attr('checked') == 'checked';
+	var myFixedChk = $('#my_fixed_check').attr('checked') == 'checked';
+	var myWondChk = $('#my_wond_check').attr('checked') == 'checked';
+	var myDuplicateChk = $('#my_duplicate_check').attr('checked') == 'checked';
+	
+	if (!myUnconfirmedChk) myCode.u = false;
+	if (!myNewChk) myCode.n = false;
+	if (!myAssignedChk) myCode.a = false;
+	if (!myResolvedChk) myCode.r = false;
+	if (!myInvalidChk) myCode.i = false;
+	if (!myWorksChk) myCode.w = false;
+	if (!myFixedChk) myCode.f = false;
+	if (!myWondChk) myCode.wnd = false;
+	if (!myDuplicateChk) myCode.d = false;
+	
+	// construct result
+	if (Object.getOwnPropertyNames(general).length > 0) result.gen = general;
+	if (Object.getOwnPropertyNames(duplicate).length > 0) result.dupl = duplicate;
+	if (Object.getOwnPropertyNames(myCode).length > 0) result.mc = myCode;
+
 	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
 
@@ -97,6 +149,40 @@ function decodeUrl() {
 		return {params: params == '' ? null : $.deparam(params), tab: tab};
 }
 
+function uncheckByAttr(attribute, prefix) {
+	var selector = '#' + prefix;
+	switch(attribute) {
+	case 'u':
+		selector += 'unconfirmed_check';
+		break;
+	case 'n':
+		selector += 'new_check';
+		break;
+	case 'a':
+		selector += 'assigned_check';
+		break;
+	case 'r':
+		selector += 'resolved_check';
+		break;
+	case 'i':
+		selector += 'invalid_check';
+		break;
+	case 'w':
+		selector += 'works_check';
+		break;
+	case 'f':
+		selector += 'fixed_check';
+		break;
+	case 'wnd':
+		selector += 'wond_check';
+		break;
+	case 'd':
+		selector += 'duplicate_check';
+		break;
+	};
+	$(selector).attr('checked', false);
+}
+
 /**
  * Parses the state of the UI from the URL and updates the UI.
  */
@@ -107,53 +193,75 @@ function loadState() {
 	var params = state.params;
 	var tab = state.tab;
 	
+	var general = params.gen;
+	var duplicate = params.dupl;
+	var myCode = params.mc;
+	
 	settingManually = true;
 	
 	// general search
 	var searchTerms = {people: true, keywords: true, concepts: true, sources: true, products: true, issues: true};
-	var filterChks = {issueChk: true, commitsChk: true, forumsChk: true, mailingChk: true, wikisChk: true};
-	var dates = {fromDate: true, toDate: true};
+	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
+	var issueChks = {u: true, n: true, a: true, r: true, i: true, w: true, f: true, wnd: true, d: true};
 	
-	// go through all the properties
-	for (var attribute in params) {
-		var value = params[attribute];
-		
-		if (searchTerms[attribute]) {	// search terms
-			// the value is an array of search terms
-			for (var i = 0; i < value.length; i++) {
-				var fieldId = attribute == 'keywords' ? 'keyword_text' : 'other_text';
-				viz.addToSearchField(fieldId, value[i]);
-			}
-		} else if(filterChks[attribute]) {	// checkboxes
-			var selector = null;
-			switch(attribute) {
-			case 'issueChk':
-				selector = '#issues_check';
-				break;
-			case 'commitsChk':
-				selector = '#commits_check';
-				break;
-			case 'forumsChk':
-				selector = '#forums_check';
-				break;
-			case 'mailingChk':
-				selector = '#mailing_check';
-				break;
-			case 'wikisChk':
-				selector = '#wikis_check';
-				break;
-			}
+	var dates = {from: true, to: true};
+	
+	if (general != null) {
+		// go through all the properties
+		for (var attribute in general) {
+			var value = general[attribute];
 			
-			$(selector).attr('checked', false);
-		} else if (dates[attribute]) {
-			var field = attribute == 'fromDate' ? 'from_text' : 'to_text';
-			$('#' + field).val(value);
+			if (searchTerms[attribute]) {	// search terms
+				// the value is an array of search terms
+				for (var i = 0; i < value.length; i++) {
+					var fieldId = attribute == 'keywords' ? 'keyword_text' : 'other_text';
+					viz.addToSearchField(fieldId, value[i]);
+				}
+			} else if(filterChks[attribute]) {	// checkboxes
+				var selector = null;
+				switch(attribute) {
+				case 'is':
+					selector = '#issues_check';
+					break;
+				case 'c':
+					selector = '#commits_check';
+					break;
+				case 'fi':
+					selector = '#forums_check';
+					break;
+				case 'm':
+					selector = '#mailing_check';
+					break;
+				case 'wo':
+					selector = '#wikis_check';
+					break;
+				}
+				
+				$(selector).attr('checked', false);
+			} else if (dates[attribute]) {
+				var field = attribute == 'from' ? 'from_text' : 'to_text';
+				$('#' + field).val(value);
+			}
 		}
 	}
 	
 	// duplicate issue
-	if (params.issueId != null)
-		$('#issue_id_text').val(params.issueId);
+	if (duplicate != null) {
+		for (var attribute in duplicate) {
+			if (attribute == 'iid')
+				$('#issue_id_text').val(duplicate.iid);
+			else if (issueChks[attribute])
+				uncheckByAttr(attribute, 'dup_');
+		}
+	}
+	
+	// issues related to my code
+	if (myCode != null) {
+		for (var attribute in myCode) {
+			if (issueChks[attribute])
+				uncheckByAttr(attribute, 'my_');
+		}
+	}
 	
 	$('#navigation').find('a')[tab].click();
 	
@@ -1073,6 +1181,9 @@ var AlertViz = function(options) {
 									
 									$('#from_text').datepicker("setDate", firstDate);
 									$('#to_text').datepicker("setDate", lastDate);
+									
+									$('#from_text').change();
+									$('#to_text').change();
 								}
 							}
 						}
@@ -1639,9 +1750,11 @@ var AlertViz = function(options) {
     
     $('#from_text').change(function (event) {
     	setRange();
+    	updateUrl();
     });
 	$('#to_text').change(function (event) {
 		setRange();
+		updateUrl();
 	});
     
     // issue id search

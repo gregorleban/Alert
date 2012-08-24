@@ -86,6 +86,8 @@ public class MessageUtils {
 	private static MessageFactory msgFactory;
 	private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	
+	private static final String DEFAULT_DATE_FORMAT = "yy-mm-dd";
+	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",
 		"commitsChk",
@@ -368,7 +370,7 @@ public class MessageUtils {
 		}
 		
 		if (props.containsKey("from") || props.contains("to")) {
-			SimpleDateFormat format = new SimpleDateFormat("mm/dd/yy");
+			SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 			format.setTimeZone(TimeZone.getTimeZone("UTC"));
 			
 			SOAPElement timeline = conditions.addChildElement("timeline");

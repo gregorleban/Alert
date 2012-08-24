@@ -2,6 +2,7 @@ var monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 var defaultDateFormat = "isoDate";
 
 var settingManually = false;
+var currentTab = 0;
 
 /**
  * Returns an URL containing the current state of the interface.
@@ -9,11 +10,17 @@ var settingManually = false;
 function genCurrentUrl() {
 	// collect all the parameters
 	var state = getCurrentState();
+	var result = '';
 	
 	if (state != null)
-		return window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
+		result = window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
-		return window.location.pathname.replace('index.html', '');
+		result = window.location.pathname.replace('index.html', '');
+	
+	if (currentTab != 0)
+		result += result.indexOf('index.html') < 0 ? 'index.html#' + currentTab : '#' + currentTab;
+	
+	return result;
 }
 
 /**
@@ -23,6 +30,7 @@ function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
 	var searchPerson = viz.searchStatePerson;
 	
+	// general search
 	// search terms
 	var people = searchGeneral.getTypeV('person');
 	var keywords = searchGeneral.getTypeV('keyword');
@@ -60,6 +68,10 @@ function getCurrentState() {
 	if (fromDate != null && fromDate != '') result.fromDate = fromDate;
 	if (toDate != null && toDate != '') result.toDate = toDate;
 	
+	// duplicate issue
+	var issueId = $('#issue_id_text').val();
+	if (issueId.length > 0) result.issueId = issueId;
+	
 	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
 
@@ -77,7 +89,12 @@ function updateUrl() {
  */
 function decodeUrl() {
 	var params = window.location.search.substring(1);
-	return params == '' ? null : $.deparam(params);
+	var tab = window.location.hash == '' ? 0 : parseInt(window.location.hash.substring(1));
+	
+	if (params == '' && tab == 0) 
+		return null;
+	else
+		return {params: params == '' ? null : $.deparam(params), tab: tab};
 }
 
 /**
@@ -87,15 +104,19 @@ function loadState() {
 	var state = decodeUrl();
 	if (state == null) return;
 	
+	var params = state.params;
+	var tab = state.tab;
+	
 	settingManually = true;
 	
+	// general search
 	var searchTerms = {people: true, keywords: true, concepts: true, sources: true, products: true, issues: true};
 	var filterChks = {issueChk: true, commitsChk: true, forumsChk: true, mailingChk: true, wikisChk: true};
 	var dates = {fromDate: true, toDate: true};
 	
 	// go through all the properties
-	for (var attribute in state) {
-		var value = state[attribute];
+	for (var attribute in params) {
+		var value = params[attribute];
 		
 		if (searchTerms[attribute]) {	// search terms
 			// the value is an array of search terms
@@ -130,7 +151,25 @@ function loadState() {
 		}
 	}
 	
-	viz.searchGeneral();
+	// duplicate issue
+	if (params.issueId != null)
+		$('#issue_id_text').val(params.issueId);
+	
+	$('#navigation').find('a')[tab].click();
+	
+	switch(tab) {
+	case 0:
+		viz.searchGeneral();
+		break;
+	case 1:
+		viz.searchIssueId();
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	}
+	
 	settingManually = false;
 }
 
@@ -1621,6 +1660,10 @@ var AlertViz = function(options) {
     	}
     });
     
+    $('#issue_id_text').blur(function (event) {
+    	updateUrl();
+    });
+    
     // suggest people search
     $('#person_text').autoSuggest('suggest', {
     	selectedItemProp: 'label',
@@ -1642,6 +1685,15 @@ var AlertViz = function(options) {
 	  		personSearch.removeFromSearch(elem);
 	  		updateUrl();
 	  	}
+    });
+    
+    // tab handler
+    jQuery.each($('#navigation').find('a'), function (i, a) {
+    	$(a).click(function () {
+    		// when a tab is clicked, the URL has to be updated
+    		currentTab = i;
+    		updateUrl();
+    	});
     });
     
     return that;

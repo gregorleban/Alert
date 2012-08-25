@@ -1,12 +1,9 @@
 .item_header{
 	width:70%;
-	-moz-box-shadow:0px 0px 3px #aaa;
-    -webkit-box-shadow:0px 0px 3px #aaa;
-    box-shadow:0px 0px 3px #aaa;
-    -moz-border-radius:5px 0px 0px 5px;
-    -webkit-border-radius:5px 0px 0px 5px;
-    border-radius:5px 0px 0px 5px;
-    padding:4px;
+	background-color:#eee;
+    -moz-border-radius:8px 0px 0px 8px;
+    -webkit-border-radius:8px 0px 0px 8px;
+    border-radius:8px 0px 0px 8px;
     color:#333;
     font-weight:bold;
     font-size:12px;
@@ -16,8 +13,8 @@
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(150,200,100)),
-        color-stop(0.55, rgb(182,222,143)),
+		color-stop(0.09, rgb(150,200,100)),
+        color-stop(0.55, rgb(150,200,100)),
         color-stop(0.78, rgb(182,222,143))
         );
     background:
@@ -29,15 +26,11 @@
         );
 }
 .item_date{
-	background-color:#7BA857;
+	background-color:#eee;
 	width:30%;
-	-moz-box-shadow:0px 0px 3px #aaa;
-    -webkit-box-shadow:0px 0px 3px #aaa;
-    box-shadow:0px 0px 3px #aaa;
-    -moz-border-radius:0px 5px 5px 0px;
-    -webkit-border-radius:0px 5px 5px 0px;
-    border-radius:0px 5px 5px 0px;
-    padding:4px;
+    -moz-border-radius:0px 8px 8px 0px;
+    -webkit-border-radius:0px 8px 8px 0px;
+    border-radius:0px 8px 8px 0px;
     text-align:center;
     color:#fff;
     font-weight:bold;
@@ -48,8 +41,8 @@
         linear,
         left bottom,
         left top,
-		 color-stop(0.09, rgb(150,200,100)),
-        color-stop(0.55, rgb(182,222,143)),
+		color-stop(0.09, rgb(150,200,100)),
+        color-stop(0.55, rgb(150,200,100)),
         color-stop(0.78, rgb(182,222,143))
         );
     background:
@@ -64,18 +57,45 @@
 	width:70%;
     padding:4px;
     text-align:left;
-    color:#000 !important;
+    color:#000;
     font-weight:bold;
     text-shadow:1px 1px 1px #fff;
-}
-.item_table .item_left_tr tr tbody table{
+    background-color: #eee;
+    -moz-border-radius:0px 0px 8px 8px;
+    -webkit-border-radius:0px 0px 8px 8px;
+    border-radius:0px 0px 8px 8px;
+        background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(240,240,240)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
 }
 .item_table{
 	color:#000;
     text-shadow:1px 1px 1px #fff;
+    background-color: #fff;
+    -moz-border-radius:8px 8px 8px 8px;
+    -webkit-border-radius:8px 8px 8px 8px;
+    border-radius:8px 8px 8px 8px;
+    margin-bottom:10px;
+    -moz-box-shadow:0px 0px 3px #aaa;
+    -webkit-box-shadow:0px 0px 3px #aaa;
+    box-shadow:0px 0px 3px #aaa;
+    margin:2px 2px 10px 2px;
 }
 .item_table em{
     color:#f00;
-    text-shadow:1px 1px 1px #ccc;
+    text-shadow:1px 1px 1px #fff;
     font-weight:bold;
 }

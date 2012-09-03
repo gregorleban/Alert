@@ -2,7 +2,6 @@ package com.jsi.keui.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,6 +135,13 @@ public class MessageUtils {
 		}
 	}
 
+	/**
+	 * Constructs a message for timeline data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUITimelineMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
@@ -154,7 +160,14 @@ public class MessageUtils {
 		}
 	}
 
-	public String getKEUIItemsMessage(Properties props, String requestId) throws DOMException, SOAPException, ParseException, IOException {
+	/**
+	 * Constructs a message for item data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
+	public String getKEUIItemsMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			
@@ -180,6 +193,13 @@ public class MessageUtils {
 		}
 	}
 
+	/**
+	 * Constructs a message for keyword data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUIKeywordMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
@@ -201,6 +221,14 @@ public class MessageUtils {
 		}
 	}
 	
+	/**
+	 * Constructs a message for requesting suggestions, which can be sent to the KEUI component.
+	 * 
+	 * @param term
+	 * @param suggestionTypes
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUISuggestionMessage(String term, String suggestionTypes, String requestId) {
 		try {
 			SOAPMessage msg = getKEUITemplate("GetSuggestions", requestId);
@@ -387,7 +415,7 @@ public class MessageUtils {
 		}
 		
 		// set which fields to query for
-		List<String> qFields = new ArrayList<String>(keuiIgnoreKeys.length);	// TODO not correct
+		List<String> qFields = new ArrayList<String>(keuiIgnoreKeys.length);
 		for (String key : keuiIgnoreKeys) {
 			if (props.containsKey(key) && Utils.parseBoolean(props.getProperty(key)))
 				qFields.add(key.substring(0, key.length() - 3));
@@ -471,7 +499,6 @@ public class MessageUtils {
 		
 		envelope.addNamespaceDeclaration("wsnt", "http://docs.oasis-open.org/wsn/b-2");
 		envelope.addNamespaceDeclaration("wsa", "http://www.w3.org/2005/08/addressing");
-		envelope.addNamespaceDeclaration("ns1", "http://www.alert-project.eu/");	// TODO should be added to event
 		
 		// construct the body
 		SOAPBody soapBody = soapMsg.getSOAPBody();
@@ -482,7 +509,7 @@ public class MessageUtils {
 		SOAPElement msgEl = notificationMsg.addChildElement("Message", "wsnt");
 		
 		// construct the event
-		SOAPElement event = msgEl.addChildElement("event", "ns1");
+		SOAPElement event = msgEl.addChildElement("event", "ns1", "http://www.alert-project.eu/");
 		event.addNamespaceDeclaration("o", "http://www.alert-project.eu/ontoevents-mdservice");
 		event.addNamespaceDeclaration("r", "http://www.alert-project.eu/rawevents-forum");
 		event.addNamespaceDeclaration("r1", "http://www.alert-project.eu/rawevents-mailinglist");

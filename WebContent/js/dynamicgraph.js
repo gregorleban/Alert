@@ -26,7 +26,6 @@ function DynamicGraph (options) {
 		stage: null,
 		particleSystem: null,
 		nodeLayer: null,
-//		tooltipLayer: null,
 		
 		currentDisplayLevel: null,
 		
@@ -62,7 +61,6 @@ function DynamicGraph (options) {
 		
 		clear: function () {
 			that.nodeLayer.removeChildren();
-//			that.tooltipLayer.removeChildren();
 			
 			for (var key in that.displayedNodes)
 				that.particleSystem.pruneNode(that.displayedNodes[key].sysNode);
@@ -218,17 +216,20 @@ function DynamicGraph (options) {
 		
 		
 		init: function () {
-			that.stage = new Kinetic.Stage({
+			// init the stage
+			var stage = new Kinetic.Stage({
 				container: that.container,
 				width: that.width,
 				height: that.height
 			});
 			
 			that.nodeLayer = new Kinetic.Layer();
-//			that.tooltipLayer = new Kinetic.Layer();
+			stage.add(that.nodeLayer);
 			
-			that.stage.add(that.nodeLayer);
-//			that.stage.add(that.tooltipLayer);
+			// add handlers
+			for (var handler in that.handlers.stage) {
+				stage.on(handler, that.handlers.stage[handler]);
+			}
 			
 			// create a particle system
 			that.particleSystem = arbor.ParticleSystem(2000, 50, 0.5, true);
@@ -237,6 +238,8 @@ function DynamicGraph (options) {
 			that.particleSystem.renderer = ArborRenderer({
 				graph: that
 			});
+			
+			that.stage = stage;
 		}
 	};
 	
@@ -254,7 +257,7 @@ function Node(opts) {
 		drawFunc: opts.graph.drawNodeFunc,
 		draggable: opts.draggable,
 		selectionMode: opts.selectionMode,
-		handlers: opts.handlers,
+		handlers: opts.handlers.node,
 		
 		edges: [],
 		prop: null,

@@ -332,6 +332,12 @@ var SocialGraph = function(options){
 	if (neighbourTextClr == null) neighbourTextClr = "white";
 	if (neighbourBoxClr == null) selectedBoxClr = "rgba(62, 189, 255, .6)";
 	
+	var nNodesOver = 0;
+	var nodeInterval = null;
+	function openPersonPopup(data) {
+		alert(data.label);
+	}
+	
 	var that = {
 		selectedTextClr: selectedTextClr,
 		selectedBoxClr: selectedBoxClr,
@@ -454,18 +460,35 @@ var SocialGraph = function(options){
 			},
 			
 			handlers: {
-				'dblclick': function (event, node) {
-					event.cancelBubble = true;
-					viz.addToSearchField('other_text', {type: 'person', label: node.data.label, value: node.data.email});
-					node.select(true);
+				node: {
+					'dblclick': function (event, node) {
+						event.cancelBubble = true;
+						viz.addToSearchField('other_text', {type: 'person', label: node.data.label, value: node.data.email});
+						node.select(true);
+					},
+					'mouseover': function (event, node) {
+						nNodesOver++;
+						document.body.style.cursor = 'pointer';
+						
+						clearInterval(nodeInterval);
+						nodeInterval = setInterval(function () {
+							openPersonPopup(node.data);
+						}, 3000);
+						console.log('over ' + node.data.label + ' ' + nNodesOver);
+					},
+					'mouseout': function (event, node) {
+						if (nNodesOver > 0) nNodesOver--;
+						if (nNodesOver == 0) document.body.style.cursor = 'default';
+						clearInterval(nodeInterval);
+						console.log('out: ' + node.data.label + ' ' + nNodesOver);
+					}
 				},
-				'mouseover': function (event, node) {
-					event.cancelBubble = true;
-					document.body.style.cursor = 'pointer';
-				},
-				'mouseout': function (event, node) {
-					event.cancelBubble = true;
-					document.body.style.cursor = 'default';
+				
+				stage: {
+					'mousemove': function (event) {
+						clearInterval(nodeInterval);
+						console.log('move');
+					}
 				}
 			}
 		}),

@@ -23,11 +23,11 @@ import com.jsi.keui.mq.MQSessionProvider;
 /**
  * An abstract <code>Servlet</code> which send a sync request to the KEUI component.
  */
-public abstract class KEUIServlet extends HttpServlet {
+public abstract class MQServlet extends HttpServlet {
        
 	private static final long serialVersionUID = -5462790358676407606L;
 	
-	private static final Logger log = LoggerFactory.getLogger(KEUIServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(MQServlet.class);
 
 	private static final long MAX_KEUI_TIME = 10000L;
 	
@@ -44,7 +44,7 @@ public abstract class KEUIServlet extends HttpServlet {
      * @throws JMSException 
      * @see HttpServlet#HttpServlet()
      */
-    public KEUIServlet() throws JMSException {
+    public MQServlet() throws JMSException {
         super();
         initMQ();
     }

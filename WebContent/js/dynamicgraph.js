@@ -26,7 +26,6 @@ function DynamicGraph (options) {
 		stage: null,
 		particleSystem: null,
 		nodeLayer: null,
-		tooltipLayer: null,
 		
 		currentDisplayLevel: null,
 		
@@ -62,7 +61,6 @@ function DynamicGraph (options) {
 		
 		clear: function () {
 			that.nodeLayer.removeChildren();
-			that.tooltipLayer.removeChildren();
 			
 			for (var key in that.displayedNodes)
 				that.particleSystem.pruneNode(that.displayedNodes[key].sysNode);
@@ -218,17 +216,20 @@ function DynamicGraph (options) {
 		
 		
 		init: function () {
-			that.stage = new Kinetic.Stage({
+			// init the stage
+			var stage = new Kinetic.Stage({
 				container: that.container,
 				width: that.width,
 				height: that.height
 			});
 			
 			that.nodeLayer = new Kinetic.Layer();
-			that.tooltipLayer = new Kinetic.Layer();
+			stage.add(that.nodeLayer);
 			
-			that.stage.add(that.nodeLayer);
-			that.stage.add(that.tooltipLayer);
+			// add handlers
+			for (var handler in that.handlers.stage) {
+				stage.on(handler, that.handlers.stage[handler]);
+			}
 			
 			// create a particle system
 			that.particleSystem = arbor.ParticleSystem(2000, 50, 0.5, true);
@@ -237,6 +238,8 @@ function DynamicGraph (options) {
 			that.particleSystem.renderer = ArborRenderer({
 				graph: that
 			});
+			
+			that.stage = stage;
 		}
 	};
 	
@@ -254,7 +257,7 @@ function Node(opts) {
 		drawFunc: opts.graph.drawNodeFunc,
 		draggable: opts.draggable,
 		selectionMode: opts.selectionMode,
-		handlers: opts.handlers,
+		handlers: opts.handlers.node,
 		
 		edges: [],
 		prop: null,
@@ -273,6 +276,8 @@ function Node(opts) {
 				var neigh = neighbours[i];
 				if (select) {
 					neigh.neighboursSelected++;
+					if (neigh.id in that.graph.displayedNodes)
+						neigh.prop.moveToTop();
 				} else if(neigh.neighboursSelected > 0) {
 					neigh.neighboursSelected--;
 				}
@@ -294,6 +299,7 @@ function Node(opts) {
 				}
 			}
 			
+			that.prop.moveToTop();
 			that.graph.drawProps();
 		},
 		
@@ -318,12 +324,12 @@ function Node(opts) {
 				prop.on('dragmove', function (event) {
 					event.cancelBubble = true;
 	
-					var pos = that.graph.stage.getUserPosition();
+					var pos = that.prop.getPosition();
 					var s = arbor.Point(pos.x, pos.y);
 					var sys = that.graph.particleSystem;
 					var p = sys.fromScreen(s);
 	
-					that.sysNode.p = {x: p.x, y: p.y};
+					that.sysNode.p = arbor.Point(p.x,p.y);
 				});
 				prop.on('dragstart', function (event) {
 					event.cancelBubble = true;
@@ -402,6 +408,13 @@ function ArborRenderer(opts) {
 				
 				if (!node.data.prop.isDragging())
 					node.data.prop.setPosition(pt.x, pt.y);
+				else {	// fix
+					var pos = node.data.prop.getPosition();
+					var s = arbor.Point(pos.x, pos.y);
+					var p = that.particleSystem.fromScreen(s);
+					
+					node.p = p;
+				}
 			});
 
 			// draw the edges

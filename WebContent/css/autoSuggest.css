@@ -4,7 +4,6 @@ ul.as-selections {
 	padding: 2px 2px 2px 2px !important;
 	margin: 0 !important;
 	background-color: white;
-	width: 100%-5px;
 	height: 33px;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
@@ -14,7 +13,7 @@ ul.as-selections {
 	-moz-box-shadow: 0px 1px 1px #ccc;
 	border-width: 1px;
 	border-style: solid;
-  	border-color: #d4d4d4 #ebebeb #ebebeb #d4d4d4; 
+  	border-color: #d4d4d4 #ebebeb #ebebeb #d4d4d4;
 }
 .text_date{
 	list-style-type: none;
@@ -35,7 +34,7 @@ ul.as-selections {
 	margin: 0 !important;
 	background-color: white;
 	height: 33px;
-	width: 892px;
+	width: 896px;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;

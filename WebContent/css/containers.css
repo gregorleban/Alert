@@ -30,8 +30,6 @@
 }
 .item_left
 {
-	margin-left: auto;
-	margin-right: auto;
 	width: 306px;
 	height:500px;
 	float:left;
@@ -44,8 +42,7 @@
     border:2px solid #fff;
     background-color:#f9f9f9;
     margin: 9px; 
-    overflow-y:scroll;
-    overflow-x:hidden;
+    overflow:hidden;
 }
 .item_right
 {
@@ -63,7 +60,6 @@
     border:2px solid #fff;
     background-color:#f9f9f9;
     margin: 9px;
-    border: 0 !important;
 }
 .timeline
 {

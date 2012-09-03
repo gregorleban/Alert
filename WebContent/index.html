@@ -45,8 +45,8 @@
 			$('#btnShowLess').click(function(){
 				viz.decreaseGraph();
 			});			
-			$('#from_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});
-			$('#to_text').datepicker({dateFormat: 'dd.mm.yy', constrainInput: true});			
+			$('#from_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
+			$('#to_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});			
 			loadState();
 		});
 		-->
@@ -111,15 +111,11 @@
 							<fieldset class="step">
 								<table>
 									<tr>
-										<td><input type="text" class="text" id="keyword_text" name="keywords" style="float:left;"/></td>
+										<td colspan="7"><input type="text" class="text" id="keyword_text" name="keywords"/></td>
 									</tr>
-								</table>
-								<table style="position:relative;">
 									<tr>
-										<td class="cells"><input type="text" class="text" id="other_text" name="other"/></td>
+										<td  colspan="7"><input type="text" class="text" id="other_text" name="other"/></td>
 									</tr>
-								</table>
-								<table>
 									<tr>
 										<td class="cells"><label for="from_text">Between:</label>
 											<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
@@ -130,59 +126,50 @@
 										<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
 										<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
 										<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
-										<td class="cells"><button style="height:33px;" onclick="return viz.searchGeneral();">Search</button></td>
+										<td class="cells"><button onclick="return viz.searchGeneral();">Search</button></td>
 									</tr>
 								</table>
 							</fieldset>
 							<fieldset class="step">
-								<legend>Duplicate issue detection</legend>
 								<table>
 									<tr>
-										<td class="cells"><input type="text" id="issue_id_text" class="text_issue"/></td>
+										<td colspan="10"><input type="text" id="issue_id_text" class="text_issue"/></td>
 									</tr>
-								</table>
-								<table>
 									<tr>
-										<td class="cells"><input class="check" type="checkbox" id="unconfirmed_check" checked="checked"/><label> Uncomfirmed</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="new_check" checked="checked"/><label> New</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="assigned_check" checked="checked"/><label> Assigned</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="resolved_check" checked="checked"/><label> Resolved</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="invalid_check" checked="checked"/><label> Invalid</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="works_check" checked="checked"/><label> Works for me</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="fixed_check" checked="checked"/><label> Fixed</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="wond_check" checked="checked"/><label> Wond for</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="duplicate_check" checked="checked"/><label> Duplicate</label></td>
-										<td class="cells"><button id="issue_search" style="height:33px;" onclick="return viz.searchIssueId();">Search</button></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+										<td class="cells"><button id="issue_search" onclick="return viz.searchIssueId();">Search</button></td>
 									</tr>
 								</table>
 							</fieldset>
 							<fieldset class="step">
-								<legend>Issues related to my code</legend>
 								<table>
 									<tr>
-										<td class="cells"><input class="check" type="checkbox" id="unconfirmed_check" checked="checked"/><label> Uncomfirmed</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="new_check" checked="checked"/><label> New</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="assigned_check" checked="checked"/><label> Assigned</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="resolved_check" checked="checked"/><label> Resolved</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="invalid_check" checked="checked"/><label> Invalid</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="works_check" checked="checked"/><label> Works for me</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="fixed_check" checked="checked"/><label> Fixed</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="wond_check" checked="checked"/><label> Wond for</label></td>
-										<td class="cells"><input class="check" type="checkbox" id="duplicate_check" checked="checked"/><label> Duplicate</label></td>
-										<td class="cells"><button class="taller_btn" style="height:33px;" onclick="return return viz.search();">Search</button></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
+										<td class="cells"><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+										<td class="cells"><button onclick="return return viz.search();">Search</button></td>
 									</tr>
 								</table>
 							</fieldset>
 							<fieldset class="step">
-								<legend>Suggest issues for a developer</legend>
 								<table>
-									<tr>
-										<td class="cells"><input id="person_text" name="other"/></td>
-									</tr>
-								</table>
-								<table>
-									<tr>
-										<td class="cells"><button class="taller_btn" style="height:33px;float:right;" onclick="return viz.search();">Search</button></td>
+									<tr style="line-hight:12px;">
+										<td style="width:100%;"><input id="person_text" name="other"/></td>
+										<td><button onclick="return viz.search();">Search</button></td>
 									</tr>
 								</table>
 							</fieldset>
@@ -194,8 +181,8 @@
 	</div>
 <div id="container" class="container_wide">
 	<div id="container" class="item_left">
-		<div style="width:296px !important;">
-			<div class="item_left_tr" id="items-div"></div>
+		<div style="width:306px !important;">
+			<div class="items-div" id="items-div"></div>
 		</div>
 	</div>
 	<div id="container" class="item_right">

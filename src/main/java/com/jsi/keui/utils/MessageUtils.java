@@ -2,10 +2,10 @@ package com.jsi.keui.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -15,8 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -88,6 +86,8 @@ public class MessageUtils {
 	private static MessageFactory msgFactory;
 	private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	
+	private static final String DEFAULT_DATE_FORMAT = "yy-mm-dd";
+	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",
 		"commitsChk",
@@ -117,6 +117,91 @@ public class MessageUtils {
 		return instance;
 	}
 	
+	/**
+	 * Generates a SOAPMessage with the envelope prefix set to 's' and 2 new namespaces added. The last child element
+	 * added is 'eventData'
+	 * 
+	 * @throws SOAPException 
+	 * @throws DOMException 
+	 */
+	private SOAPMessage getMsgTemplate(String address, String eventName) throws DOMException, SOAPException {
+		// set the namespaces
+		SOAPMessage soapMsg = msgFactory.createMessage();
+		soapMsg.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
+		soapMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
+		
+		SOAPPart soapPart = soapMsg.getSOAPPart();
+		SOAPEnvelope envelope = soapPart.getEnvelope();
+		
+		envelope.removeNamespaceDeclaration("env");
+		envelope.setPrefix("s");
+		envelope.getHeader().setPrefix("s");
+		envelope.getBody().setPrefix("s");
+		
+		envelope.addNamespaceDeclaration("wsnt", "http://docs.oasis-open.org/wsn/b-2");
+		envelope.addNamespaceDeclaration("wsa", "http://www.w3.org/2005/08/addressing");
+		
+		// construct the body
+		SOAPBody soapBody = soapMsg.getSOAPBody();
+		SOAPElement notify = soapBody.addChildElement("Notify", "wsnt");
+		SOAPElement notificationMsg = notify.addChildElement("NotificationMessage", "wsnt");
+		notificationMsg.addChildElement("Topic", "wsnt");
+		notificationMsg.addChildElement("ProducerReference", "wsnt").addChildElement("Address", "wsa").setTextContent(address);
+		SOAPElement msgEl = notificationMsg.addChildElement("Message", "wsnt");
+		
+		// construct the event
+		SOAPElement event = msgEl.addChildElement("event", "ns1", "http://www.alert-project.eu/");
+		event.addNamespaceDeclaration("o", "http://www.alert-project.eu/ontoevents-mdservice");
+		event.addNamespaceDeclaration("r", "http://www.alert-project.eu/rawevents-forum");
+		event.addNamespaceDeclaration("r1", "http://www.alert-project.eu/rawevents-mailinglist");
+		event.addNamespaceDeclaration("r2", "http://www.alert-project.eu/rawevents-wiki");
+		event.addNamespaceDeclaration("s", "http://www.alert-project.eu/strevents-kesi");
+		event.addNamespaceDeclaration("s1", "http://www.alert-project.eu/strevents-keui");
+		event.addNamespaceDeclaration("s2", "http://www.alert-project.eu/APIcall-request");
+		event.addNamespaceDeclaration("s3", "http://www.alert-project.eu/APIcall-response");
+		event.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		event.addNamespaceDeclaration("schemaLocation", "http://www.alert-project.eu/alert-root.xsd");
+		
+		// head
+		event.addChildElement("head", "ns1");
+		// TODO add header tags
+		
+		// payload
+		SOAPElement payload = event.addChildElement("payload", "ns1");
+		// meta
+		SOAPElement meta = payload.addChildElement("meta", "ns1");
+		meta.addChildElement("eventName", "ns1").setTextContent(eventName);
+		meta.addChildElement("eventType", "ns1").setTextContent("request");
+		// TODO add startTime, endTime, eventId to meta tag
+		
+		// event data
+		payload.addChildElement("eventData", "ns1");
+		
+		return soapMsg;
+	}
+	
+	private SOAPMessage getAPITemplate() throws DOMException, SOAPException {
+		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", "ALERT.Search.APICallRequest");
+		
+		SOAPBody body = msg.getSOAPBody();
+		SOAPElement eventData = (SOAPElement) body.getElementsByTagName("ns1:eventData").item(0);
+		
+		SOAPElement requestEl = eventData.addChildElement("apiRequest", "ns1");
+		requestEl.addChildElement("apiCall", "s2").setTextContent("issue.getInfo");
+		SOAPElement dataEl = requestEl.addChildElement("requestData", "s2");
+		
+		dataEl.addChildElement("inputParameter", "s2");
+		
+		return msg;
+	}
+	
+	/**
+	 * Generates a people request message which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUIPeopleMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
@@ -136,6 +221,13 @@ public class MessageUtils {
 		}
 	}
 
+	/**
+	 * Constructs a message for timeline data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUITimelineMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
@@ -154,7 +246,14 @@ public class MessageUtils {
 		}
 	}
 
-	public String getKEUIItemsMessage(Properties props, String requestId) throws DOMException, SOAPException, ParseException, IOException {
+	/**
+	 * Constructs a message for item data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
+	public String getKEUIItemsMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			
@@ -180,6 +279,13 @@ public class MessageUtils {
 		}
 	}
 
+	/**
+	 * Constructs a message for keyword data, which can be sent to the KEUI component.
+	 * 
+	 * @param props
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUIKeywordMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
@@ -201,6 +307,14 @@ public class MessageUtils {
 		}
 	}
 	
+	/**
+	 * Constructs a message for requesting suggestions, which can be sent to the KEUI component.
+	 * 
+	 * @param term
+	 * @param suggestionTypes
+	 * @param requestId
+	 * @return
+	 */
 	public String genKEUISuggestionMessage(String term, String suggestionTypes, String requestId) {
 		try {
 			SOAPMessage msg = getKEUITemplate("GetSuggestions", requestId);
@@ -249,6 +363,43 @@ public class MessageUtils {
 		}
 	}
 	
+	/**
+	 * Generates a message for requesting duplicate issue which can be sent to the KEUI component.
+	 * 
+	 * @param issueId
+	 * @param requestId
+	 * @return
+	 */
+	public String genKEUIDuplicateIssueMsg(Properties props, String requestId) {
+		try {
+			String issueId = props.getProperty("issues");
+			String offset = props.getProperty("offset");
+			String limit = props.getProperty("limit");
+			
+			SOAPMessage msg = getKEUITemplate("CustomQuery", requestId);
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+			SOAPElement requestData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
+			
+			SOAPElement query = requestData.addChildElement("query");
+			query.addAttribute(envelope.createName("type"), "similarThreads");
+			query.addAttribute(envelope.createName("threadId"), "-1");
+			query.addAttribute(envelope.createName("bugId"), issueId);
+			query.addAttribute(envelope.createName("count"), "100");
+			query.addAttribute(envelope.createName("includeItemIds"), "1");
+			query.addAttribute(envelope.createName("includeItemData"), "1");
+			query.addAttribute(envelope.createName("includeOnlyFirstInThread"), "1");
+			query.addAttribute(envelope.createName("maxCount"), limit);
+			query.addAttribute(envelope.createName("offset"), offset);
+			query.addAttribute(envelope.createName("includePeopleData"), "1");
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unexpected exception occurred while generating duplicate issue message!", t);
+		}
+	}
+	
 	private SOAPMessage getKEUITemplate(String requestType, String requestId) throws DOMException, SOAPException {
 		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/keui", "KEUIRequest");
 		
@@ -273,98 +424,98 @@ public class MessageUtils {
 	 */
 	private SOAPMessage getKEUIQueryMsg(Properties props, String requestId) {
 		try {
-		SOAPMessage msg = getKEUITemplate("GeneralQuery", requestId);
-		SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
-		
-		SOAPElement requestData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
-		SOAPElement queryEl = requestData.addChildElement("query");
-		
-		SOAPElement args = queryEl.addChildElement("queryArgs");
-		SOAPElement conditions = args.addChildElement("conditions");
-		
-		if (props.containsKey("keywords")) {
-			String[] keywords = props.getProperty("keywords").split(",");
+			SOAPMessage msg = getKEUITemplate("GeneralQuery", requestId);
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
 			
-			SOAPElement kwsEl = conditions.addChildElement("keywords");
-			for (String keyword : keywords)
-				kwsEl.addChildElement("kw").setTextContent(keyword);
-		}
-		
-		if (props.containsKey("concepts")) {
-			String[] concepts = props.getProperty("concepts").split(",");
+			SOAPElement requestData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
+			SOAPElement queryEl = requestData.addChildElement("query");
 			
-			SOAPElement conceptsEl = conditions.addChildElement("concepts");
-			for (String c : concepts)
-				conceptsEl.addChildElement("concept").setTextContent(c);
-		}
-		
-		if (props.containsKey("people")) {
-			String[] people = props.getProperty("people").split(",");
+			SOAPElement args = queryEl.addChildElement("queryArgs");
+			SOAPElement conditions = args.addChildElement("conditions");
 			
-			for (String personOrV : people) {
-				String[] personV = personOrV.split("\\|");
-				SOAPElement accounts = conditions.addChildElement("accounts");
+			if (props.containsKey("keywords")) {
+				String[] keywords = props.getProperty("keywords").split(",");
 				
-				for (String person : personV)
-					accounts.addChildElement("account").setAttribute("name", person);
+				SOAPElement kwsEl = conditions.addChildElement("keywords");
+				for (String keyword : keywords)
+					kwsEl.addChildElement("kw").setTextContent(keyword);
 			}
-		}
-		
-		if (props.containsKey("issues")) {
-			String[] issues = props.getProperty("issues").split(",");
 			
-			for (String issue : issues) 
-				conditions.addChildElement("bugId").setTextContent(issue);
-		}
-		
-		// sources and products go into the same tag
-		if (props.containsKey("sources") || props.containsKey("products")) {
-			List<String> tagIdV = new ArrayList<String>();
-			if (props.containsKey("sources")) tagIdV.addAll(Arrays.asList(props.getProperty("sources").split(",")));
-			if (props.containsKey("products")) tagIdV.addAll(Arrays.asList(props.getProperty("products").split(",")));
+			if (props.containsKey("concepts")) {
+				String[] concepts = props.getProperty("concepts").split(",");
+				
+				SOAPElement conceptsEl = conditions.addChildElement("concepts");
+				for (String c : concepts)
+					conceptsEl.addChildElement("concept").setTextContent(c);
+			}
+			
+			if (props.containsKey("people")) {
+				String[] people = props.getProperty("people").split(",");
+				
+				for (String personOrV : people) {
+					String[] personV = personOrV.split("\\|");
+					SOAPElement accounts = conditions.addChildElement("accounts");
+					
+					for (String person : personV)
+						accounts.addChildElement("account").setAttribute("name", person);
+				}
+			}
+			
+			if (props.containsKey("issues")) {
+				String[] issues = props.getProperty("issues").split(",");
+				
+				for (String issue : issues) 
+					conditions.addChildElement("bugId").setTextContent(issue);
+			}
+			
+			// sources and products go into the same tag
+			if (props.containsKey("sources") || props.containsKey("products")) {
+				List<String> tagIdV = new ArrayList<String>();
+				if (props.containsKey("sources")) tagIdV.addAll(Arrays.asList(props.getProperty("sources").split(",")));
+				if (props.containsKey("products")) tagIdV.addAll(Arrays.asList(props.getProperty("products").split(",")));
+				
+				StringBuilder builder = new StringBuilder();
+				for (int i = 0; i < tagIdV.size(); i++) {
+					builder.append(tagIdV.get(i));
+					if (i < tagIdV.size() - 1)
+						builder.append("|");	// the delimiter is |
+				}
+				conditions.addChildElement("tagIdStr").setTextContent(builder.toString());
+			}
+			
+			if (props.containsKey("from") || props.contains("to")) {
+				SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				
+				SOAPElement timeline = conditions.addChildElement("timeline");
+				if (props.containsKey("from")) {
+					Date from = format.parse(props.getProperty("from"));
+					long winTime = from.getTime() + 11644473600000L; // convert to windows time
+					timeline.addAttribute(envelope.createName("start"), winTime + "");
+				}
+				if (props.containsKey("to")) {
+					Date to = format.parse(props.getProperty("to"));
+					long winTime = to.getTime() + 11644473600000L;
+					timeline.addAttribute(envelope.createName("end"), winTime + "");
+				}
+			}
+			
+			// set which fields to query for
+			List<String> qFields = new ArrayList<String>(keuiIgnoreKeys.length);
+			for (String key : keuiIgnoreKeys) {
+				if (props.containsKey(key) && Utils.parseBoolean(props.getProperty(key)))
+					qFields.add(key.substring(0, key.length() - 3));
+			}
 			
 			StringBuilder builder = new StringBuilder();
-			for (int i = 0; i < tagIdV.size(); i++) {
-				builder.append(tagIdV.get(i));
-				if (i < tagIdV.size() - 1)
-					builder.append("|");	// the delimiter is |
+			for (int i = 0; i < qFields.size(); i++) {
+				builder.append(qFields.get(i));
+				if (i < qFields.size() - 1)
+					builder.append(",");
 			}
-			conditions.addChildElement("tagIdStr").setTextContent(builder.toString());
-		}
-		
-		if (props.containsKey("from") || props.contains("to")) {
-			SimpleDateFormat format = new SimpleDateFormat("mm/dd/yy");
-			format.setTimeZone(TimeZone.getTimeZone("UTC"));
+			conditions.addChildElement("postTypes").setTextContent(builder.toString());
 			
-			SOAPElement timeline = conditions.addChildElement("timeline");
-			if (props.containsKey("from")) {
-				Date from = format.parse(props.getProperty("from"));
-				long winTime = from.getTime() + 11644473600000L; // convert to windows time
-				timeline.addAttribute(envelope.createName("start"), winTime + "");
-			}
-			if (props.containsKey("to")) {
-				Date to = format.parse(props.getProperty("to"));
-				long winTime = to.getTime() + 11644473600000L;
-				timeline.addAttribute(envelope.createName("end"), winTime + "");
-			}
-		}
-		
-		// set which fields to query for
-		List<String> qFields = new ArrayList<String>(keuiIgnoreKeys.length);	// TODO not correct
-		for (String key : keuiIgnoreKeys) {
-			if (props.containsKey(key) && Utils.parseBoolean(props.getProperty(key)))
-				qFields.add(key.substring(0, key.length() - 3));
-		}
-		
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < qFields.size(); i++) {
-			builder.append(qFields.get(i));
-			if (i < qFields.size() - 1)
-				builder.append(",");
-		}
-		conditions.addChildElement("postTypes").setTextContent(builder.toString());
-		
-		return msg;
+			return msg;
 		} catch (Throwable t) {
 			throw new IllegalStateException("En exception occurred while generating KEUI message!", t);
 		}
@@ -413,81 +564,27 @@ public class MessageUtils {
 	}
 	
 	/**
-	 * Generates a SOAPMessage with the envelope prefix set to 's' and 2 new namespaces added. 
+	 * Generates a Recommender 'issues for identities' message, which can be sent over the MQ.
 	 * 
-	 * @throws SOAPException 
-	 * @throws DOMException 
+	 * @param userIds
+	 * @return
 	 */
-	private SOAPMessage getMsgTemplate(String address, String eventName) throws DOMException, SOAPException {
-		// set the namespaces
-		SOAPMessage soapMsg = msgFactory.createMessage();
-		soapMsg.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
-		soapMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "utf-8");
-		
-		SOAPPart soapPart = soapMsg.getSOAPPart();
-		SOAPEnvelope envelope = soapPart.getEnvelope();
-		
-		envelope.removeNamespaceDeclaration("env");
-		envelope.setPrefix("s");
-		envelope.getHeader().setPrefix("s");
-		envelope.getBody().setPrefix("s");
-		
-		envelope.addNamespaceDeclaration("wsnt", "http://docs.oasis-open.org/wsn/b-2");
-		envelope.addNamespaceDeclaration("wsa", "http://www.w3.org/2005/08/addressing");
-		envelope.addNamespaceDeclaration("ns1", "http://www.alert-project.eu/");	// TODO should be added to event
-		
-		// construct the body
-		SOAPBody soapBody = soapMsg.getSOAPBody();
-		SOAPElement notify = soapBody.addChildElement("Notify", "wsnt");
-		SOAPElement notificationMsg = notify.addChildElement("NotificationMessage", "wsnt");
-		notificationMsg.addChildElement("Topic", "wsnt");
-		notificationMsg.addChildElement("ProducerReference", "wsnt").addChildElement("Address", "wsa").setTextContent(address);
-		SOAPElement msgEl = notificationMsg.addChildElement("Message", "wsnt");
-		
-		// construct the event
-		SOAPElement event = msgEl.addChildElement("event", "ns1");
-		event.addNamespaceDeclaration("o", "http://www.alert-project.eu/ontoevents-mdservice");
-		event.addNamespaceDeclaration("r", "http://www.alert-project.eu/rawevents-forum");
-		event.addNamespaceDeclaration("r1", "http://www.alert-project.eu/rawevents-mailinglist");
-		event.addNamespaceDeclaration("r2", "http://www.alert-project.eu/rawevents-wiki");
-		event.addNamespaceDeclaration("s", "http://www.alert-project.eu/strevents-kesi");
-		event.addNamespaceDeclaration("s1", "http://www.alert-project.eu/strevents-keui");
-		event.addNamespaceDeclaration("s2", "http://www.alert-project.eu/APIcall-request");
-		event.addNamespaceDeclaration("s3", "http://www.alert-project.eu/APIcall-response");
-		event.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		event.addNamespaceDeclaration("schemaLocation", "http://www.alert-project.eu/alert-root.xsd");
-		
-		// head
-		event.addChildElement("head", "ns1");
-		// TODO add header tags
-		
-		// payload
-		SOAPElement payload = event.addChildElement("payload", "ns1");
-		// meta
-		SOAPElement meta = payload.addChildElement("meta", "ns1");
-		meta.addChildElement("eventName", "ns1").setTextContent(eventName);
-		meta.addChildElement("eventType", "ns1").setTextContent("request");
-		// TODO add startTime, endTime, eventId to meta tag
-		
-		// event data
-		payload.addChildElement("eventData", "ns1");
-		
-		return soapMsg;
-	}
-	
-	private SOAPMessage getAPITemplate() throws DOMException, SOAPException {
-		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", "ALERT.Search.APICallRequest");
-		
-		SOAPBody body = msg.getSOAPBody();
-		SOAPElement eventData = (SOAPElement) body.getElementsByTagName("ns1:eventData").item(0);
-		
-		SOAPElement requestEl = eventData.addChildElement("apiRequest", "ns1");
-		requestEl.addChildElement("apiCall", "s2").setTextContent("issue.getInfo");
-		SOAPElement dataEl = requestEl.addChildElement("requestData", "s2");
-		
-		dataEl.addChildElement("inputParameter", "s2");
-		
-		return msg;
+	public String genRecommenderIssuesMsg(Collection<String> userIds) {
+		try {
+			SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/metadata", "ALERT.*.Recommender.IssueRecommendationRequest");
+			SOAPElement eventData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("ns1:eventData").item(0);
+			
+			SOAPElement identities = eventData.addChildElement("identities", "sc");
+			
+			for (String userId : userIds)
+				identities.addChildElement("identity", "sc").addChildElement("uuid", "sc").setTextContent(userId);
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unecpected exception occurred while generating Recommender suggest issues message!", t);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1126,22 +1223,10 @@ public class MessageUtils {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
 			
-			Map<Long, JSONObject> peopleH = new HashMap<Long, JSONObject>();
 			JSONArray items = new JSONArray();
 			
 			// parse people
-			NodeList peopleNodes = doc.getElementsByTagName("person");
-			for (int i = 0; i < peopleNodes.getLength(); i++) {
-				Element node = (Element) peopleNodes.item(i);
-				JSONObject person = new JSONObject();
-				
-				long id = Long.parseLong(node.getAttribute("id"));
-				
-				person.put("id", id);
-				person.put("account", node.getAttribute("account"));
-				person.put("name", node.getAttribute("name"));
-				peopleH.put(id, person);
-			}
+			Map<Long, JSONObject> peopleH = parsePeopleH(doc.getElementsByTagName("person"));
 			
 			Element infoEl = (Element) doc.getElementsByTagName("info").item(0);
 			int totalCount = Integer.parseInt(infoEl.getAttribute("totalCount"));
@@ -1168,82 +1253,27 @@ public class MessageUtils {
 			NodeList itemNodes = doc.getElementsByTagName("item");
 			for (int i = 0; i < itemNodes.getLength(); i++) {
 				Element itemNode = (Element) itemNodes.item(i);
-				JSONObject itemJSon = new JSONObject();
+				JSONObject itemJSon = parseKEUIItem(itemNode);
 				
-				long id = Long.parseLong(itemNode.getAttribute("id"));
-				int  type = Integer.parseInt(itemNode.getAttribute("itemType"));
-				long time = Long.parseLong(itemNode.getAttribute("time")) - 11644473600000L;
-				String[] tags = itemNode.getAttribute("tags").split(",");
-				String entryId = itemNode.getAttribute("entryId");
-				String content = itemNode.getElementsByTagName("shortContent").item(0).getTextContent();
-				
-				JSONArray tagsArr = new JSONArray();
-				tagsArr.addAll(Arrays.asList(tags));
-				
-				
+				// emphasize the keywords
 				if (!keywords.isEmpty()) {
+					String content = (String) itemJSon.get("content");
 					for (String keyword : keywords)
 						content = content.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
-				}
-				
-				if (type != ItemType.COMMIT.getValue()) {
-					long threadId = Long.parseLong(itemNode.getAttribute("threadId"));
-					int count = Integer.parseInt(itemNode.getAttribute("count"));
-					long senderId = Long.parseLong(itemNode.getAttribute("from"));
-					String url = itemNode.getElementsByTagName("url").getLength() > 0 ? itemNode.getElementsByTagName("url").item(0).getTextContent() : null;
 					
-					String subject = itemNode.getElementsByTagName("subject").item(0).getTextContent();
-					if (!keywords.isEmpty()) {
+					itemJSon.put("content", content);
+					if (itemJSon.containsKey("subject")) {
+						String subject = (String) itemJSon.get("subject");
 						for (String keyword : keywords)
 							subject = subject.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
+						itemJSon.put("subject", subject);
 					}
 					
-					Double similarity = null;
-					if (itemNode.getElementsByTagName("similarity").item(0) != null)
-						similarity = Double.parseDouble(itemNode.getElementsByTagName("similarity").item(0).getTextContent());
-					
-					JSONArray recipients = new JSONArray();
-					if (itemNode.getElementsByTagName("to").item(0) != null) {
-						String[] recipientStrV = itemNode.getElementsByTagName("to").item(0).getTextContent().split(",");
-						for (String recIdStr : recipientStrV)
-							recipients.add(Long.parseLong(recIdStr));
-					}
-					
-					// metadata
-					if (itemNode.getElementsByTagName("metaData").getLength() > 0) {
-						Element metadata = (Element) itemNode.getElementsByTagName("metaData").item(0);
-						if (metadata.getElementsByTagName("issueId").getLength() > 0)
-							itemJSon.put("issueID", Long.parseLong(metadata.getElementsByTagName("issueId").item(0).getTextContent()));
-					}
-					
-					
-					itemJSon.put("id", id);
-					itemJSon.put("type", type);
-					itemJSon.put("time", time);
-					itemJSon.put("tags", tagsArr);
-					itemJSon.put("entryID", entryId);
-					itemJSon.put("threadID", threadId);
-					itemJSon.put("count", count);
-					itemJSon.put("senderID", senderId);
-					itemJSon.put("recipientIDs", recipients);
-					itemJSon.put("content", content);
-					itemJSon.put("subject", subject);
-					itemJSon.put("url", url);
-					itemJSon.put("similarity", similarity);
-					
-					items.add(itemJSon);
-				} else {
-					long authorId = Long.parseLong(itemNode.getAttribute("author"));
-					itemJSon.put("id", id);
-					itemJSon.put("type", type);
-					itemJSon.put("time", time);
-					itemJSon.put("tags", tagsArr);
-					itemJSon.put("entryID", entryId);
-					itemJSon.put("authorID", authorId);
-					itemJSon.put("content", content);
-					
-					items.add(itemJSon);
 				}
+				
+				
+				
+				items.add(itemJSon);
 			}
 			
 			JSONObject result = new JSONObject();
@@ -1257,7 +1287,141 @@ public class MessageUtils {
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI items response!!", t);
 		}
 	}
+	
+	/**
+	 * Parses KEUI duplicate issue response.
+	 * 
+	 * @param responseMsg
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String parseKEUIDuplicateResponse(String responseMsg) {
+		try {
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			
+			Element results = (Element) doc.getElementsByTagName("results").item(0);
+			
+			JSONArray items = new JSONArray();
+			Map<Long, JSONObject> peopleH = parsePeopleH(results.getElementsByTagName("person"));
+			
+			NodeList itemNodes = results.getElementsByTagName("item");
+			for (int i = 0; i < itemNodes.getLength(); i++) {
+				Element node = (Element) itemNodes.item(i);
+				
+				JSONObject item = parseKEUIItem(node);
+				items.add(item);
+			}
+			
+			JSONObject info = new JSONObject();
+			info.put("totalCount", items.size());
+			info.put("offset", 0);
+			info.put("limit", items.size());
+			
+			JSONObject result = new JSONObject();
+			result.put("type", "itemData");
+			result.put("persons", new JSONObject(peopleH));
+			result.put("items", items);
+			result.put("info", info);
+			
+			return result.toJSONString();
+		} catch(Throwable t) {
+			throw new IllegalArgumentException("An exception occurred while parsing duplicate issue response!", t);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private JSONObject parseKEUIItem(Element node) {
+		JSONObject result = new JSONObject();
+		
+		long id = Long.parseLong(node.getAttribute("id"));
+		int  type = Integer.parseInt(node.getAttribute("itemType"));
+		long time = Long.parseLong(node.getAttribute("time")) - 11644473600000L;
+		String[] tags = node.getAttribute("tags").split(",");
+		String entryId = node.getAttribute("entryId");
+		String content = node.getElementsByTagName("shortContent").item(0).getTextContent();
+		
+		JSONArray tagsArr = new JSONArray();
+		tagsArr.addAll(Arrays.asList(tags));
+		
+		if (type != ItemType.COMMIT.getValue()) {
+			long threadId = Long.parseLong(node.getAttribute("threadId"));
+			int count = Integer.parseInt(node.getAttribute("count"));
+			long senderId = Long.parseLong(node.getAttribute("from"));
+			String url = node.getElementsByTagName("url").getLength() > 0 ? node.getElementsByTagName("url").item(0).getTextContent() : null;
+			
+			String subject = node.getElementsByTagName("subject").item(0).getTextContent();
+			
+			Double similarity = null;
+			if (node.getElementsByTagName("similarity").item(0) != null)
+				similarity = Double.parseDouble(node.getElementsByTagName("similarity").item(0).getTextContent());
+			
+			JSONArray recipients = new JSONArray();
+			if (node.getElementsByTagName("to").item(0) != null) {
+				String[] recipientStrV = node.getElementsByTagName("to").item(0).getTextContent().split(",");
+				for (String recIdStr : recipientStrV)
+					recipients.add(Long.parseLong(recIdStr));
+			}
+			
+			// metadata
+			if (node.getElementsByTagName("metaData").getLength() > 0) {
+				Element metadata = (Element) node.getElementsByTagName("metaData").item(0);
+				if (metadata.getElementsByTagName("issueId").getLength() > 0)
+					result.put("issueID", Long.parseLong(metadata.getElementsByTagName("issueId").item(0).getTextContent()));
+			}
+			
+			
+			result.put("id", id);
+			result.put("type", type);
+			result.put("time", time);
+			result.put("tags", tagsArr);
+			result.put("entryID", entryId);
+			result.put("threadID", threadId);
+			result.put("count", count);
+			result.put("senderID", senderId);
+			result.put("recipientIDs", recipients);
+			result.put("content", content);
+			result.put("subject", subject);
+			result.put("url", url);
+			result.put("similarity", similarity);
+		} else {
+			long authorId = Long.parseLong(node.getAttribute("author"));
+			result.put("id", id);
+			result.put("type", type);
+			result.put("time", time);
+			result.put("tags", tagsArr);
+			result.put("entryID", entryId);
+			result.put("authorID", authorId);
+			result.put("content", content);
+		}
+		
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<Long, JSONObject> parsePeopleH(NodeList peopleNodes) {
+		Map<Long, JSONObject> result = new HashMap<Long, JSONObject>();
+		for (int i = 0; i < peopleNodes.getLength(); i++) {
+			Element node = (Element) peopleNodes.item(i);
+			JSONObject person = new JSONObject();
+			
+			long id = Long.parseLong(node.getAttribute("id"));
+			
+			person.put("id", id);
+			person.put("account", node.getAttribute("account"));
+			person.put("name", node.getAttribute("name"));
+			result.put(id, person);
+		}
+		
+		return result;
+	}
 
+	/**
+	 * Parses a KEUI suggestion message and returns a JSON <code>String</code>.
+	 * 
+	 * @param responseMsg
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public String parseKEUISuggestMessage(String responseMsg) {
 		try {

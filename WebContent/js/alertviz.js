@@ -2,6 +2,7 @@ var monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 var defaultDateFormat = "isoDate";
 
 var settingManually = false;
+var currentTab = 0;
 
 /**
  * Returns an URL containing the current state of the interface.
@@ -9,11 +10,17 @@ var settingManually = false;
 function genCurrentUrl() {
 	// collect all the parameters
 	var state = getCurrentState();
+	var result = '';
 	
 	if (state != null)
-		return window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
+		result = window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
-		return window.location.pathname;
+		result = window.location.pathname.replace('index.html', '');
+	
+	if (currentTab != 0)
+		result += result.indexOf('index.html') < 0 ? 'index.html#' + currentTab : '#' + currentTab;
+	
+	return result;
 }
 
 /**
@@ -21,8 +28,15 @@ function genCurrentUrl() {
  */
 function getCurrentState() {
 	var searchGeneral = viz.searchStateGeneral;
-	var searchPerson = viz.searchStatePerson;
+	var searchPerson = viz.searchStatePerson;	// TODO
 	
+	var result = {};
+	var general = {};
+	var duplicate = {};
+	var myCode = {};
+	
+	
+	// general search
 	// search terms
 	var people = searchGeneral.getTypeV('person');
 	var keywords = searchGeneral.getTypeV('keyword');
@@ -31,36 +45,86 @@ function getCurrentState() {
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
 	
-	var result = {};
 	
-	if (people.length > 0) result.people = people;
-	if (keywords.length > 0) result.keywords = keywords;
-	if (concepts.length > 0) result.concepts = concepts;
-	if (sources.length > 0) result.sources = sources;
-	if (products.length > 0) result.products = products;
-	if (issues.length > 0) result.issues = issues;
+	
+	if (people.length > 0) general.people = people;
+	if (keywords.length > 0) general.keywords = keywords;
+	if (concepts.length > 0) general.concepts = concepts;
+	if (sources.length > 0) general.sources = sources;
+	if (products.length > 0) general.products = products;
+	if (issues.length > 0) general.issues = issues;
 	
 	// checkboxes
-	var issueChk = $('#issues_check').attr('checked');
-	var commitsChk = $('#commits_check').attr('checked');
-	var forumsChk = $('#forums_check').attr('checked');
-	var mailingChk = $('#mailing_check').attr('checked');
-	var wikisChk = $('#wikis_check').attr('checked');
+	var issueChk = $('#issues_check').attr('checked') == 'checked';
+	var commitsChk = $('#commits_check').attr('checked') == 'checked';
+	var forumsChk = $('#forums_check').attr('checked') == 'checked';
+	var mailingChk = $('#mailing_check').attr('checked') == 'checked';
+	var wikisChk = $('#wikis_check').attr('checked') == 'checked';
 	
-	if (!issueChk) result.issueChk = false;
-	if (!commitsChk) result.commitsChk = false;
-	if (!forumsChk) result.forumsChk = false;
-	if (!mailingChk) result.mailingChk = false;
-	if (!wikisChk) result.wikisChk = false;
+	if (!issueChk) general.is = false;
+	if (!commitsChk) general.c = false;
+	if (!forumsChk) general.fi = false;
+	if (!mailingChk) general.m = false;
+	if (!wikisChk) general.wo = false;
 	
 	// dates
 	var fromDate = $('#from_text').val();
 	var toDate = $('#to_text').val();
 	
-	if (fromDate != null && fromDate != '') result.fromDate = fromDate;
-	if (toDate != null && toDate != '') result.toDate = toDate;
+	if (fromDate != null && fromDate != '') general.from = fromDate;
+	if (toDate != null && toDate != '') general.to = toDate;
 	
-	return result;
+	// duplicate issue
+	var issueId = $('#issue_id_text').val();
+	if (issueId.length > 0) duplicate.iid = issueId;
+	
+	var duplUnconfirmedChk = $('#dup_unconfirmed_check').attr('checked') == 'checked';
+	var duplNewChk = $('#dup_new_check').attr('checked') == 'checked';
+	var duplAssignedChk = $('#dup_assigned_check').attr('checked') == 'checked';
+	var duplResolvedChk = $('#dup_resolved_check').attr('checked') == 'checked';
+	var duplInvalidChk = $('#dup_invalid_check').attr('checked') == 'checked';
+	var duplWorksChk = $('#dup_works_check').attr('checked') == 'checked';
+	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
+	var duplWondChk = $('#dup_wond_check').attr('checked') == 'checked';
+	var duplDuplicateChk = $('#dup_duplicate_check').attr('checked') == 'checked';
+	
+	if (!duplUnconfirmedChk) duplicate.u = false;
+	if (!duplNewChk) duplicate.n = false;
+	if (!duplAssignedChk) duplicate.a = false;
+	if (!duplResolvedChk) duplicate.r = false;
+	if (!duplInvalidChk) duplicate.i = false;
+	if (!duplWorksChk) duplicate.w = false;
+	if (!duplFixedChk) duplicate.f = false;
+	if (!duplWondChk) duplicate.wnd = false;
+	if (!duplDuplicateChk) duplicate.d = false;
+	
+	// issues related to my code
+	var myUnconfirmedChk = $('#my_unconfirmed_check').attr('checked') == 'checked';
+	var myNewChk = $('#my_new_check').attr('checked') == 'checked';
+	var myAssignedChk = $('#my_assigned_check').attr('checked') == 'checked';
+	var myResolvedChk = $('#my_resolved_check').attr('checked') == 'checked';
+	var myInvalidChk = $('#my_invalid_check').attr('checked') == 'checked';
+	var myWorksChk = $('#my_works_check').attr('checked') == 'checked';
+	var myFixedChk = $('#my_fixed_check').attr('checked') == 'checked';
+	var myWondChk = $('#my_wond_check').attr('checked') == 'checked';
+	var myDuplicateChk = $('#my_duplicate_check').attr('checked') == 'checked';
+	
+	if (!myUnconfirmedChk) myCode.u = false;
+	if (!myNewChk) myCode.n = false;
+	if (!myAssignedChk) myCode.a = false;
+	if (!myResolvedChk) myCode.r = false;
+	if (!myInvalidChk) myCode.i = false;
+	if (!myWorksChk) myCode.w = false;
+	if (!myFixedChk) myCode.f = false;
+	if (!myWondChk) myCode.wnd = false;
+	if (!myDuplicateChk) myCode.d = false;
+	
+	// construct result
+	if (Object.getOwnPropertyNames(general).length > 0) result.gen = general;
+	if (Object.getOwnPropertyNames(duplicate).length > 0) result.dupl = duplicate;
+	if (Object.getOwnPropertyNames(myCode).length > 0) result.mc = myCode;
+
+	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
 
 function updateUrl() {
@@ -77,7 +141,46 @@ function updateUrl() {
  */
 function decodeUrl() {
 	var params = window.location.search.substring(1);
-	return params == '' ? null : $.deparam(params);
+	var tab = window.location.hash == '' ? 0 : parseInt(window.location.hash.substring(1));
+	
+	if (params == '' && tab == 0) 
+		return null;
+	else
+		return {params: params == '' ? null : $.deparam(params), tab: tab};
+}
+
+function uncheckByAttr(attribute, prefix) {
+	var selector = '#' + prefix;
+	switch(attribute) {
+	case 'u':
+		selector += 'unconfirmed_check';
+		break;
+	case 'n':
+		selector += 'new_check';
+		break;
+	case 'a':
+		selector += 'assigned_check';
+		break;
+	case 'r':
+		selector += 'resolved_check';
+		break;
+	case 'i':
+		selector += 'invalid_check';
+		break;
+	case 'w':
+		selector += 'works_check';
+		break;
+	case 'f':
+		selector += 'fixed_check';
+		break;
+	case 'wnd':
+		selector += 'wond_check';
+		break;
+	case 'd':
+		selector += 'duplicate_check';
+		break;
+	};
+	$(selector).attr('checked', false);
 }
 
 /**
@@ -87,50 +190,94 @@ function loadState() {
 	var state = decodeUrl();
 	if (state == null) return;
 	
+	var params = state.params;
+	var tab = state.tab;
+	
+	var general = params.gen;
+	var duplicate = params.dupl;
+	var myCode = params.mc;
+	
 	settingManually = true;
 	
+	// general search
 	var searchTerms = {people: true, keywords: true, concepts: true, sources: true, products: true, issues: true};
-	var filterChks = {issueChk: true, commitsChk: true, forumsChk: true, mailingChk: true, wikisChk: true};
-	var dates = {fromDate: true, toDate: true};
+	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
+	var issueChks = {u: true, n: true, a: true, r: true, i: true, w: true, f: true, wnd: true, d: true};
 	
-	// go through all the properties
-	for (var attribute in state) {
-		var value = state[attribute];
-		
-		if (searchTerms[attribute]) {	// search terms
-			// the value is an array of search terms
-			for (var i = 0; i < value.length; i++) {
-				var fieldId = attribute == 'keywords' ? 'keyword_text' : 'other_text';
-				viz.addToSearchField(fieldId, value[i]);
-			}
-		} else if(filterChks[attribute]) {	// checkboxes
-			var selector = null;
-			switch(attribute) {
-			case 'issueChk':
-				selector = '#issues_check';
-				break;
-			case 'commitsChk':
-				selector = '#commits_check';
-				break;
-			case 'forumsChk':
-				selector = '#forums_check';
-				break;
-			case 'mailingChk':
-				selector = '#mailing_check';
-				break;
-			case 'wikisChk':
-				selector = '#wikis_check';
-				break;
-			}
+	var dates = {from: true, to: true};
+	
+	if (general != null) {
+		// go through all the properties
+		for (var attribute in general) {
+			var value = general[attribute];
 			
-			$(selector).attr('checked', false);
-		} else if (dates[attribute]) {
-			var field = attribute == 'fromDate' ? 'from_text' : 'to_text';
-			$('#' + field).val(value);
+			if (searchTerms[attribute]) {	// search terms
+				// the value is an array of search terms
+				for (var i = 0; i < value.length; i++) {
+					var fieldId = attribute == 'keywords' ? 'keyword_text' : 'other_text';
+					viz.addToSearchField(fieldId, value[i]);
+				}
+			} else if(filterChks[attribute]) {	// checkboxes
+				var selector = null;
+				switch(attribute) {
+				case 'is':
+					selector = '#issues_check';
+					break;
+				case 'c':
+					selector = '#commits_check';
+					break;
+				case 'fi':
+					selector = '#forums_check';
+					break;
+				case 'm':
+					selector = '#mailing_check';
+					break;
+				case 'wo':
+					selector = '#wikis_check';
+					break;
+				}
+				
+				$(selector).attr('checked', false);
+			} else if (dates[attribute]) {
+				var field = attribute == 'from' ? 'from_text' : 'to_text';
+				$('#' + field).val(value);
+			}
 		}
 	}
 	
-	viz.searchGeneral();
+	// duplicate issue
+	if (duplicate != null) {
+		for (var attribute in duplicate) {
+			if (attribute == 'iid')
+				$('#issue_id_text').val(duplicate.iid);
+			else if (issueChks[attribute])
+				uncheckByAttr(attribute, 'dup_');
+		}
+	}
+	
+	// issues related to my code
+	if (myCode != null) {
+		for (var attribute in myCode) {
+			if (issueChks[attribute])
+				uncheckByAttr(attribute, 'my_');
+		}
+	}
+	
+	$('#navigation').find('a')[tab].click();
+	
+	switch(tab) {
+	case 0:
+		viz.searchGeneral();
+		break;
+	case 1:
+		viz.searchIssueId();
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	}
+	
 	settingManually = false;
 }
 
@@ -185,6 +332,12 @@ var SocialGraph = function(options){
 	if (neighbourTextClr == null) neighbourTextClr = "white";
 	if (neighbourBoxClr == null) selectedBoxClr = "rgba(62, 189, 255, .6)";
 	
+	var nNodesOver = 0;
+	var nodeInterval = null;
+	function openPersonPopup(data) {
+		alert(data.label);
+	}
+	
 	var that = {
 		selectedTextClr: selectedTextClr,
 		selectedBoxClr: selectedBoxClr,
@@ -228,12 +381,22 @@ var SocialGraph = function(options){
 					boxColor = 'rgba(255,255,255,0)';
 				}
 				
+				var edgeRadius = Math.min(width, height)/4;
 				context.save();
 				context.beginPath();
 					// draw the rect in the back
 					context.fillStyle = boxColor;
-					context.rect(-width/2, -height/2, width, height);
+					context.moveTo(-width/2 + edgeRadius, -height/2);
+					context.lineTo(width/2 - edgeRadius, -height/2);
+					context.arc(width/2 - edgeRadius, -height/2 + edgeRadius, edgeRadius, 1.5*Math.PI, 2*Math.PI, false);
+					context.lineTo(width/2, height - edgeRadius);
+					context.arc(width/2 - edgeRadius, height/2 - edgeRadius, edgeRadius, 0, .5*Math.PI, false);
+					context.lineTo(-width/2 + edgeRadius, height/2);
+					context.arc(-width/2 + edgeRadius, height/2 - edgeRadius, edgeRadius, .5*Math.PI, Math.PI, false);
+					context.lineTo(-width/2, -height/2 + edgeRadius);
+					context.arc(-width/2 + edgeRadius, -height/2 + edgeRadius, edgeRadius, Math.PI, 1.5*Math.PI, false);
 					context.fill();
+					
 					// draw the label
 					context.fillStyle = textColor;
 					context.textAlign = 'center';
@@ -297,18 +460,35 @@ var SocialGraph = function(options){
 			},
 			
 			handlers: {
-				'dblclick': function (event, node) {
-					event.cancelBubble = true;
-					viz.addToSearchField('other_text', {type: 'person', label: node.data.label, value: node.data.email});
-					node.select(true);
+				node: {
+					'dblclick': function (event, node) {
+						event.cancelBubble = true;
+						viz.addToSearchField('other_text', {type: 'person', label: node.data.label, value: node.data.email});
+						node.select(true);
+					},
+					'mouseover': function (event, node) {
+						nNodesOver++;
+						document.body.style.cursor = 'pointer';
+						
+						clearInterval(nodeInterval);
+						nodeInterval = setInterval(function () {
+							openPersonPopup(node.data);
+						}, 3000);
+						console.log('over ' + node.data.label + ' ' + nNodesOver);
+					},
+					'mouseout': function (event, node) {
+						if (nNodesOver > 0) nNodesOver--;
+						if (nNodesOver == 0) document.body.style.cursor = 'default';
+						clearInterval(nodeInterval);
+						console.log('out: ' + node.data.label + ' ' + nNodesOver);
+					}
 				},
-				'mouseover': function (event, node) {
-					event.cancelBubble = true;
-					document.body.style.cursor = 'pointer';
-				},
-				'mouseout': function (event, node) {
-					event.cancelBubble = true;
-					document.body.style.cursor = 'default';
+				
+				stage: {
+					'mousemove': function (event) {
+						clearInterval(nodeInterval);
+						console.log('move');
+					}
 				}
 			}
 		}),
@@ -505,6 +685,9 @@ var AlertViz = function(options) {
     	
     	cleanData: function () {
     		$('#details_wrapper').html('');
+    		$('#wordcloud-div').html('');
+    		if (that.socialGraph != null)
+    			that.socialGraph.clear();
     	},
     	
     	addToSearchField: function (fieldId, data) {
@@ -690,95 +873,38 @@ var AlertViz = function(options) {
 			return false;
     	},
     	
-    	searchQueryIssue: function (queryType, queryOpts) {
-    		$.ajax({
-                type: "GET",
-                url: "query",
-                data: {
-                	type: queryType,
-        			issues: queryOpts.issues,
-        			unconfirmedChk: queryOpts.unconfirmedChk,
-                	newChk: queryOpts.newChk,
-                	assignedChk: queryOpts.assignedChk,
-                	resolveChk: queryOpts.resolveChk,
-                	invalidChk: queryOpts.invalidChk,
-                	worksChk: queryOpts.worksChk,
-                	fixedChk: queryOpts.unconfirmedChk,
-                	wondChk: queryOpts.fixedChk,
-                	duplicateChk: queryOpts.duplicateChk
-                },
-                dataType: "json",
-                async: true,
-                success: function (data, textStatus, jqXHR) {
-                	that.setQueryResults(data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
-            });
-    	},
-    	
-    	/*
-    	 * Items is special because it contains offset and limit
-    	 */
-    	searchItemsIssue: function (queryOpts, offset, limit) {
-    		$.ajax({
-                type: "GET",
-                url: "query",
-                data: {
-                	type: 'itemData',
-        			issues: queryOpts.issues,
-        			unconfirmedChk: queryOpts.unconfirmedChk,
-                	newChk: queryOpts.newChk,
-                	assignedChk: queryOpts.assignedChk,
-                	resolveChk: queryOpts.resolveChk,
-                	invalidChk: queryOpts.invalidChk,
-                	worksChk: queryOpts.worksChk,
-                	fixedChk: queryOpts.unconfirmedChk,
-                	wondChk: queryOpts.fixedChk,
-                	duplicateChk: queryOpts.duplicateChk,
-                	offset: offset,
-                	limit: limit
-                },
-                dataType: "json",
-                async: true,
-                success: function (data, textStatus, jqXHR) {
-                	that.setQueryResults(data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
-            });
-    	},
-    	
-    	searchPeopleIssue: function (queryOpts) {
-    		that.searchQueryIssue('peopleData', queryOpts);
-    	},
-    	
-    	searchKeywordIssue: function (queryOpts) {
-    		that.searchQueryIssue('keywordData', queryOpts);
-    	},
-    	
-    	searchTimelineIssue: function (queryOpts) {
-    		that.searchQueryIssue('timelineData', queryOpts);
-    	},
-    	
-    	searchIssueId: function () {
+    	searchIssueId: function (offset, limit) {
     		var issues = $('#issue_id_text').val();
     		
-    		var queryOpts = {
-    			issues: issues,
-    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
-            	newChk: $('#new_check').attr('checked') == 'checked',
-            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
-            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
-            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
-            	worksChk: $('#works_check').attr('checked') == 'checked',
-            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
-            	wondChk: $('#wond_check').attr('checked') == 'checked',
-            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked'
-    		};
-    		
-    		that.searchPeopleIssue(queryOpts);
-    		that.searchTimelineIssue(queryOpts);
-    		that.searchKeywordIssue(queryOpts);
-    		that.searchItemsIssue(queryOpts, 0, 100);
+    		try {
+	    		$.ajax({
+	                type: "GET",
+	                url: "query",
+	                data: {
+	                	type: 'duplicateIssue',
+		    			issues: issues,
+		    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
+		            	newChk: $('#new_check').attr('checked') == 'checked',
+		            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
+		            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
+		            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
+		            	worksChk: $('#works_check').attr('checked') == 'checked',
+		            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
+		            	wondChk: $('#wond_check').attr('checked') == 'checked',
+		            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
+		            	offset: offset,
+		            	limit: limit
+	                },
+	                dataType: "json",
+	                async: true,
+	                success: function (data, textStatus, jqXHR) {
+	    				that.setQueryResults(data);
+	    			},
+	                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
+	            });
+    		} catch (e) {
+    			alert(e);
+    		}
     		
     		that.cleanData();
     		
@@ -925,9 +1051,9 @@ var AlertViz = function(options) {
     		
     		// subject
     		if (data.subject != null)
-    			html += '<tr><td colspan="2">' + data.subject + '</td></tr>';
+    			html += '<tr><td class="subject_td" colspan="2">' + data.subject + '</td></tr>';
     		if (data.content != null)
-    			html += '<tr><td colspan="2">' + data.content + '</td></tr>';
+    			html += '<tr><td class="content_td" colspan="2">' + data.content + '</td></tr>';
     		
     		
     		html += '</table>';
@@ -959,8 +1085,8 @@ var AlertViz = function(options) {
     		
     		var history = ZoomHistory();
     		var selectedRange = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
-    		var normalColor = 'rgb(69, 114, 167)';
-    		var selectedColor = '#F68B05';
+    		var normalColor = getCssValue('bar-normal', 'background-color');
+    		var selectedColor = getCssValue('bar-selected', 'background-color');
     		var ctrlDown = false;
     		$(document).keydown(function (event) {
     			if (event.keyCode == 17)	// CTRL
@@ -1078,12 +1204,15 @@ var AlertViz = function(options) {
 									
 									$('#from_text').datepicker("setDate", firstDate);
 									$('#to_text').datepicker("setDate", lastDate);
+									
+									$('#from_text').change();
+									$('#to_text').change();
 								}
 							}
 						}
 					}
 				},
-				
+				colors: [normalColor],
 				title: null,				
 				xAxis: {
 					min: minX,
@@ -1351,9 +1480,9 @@ var AlertViz = function(options) {
 					// subject
 					html += '<tr>';
 					if (item.url != null)
-						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						html += '<td colspan="2" class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
 					else
-						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+						html += '<td colspan="2" class="item_subject" colspan="2">' + item.subject + '</td>';
 					html += '</tr>';
     				
     				// content
@@ -1369,12 +1498,11 @@ var AlertViz = function(options) {
     				html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 					
-					// subject TODO does this belong here???
 					html += '<tr>';
 					if (item.url != null)
-						html += '<td class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						html += '<td colspan="2" class="item_subject" colspan="2"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
 					else
-						html += '<td class="item_subject" colspan="2">' + item.subject + '</td>';
+						html += '<td colspan="2 class="item_subject" colspan="2">' + item.subject + '</td>';
 					html += '</tr>';
     				
 					// content
@@ -1392,14 +1520,23 @@ var AlertViz = function(options) {
 	    			
 					// subject + similarity
 					html += '<tr>';
-					if (item.url != null)
-						html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-					else
-						html += '<td class="item_subject">' + item.subject + '</td>';
-					
-					// similarity
-					if (item.similarity != null)
-						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					if (item.similarity != null) {
+						if (item.url != null)
+							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td class="item_subject">' + item.subject + '</td>';
+						
+						// similarity
+						if (item.similarity != null)
+							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					}
+					else {
+						if (item.url != null)
+							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+						
+					}
 					html += '</tr>';
 					
 					// content
@@ -1417,14 +1554,23 @@ var AlertViz = function(options) {
 					
 					// subject + similarity
 					html += '<tr>';
-					if (item.url != null)
-						html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-					else
-						html += '<td class="item_subject">' + item.subject + '</td>';
-					
-					// similarity
-					if (item.similarity != null)
-						html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					if (item.similarity != null) {
+						if (item.url != null)
+							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td class="item_subject">' + item.subject + '</td>';
+						
+						// similarity
+						if (item.similarity != null)
+							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+					}
+					else {
+						if (item.url != null)
+							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+						else
+							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+						
+					}
 					html += '</tr>';
     				
 					// content
@@ -1436,8 +1582,8 @@ var AlertViz = function(options) {
     				
     				// author + date
     				html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
-					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '<td colspan="2" class="item_header">' + peopleH[item.authorID].name + '</td>';
+					html += '<td colspan="2" class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
     				
 					// content
@@ -1486,15 +1632,13 @@ var AlertViz = function(options) {
     	},
     	
     	decreaseGraph: function() {
-    		if(that.socialGraph){
+    		if(that.socialGraph)
     			that.socialGraph.showLess();
-    		}
     	},
     	
     	increaseGraph: function() {
-    		if(that.socialGraph){
+    		if(that.socialGraph)
     			that.socialGraph.showMore();
-    		}
     	}
     };
     
@@ -1629,9 +1773,11 @@ var AlertViz = function(options) {
     
     $('#from_text').change(function (event) {
     	setRange();
+    	updateUrl();
     });
 	$('#to_text').change(function (event) {
 		setRange();
+		updateUrl();
 	});
     
     // issue id search
@@ -1648,6 +1794,10 @@ var AlertViz = function(options) {
 				}
 			});
     	}
+    });
+    
+    $('#issue_id_text').blur(function (event) {
+    	updateUrl();
     });
     
     // suggest people search
@@ -1671,6 +1821,15 @@ var AlertViz = function(options) {
 	  		personSearch.removeFromSearch(elem);
 	  		updateUrl();
 	  	}
+    });
+    
+    // tab handler
+    jQuery.each($('#navigation').find('a'), function (i, a) {
+    	$(a).click(function () {
+    		// when a tab is clicked, the URL has to be updated
+    		currentTab = i;
+    		updateUrl();
+    	});
     });
     
     return that;

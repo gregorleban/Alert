@@ -12,11 +12,11 @@ body {
 a:link, a:visited { 
 	text-decoration: none;
 	color: #7BA857;
-	text-shadow:1px 1px 1px #ccc;
+	text-shadow:1px 1px 1px #fff;
 }
 a:hover {
 	color: #333;
-	text-shadow:1px 1px 1px #ccc;
+	text-shadow:1px 1px 1px #eee;
 }
 a.more-link {
 	padding-bottom: 2px;
@@ -50,7 +50,6 @@ strong {
 }
 table {
 	border-collapse: collapse;
-	margin: 5px;		
 }
 tr.altrow {
 	background: #F9F9F9;
@@ -128,8 +127,8 @@ input.button {
         left bottom,
         left top,
 		color-stop(0.09, rgb(150,200,100)),
-        color-stop(0.55, rgb(182,222,143)),
-        color-stop(0.78, rgb(150,200,100))
+        color-stop(0.55, rgb(150,200,100)),
+        color-stop(0.78, rgb(182,222,143))
         );
     background:
         -moz-linear-gradient(
@@ -322,6 +321,12 @@ input.button {
 .neighbour-node {
 	color: #fff;
 	background-color: #666;
+}
+.bar-normal {
+	background-color: #7BA857;
+}
+.bar-selected {
+	background-color: #7BA857;
 }
 #wordcloud-div {
 	width: 606px !important;

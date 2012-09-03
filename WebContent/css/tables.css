@@ -7,15 +7,15 @@
     color:#333;
     font-weight:bold;
     font-size:12px;
-    text-shadow:1px 1px 1px #fff;
+    text-shadow:1px 1px 1px #ccc;
     background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-		color-stop(0.09, rgb(150,200,100)),
-        color-stop(0.55, rgb(150,200,100)),
-        color-stop(0.78, rgb(182,222,143))
+        color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
         );
     background:
         -moz-linear-gradient(
@@ -32,18 +32,17 @@
     -webkit-border-radius:0px 8px 8px 0px;
     border-radius:0px 8px 8px 0px;
     text-align:center;
-    color:#fff;
-    font-weight:bold;
+    color:#000;
     font-size:12px;
-    text-shadow:1px 1px 1px #333;
+    text-shadow:1px 1px 1px #ccc;
     background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-		color-stop(0.09, rgb(150,200,100)),
-        color-stop(0.55, rgb(150,200,100)),
-        color-stop(0.78, rgb(182,222,143))
+        color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
         );
     background:
         -moz-linear-gradient(
@@ -54,7 +53,7 @@
         );
 }
 .item_subject{
-	width:70%;
+	width:100%;
     padding:4px;
     text-align:left;
     color:#000;
@@ -64,7 +63,7 @@
     -moz-border-radius:0px 0px 8px 8px;
     -webkit-border-radius:0px 0px 8px 8px;
     border-radius:0px 0px 8px 8px;
-        background:
+    background:
         -webkit-gradient(
         linear,
         left bottom,
@@ -98,4 +97,109 @@
     color:#f00;
     text-shadow:1px 1px 1px #fff;
     font-weight:bold;
+}
+.tooltip{
+    -moz-border-radius:8px 8px 8px 8px;
+    -webkit-border-radius:8px 8px 8px 8px;
+    border-radius:8px 8px 8px 8px;
+    -moz-box-shadow:0px 0px 3px #aaa;
+    -webkit-box-shadow:0px 0px 3px #aaa;
+    box-shadow:0px 0px 3px #aaa;
+	width:250px;	
+	height:80px;
+	padding:5px;
+}
+.tooltip_name{
+	font-size:14px;
+	font-weight:bold;
+	padding-left:20px;
+	-moz-border-radius:8px 0px 0px 8px;
+    -webkit-border-radius:8px 0px 0px 8px;
+    border-radius:8px 0px 0px 8px;
+	background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
+}
+.tooltip_id{
+	text-align:right;
+	font-size:14px;
+	font-weight:bold;
+	padding-right:20px;
+	-moz-border-radius:0px 8px 8px 0px;
+    -webkit-border-radius:0px 8px 8px 0px;
+    border-radius:0px 8px 8px 0px;
+	background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
+}
+.tooltip_mail{
+	padding-left:20px;
+	-moz-border-radius:8px 0px 0px 8px;
+    -webkit-border-radius:8px 0px 0px 8px;
+    border-radius:8px 0px 0px 8px;
+	background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(240,240,240)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
+}
+.tooltip_expertise{
+	text-align:right;
+	padding-right:20px;
+	-moz-border-radius:0px 8px 8px 0px;
+    -webkit-border-radius:0px 8px 8px 0px;
+    border-radius:0px 8px 8px 0px;
+	background:
+        -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.09, rgb(240,240,240)),
+        color-stop(0.55, rgb(255,255,255)),
+        color-stop(0.78, rgb(255,255,255))
+        );
+    background:
+        -moz-linear-gradient(
+        center bottom,
+        rgb(240,240,240) 9%,
+        rgb(227,227,227) 55%,
+        rgb(240,240,240) 78%
+        );
 }

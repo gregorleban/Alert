@@ -5,10 +5,14 @@ var tooltip = function() {
 	var maxw = 300;
 	var speed = 10;
 	var timer = 20;
+	var delay = 1000;
 	var endalpha = 95;
 	var alpha = 0;
 	var tt, t, c, b, h;
 	var ie = document.all ? true : false;
+	
+	var showTimer = null;
+	
 	return {
 		show : function(v, w) {
 			if (tt == null) {
@@ -39,13 +43,18 @@ var tooltip = function() {
 				b.style.display = 'block';
 			}
 			if (tt.offsetWidth > maxw) {
-				tt.style.width = maxw + 'px'
+				tt.style.width = maxw + 'px';
 			}
 			h = parseInt(tt.offsetHeight) + top;
+			
+			console.log('show');
 			clearInterval(tt.timer);
-			tt.timer = setInterval(function() {
-				tooltip.fade(1)
-			}, timer);
+			clearTimeout(showTimer);
+			showTimer = setTimeout(function () {
+				tt.timer = setInterval(function() {
+					tooltip.fade(1);
+				}, timer);
+			}, delay);
 		},
 		pos : function(e) {
 			var u = ie ? event.clientY + document.documentElement.scrollTop
@@ -75,7 +84,9 @@ var tooltip = function() {
 			}
 		},
 		hide : function() {
+			clearTimeout(showTimer);
 			clearInterval(tt.timer);
+			console.log('hide');
 			tt.timer = setInterval(function() {
 				tooltip.fade(-1)
 			}, timer);

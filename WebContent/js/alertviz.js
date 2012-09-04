@@ -332,7 +332,26 @@ var SocialGraph = function(options){
 	if (neighbourTextClr == null) neighbourTextClr = "white";
 	if (neighbourBoxClr == null) selectedBoxClr = "rgba(62, 189, 255, .6)";
 	
-//	var tooltip = tooltip();
+	// tooltip functions
+	function showTooltip(data) {
+		var html = '<table class="tooltip"><tbody>';
+		html += '<tr>';
+		html += '<td class="tooltip_name">' + data.label + '</td>';
+		html += '<td class="tooltip_id">' + data.id + '</td>';
+		html += '</tr>';
+		
+		html += '<tr>';
+		html += '<td class="tooltip_mail">' + data.email + '</td>';
+		html += '<td class="tooltip_expertise">Missing!!</td>';
+		html +='</tr>';
+		html += '</tbody></table>';
+		
+		tooltip.show(html);
+	}
+	
+	function hideToolip() {
+		tooltip.hide();
+	}
 	
 	var that = {
 		selectedTextClr: selectedTextClr,
@@ -467,21 +486,18 @@ var SocialGraph = function(options){
 						node.data.mouseOver = true;
 						
 						document.body.style.cursor = 'pointer';
-						tooltip.show('HELLO', 200);
-						
-						console.log('over ' + node.data.label);
+						showTooltip(node.data);
 					},
 					'mouseout': function (event, node) {
 						if (node.data.mouseOver != true) return;	// fix
 						node.data.mouseOver = false;
 						
-						tooltip.hide();
+						hideToolip();
 						
 						document.body.style.cursor = 'default';
-						console.log('out: ' + node.data.label);
 					},
 					'mousemove': function (event) {
-						console.log('move');
+						showTooltip(node.data);
 					}
 				}
 			}

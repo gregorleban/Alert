@@ -1,21 +1,24 @@
 .item_header{
 	width:70%;
-	background-color:#eee;
     -moz-border-radius:8px 0px 0px 8px;
     -webkit-border-radius:8px 0px 0px 8px;
     border-radius:8px 0px 0px 8px;
-    color:#333;
+    color:#000;
     font-weight:bold;
     font-size:12px;
-    text-shadow:1px 1px 1px #ccc;
+    text-shadow:1px 1px 1px #fff;
+    text-overflow: ellipsis;
+    max-width: 1ex;
+    white-space: nowrap;
+    overflow:hidden;
     background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
+		color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(220,220,220)),
+        color-stop(0.78, rgb(240,240,240))
         );
     background:
         -moz-linear-gradient(
@@ -26,7 +29,6 @@
         );
 }
 .item_date{
-	background-color:#eee;
 	width:30%;
     -moz-border-radius:0px 8px 8px 0px;
     -webkit-border-radius:0px 8px 8px 0px;
@@ -34,15 +36,15 @@
     text-align:center;
     color:#000;
     font-size:12px;
-    text-shadow:1px 1px 1px #ccc;
+    text-shadow:1px 1px 1px #fff;
     background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
+		color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(220,220,220)),
+        color-stop(0.78, rgb(240,240,240))
         );
     background:
         -moz-linear-gradient(
@@ -56,7 +58,7 @@
 	width:100%;
     padding:4px;
     text-align:left;
-    color:#000;
+    color:#333;
     font-weight:bold;
     text-shadow:1px 1px 1px #fff;
     background-color: #eee;
@@ -81,7 +83,7 @@
         );
 }
 .item_table{
-	color:#000;
+	color:#333;
     text-shadow:1px 1px 1px #fff;
     background-color: #fff;
     -moz-border-radius:8px 8px 8px 8px;
@@ -93,6 +95,11 @@
     box-shadow:0px 0px 3px #aaa;
     margin:2px 2px 10px 2px;
     width:292px;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    -webkit-hyphens: auto;
+   -moz-hyphens: auto;
+   hyphens: auto;
 }
 .item_table em{
     color:#f00;
@@ -107,8 +114,8 @@
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
 	width:250px;	
-	height:80px;
-	padding:5px;
+	height:60px;
+	padding:3px;
 }
 .tooltip_name{
 	font-size:14px;
@@ -117,14 +124,16 @@
 	-moz-border-radius:8px 0px 0px 8px;
     -webkit-border-radius:8px 0px 0px 8px;
     border-radius:8px 0px 0px 8px;
+    color:#000;
+    text-shadow:1px 1px 1px #fff;
 	background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
+		color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(220,220,220)),
+        color-stop(0.78, rgb(240,240,240))
         );
     background:
         -moz-linear-gradient(
@@ -142,14 +151,16 @@
 	-moz-border-radius:0px 8px 8px 0px;
     -webkit-border-radius:0px 8px 8px 0px;
     border-radius:0px 8px 8px 0px;
+    color:#000;
+    text-shadow:1px 1px 1px #fff;
 	background:
         -webkit-gradient(
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
+		color-stop(0.09, rgb(220,220,220)),
+        color-stop(0.55, rgb(220,220,220)),
+        color-stop(0.78, rgb(240,240,240))
         );
     background:
         -moz-linear-gradient(
@@ -164,6 +175,8 @@
 	-moz-border-radius:8px 0px 0px 8px;
     -webkit-border-radius:8px 0px 0px 8px;
     border-radius:8px 0px 0px 8px;
+    color:#333;
+    text-shadow:1px 1px 1px #fff;
 	background:
         -webkit-gradient(
         linear,
@@ -187,6 +200,8 @@
 	-moz-border-radius:0px 8px 8px 0px;
     -webkit-border-radius:0px 8px 8px 0px;
     border-radius:0px 8px 8px 0px;
+    color:#333;
+    text-shadow:1px 1px 1px #fff;
 	background:
         -webkit-gradient(
         linear,
@@ -203,4 +218,19 @@
         rgb(227,227,227) 55%,
         rgb(240,240,240) 78%
         );
+}
+.pages{
+	font-size:10px;
+	width:50%;
+	text-align:center;
+	line-height:11px;    
+	text-shadow:1px 1px 1px #fff;
+}
+.pages a{
+	font-size:10px;
+	color:#7BA857;
+	line-height:11px;
+}
+.pages_table{
+	width:300px
 }

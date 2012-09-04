@@ -7,7 +7,7 @@ ul.tabbernav
 {
  margin:2px;
  padding: 6px 0px;
- font: bold 12px "Century Gothic", Helvetica, sans-serif;
+ font: bold 12px Arial, Helvetica, sans-serif;
  height:16px;
  -moz-border-radius:8px 8px 8px 8px;
  -webkit-border-top-left-radius:8px;
@@ -100,9 +100,9 @@ ul.tabbernav li a:hover
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(180,180,180)),
-        color-stop(0.55, rgb(180,180,180)),
-        color-stop(0.78, rgb(220,220,220))
+		color-stop(0.09, rgb(150,150,150)),
+        color-stop(0.55, rgb(150,150,150)),
+        color-stop(0.78, rgb(200,200,200))
         );
     background:
         -moz-linear-gradient(
@@ -121,9 +121,9 @@ ul.tabbernav li.tabberactive a
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(180,180,180)),
-        color-stop(0.55, rgb(180,180,180)),
-        color-stop(0.78, rgb(220,220,220))
+		color-stop(0.09, rgb(150,150,150)),
+        color-stop(0.55, rgb(150,150,150)),
+        color-stop(0.78, rgb(200,200,200))
         );
     background:
         -moz-linear-gradient(
@@ -143,9 +143,9 @@ ul.tabbernav li.tabberactive a:hover
         linear,
         left bottom,
         left top,
-        color-stop(0.09, rgb(180,180,180)),
-        color-stop(0.55, rgb(180,180,180)),
-        color-stop(0.78, rgb(220,220,220))
+		color-stop(0.09, rgb(150,150,150)),
+        color-stop(0.55, rgb(150,150,150)),
+        color-stop(0.78, rgb(200,200,200))
         );
     background:
         -moz-linear-gradient(

@@ -47,7 +47,6 @@ var tooltip = function() {
 			}
 			h = parseInt(tt.offsetHeight) + top;
 			
-			console.log('show');
 			clearInterval(tt.timer);
 			clearTimeout(showTimer);
 			showTimer = setTimeout(function () {
@@ -86,7 +85,6 @@ var tooltip = function() {
 		hide : function() {
 			clearTimeout(showTimer);
 			clearInterval(tt.timer);
-			console.log('hide');
 			tt.timer = setInterval(function() {
 				tooltip.fade(-1)
 			}, timer);

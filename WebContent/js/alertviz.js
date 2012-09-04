@@ -687,6 +687,8 @@ var AlertViz = function(options) {
     var generalSearch = Search();
     var personSearch = Search();
     
+    var itemsPerPage = 100;
+    
     var that = {
     	searchStateGeneral: generalSearch,
     	searchStatePerson: personSearch,
@@ -805,29 +807,34 @@ var AlertViz = function(options) {
     	 * Items is special because it contains offset and limit
     	 */
     	searchItemsGeneral: function (queryOpts, offset, limit) {
+    		return that.searchItemsByQueryOpts({
+    			type: 'itemData',
+            	keywords: queryOpts.keywords,
+            	concepts: queryOpts.concepts,
+    			people: queryOpts.people,
+    			sources: queryOpts.sources,
+    			products: queryOpts.products,
+    			from: queryOpts.from,
+    			to: queryOpts.to,
+    			issuesChk: queryOpts.issuesChk,
+    			commitsChk: queryOpts.commitsChk,
+    			forumsChk: queryOpts.forumsChk,
+    			mailsChk: queryOpts.mailingListsChk,
+    			wikisChk: queryOpts.wikisChk,
+    			offset: offset,
+    			maxCount: limit
+    		});
+    	},
+    	
+    	searchItemsByQueryOpts: function (queryOpts) {
     		$.ajax({
                 type: "GET",
                 url: "query",
-                data: {
-                	type: 'itemData',
-                	keywords: queryOpts.keywords,
-                	concepts: queryOpts.concepts,
-        			people: queryOpts.people,
-        			sources: queryOpts.sources,
-        			products: queryOpts.products,
-        			from: queryOpts.from,
-        			to: queryOpts.to,
-        			issuesChk: queryOpts.issuesChk,
-        			commitsChk: queryOpts.commitsChk,
-        			forumsChk: queryOpts.forumsChk,
-        			mailsChk: queryOpts.mailingListsChk,
-        			wikisChk: queryOpts.wikisChk,
-        			offset: offset,
-        			maxCount: limit
-                },
+                data: queryOpts,
                 dataType: "json",
                 async: true,
                 success: function (data, textStatus, jqXHR) {
+                	that.currentQueryOpts = queryOpts;
                 	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
@@ -858,6 +865,7 @@ var AlertViz = function(options) {
     		var to = $('#to_text').val();
     		
     		var queryOpts = {
+    			type: 'generalSearch',
     			keywords: keywords,
     			concepts: concepts,
     			people: people,
@@ -875,10 +883,9 @@ var AlertViz = function(options) {
 			
 			that.searchKeywordsGeneral(queryOpts);
 			that.searchTimelineGeneral(queryOpts);
-			that.searchItemsGeneral(queryOpts, 0, 100);
+			that.searchItemsGeneral(queryOpts, 0, itemsPerPage);
 			that.searchPeopleGeneral(queryOpts);
 			
-			that.currentQueryOpts = queryOpts;
 			that.cleanData();
 			return false;
     	},
@@ -886,28 +893,33 @@ var AlertViz = function(options) {
     	searchIssueId: function (offset, limit) {
     		var issues = $('#issue_id_text').val();
     		
+    		return that.searchIssueByQueryOpts({
+				type: 'duplicateIssue',
+    			issues: issues,
+    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
+            	newChk: $('#new_check').attr('checked') == 'checked',
+            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
+            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
+            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
+            	worksChk: $('#works_check').attr('checked') == 'checked',
+            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
+            	wondChk: $('#wond_check').attr('checked') == 'checked',
+            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
+            	offset: offset,
+            	limit: limit
+    		});
+    	},
+    	
+    	searchIssueByQueryOpts: function (queryOpts) {
     		try {
 	    		$.ajax({
 	                type: "GET",
 	                url: "query",
-	                data: {
-	                	type: 'duplicateIssue',
-		    			issues: issues,
-		    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
-		            	newChk: $('#new_check').attr('checked') == 'checked',
-		            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
-		            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
-		            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
-		            	worksChk: $('#works_check').attr('checked') == 'checked',
-		            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
-		            	wondChk: $('#wond_check').attr('checked') == 'checked',
-		            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
-		            	offset: offset,
-		            	limit: limit
-	                },
+	                data: queryOpts,
 	                dataType: "json",
 	                async: true,
 	                success: function (data, textStatus, jqXHR) {
+	                	that.currentQueryOpts = queryOpts;
 	    				that.setQueryResults(data);
 	    			},
 	                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
@@ -915,9 +927,7 @@ var AlertViz = function(options) {
     		} catch (e) {
     			alert(e);
     		}
-    		
     		that.cleanData();
-    		
     		return false;
     	},
     	
@@ -939,6 +949,19 @@ var AlertViz = function(options) {
     		});
     		
     		return false;
+    	},
+    	
+    	jumpPage: function (offset, limit) {
+    		var queryOpts = that.currentQueryOpts;
+    		queryOpts.offset = offset;
+    		queryOpts.limit = limit;
+    		
+    		switch(queryOpts.type) {
+    		case 'duplicateIssue':
+    			return that.searchIssueByQueryOpts(queryOpts);
+    		case 'generalQuery':
+    			return that.searchItemsByQueryOpts(queryOpts);
+    		}
     	},
     	
     	setIssueDetails: function (data) {
@@ -976,20 +999,9 @@ var AlertViz = function(options) {
     		jQuery(".heading").click(function() {
 			    jQuery(this).next(".content").slideToggle(500);
 			});
-    		
-    		/*
-				<table class="heading" style="width:100%;">
-				<tr>
-				<td style="font-weight:bold;">
-				Related issues
-				</td>
-				</tr>
-				</table>
-				<div class="content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit orem ipsum dolor sit amet, consectetuer adipiscing elit</div>*/
     	},
     	
     	setCommitDetails: function (data) {
-    		
     		// header
     		var html = '<table class="heading"><tr>';
     		html += '<td class="title_desc">Commit comment</td>';
@@ -1617,18 +1629,24 @@ var AlertViz = function(options) {
 				
     			html += '</li>';
     		}
+    		html += '</ul>';
     		
+    		// navigation
     		var info = data.info;
-    		var navHtml = (info.offset + 1) + ' to ' + (info.offset + data.items.length) + ' of ' + info.totalCount;
-    		if (info.offset > 0)
+    		var offset = info.offset;
+    		var total = info.totalCount;
+    		
+    		var nPages = Math.ceil(total/itemsPerPage);
+    		var currentPage = Math.floor(offset/itemsPerPage) + 1;
+    		
+    		var navHtml = 'page ' + currentPage + ' of ' + nPages;
+    		if (currentPage > 1)
     			navHtml = '<a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
-    		if (info.offset + info.limit < info.totalCount)
+    		if (currentPage < nPages)
     			navHtml += ' <a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
     		
-    		html += '<li id="nav">' + navHtml + '</li>';
-
-    		html += '</ul>';
     		$('#items-div').html(html);
+    		$('#page_td').html(navHtml);
     	},
 
     	createGraph: function(data) {

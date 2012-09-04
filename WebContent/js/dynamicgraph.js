@@ -389,21 +389,20 @@ function Edge(opts) {
 }
 
 function ArborRenderer(opts) {
+	var graph = opts.graph;
+	var sys = null;
+	
 	var that = {
-		graph: opts.graph,
-		
-		particleSystem: null,
-		
 		init: function(system) {
-			that.particleSystem = system;
-			that.particleSystem.screenSize(that.graph.width, that.graph.height); 
-			that.particleSystem.screenPadding(40);
+			sys = system;
+			sys.screenSize(graph.width, graph.height); 
+			sys.screenPadding(40);
 		},
 		
 		redraw:function() {
-			if (!that.particleSystem) return;
+			if (!sys) return;
 
-			that.particleSystem.eachNode(function(node, pt) {
+			sys.eachNode(function(node, pt) {
 				node.data.pos = pt;
 				
 				if (!node.data.prop.isDragging())
@@ -411,14 +410,14 @@ function ArborRenderer(opts) {
 				else {	// fix
 					var pos = node.data.prop.getPosition();
 					var s = arbor.Point(pos.x, pos.y);
-					var p = that.particleSystem.fromScreen(s);
+					var p = sys.fromScreen(s);
 					
 					node.p = p;
 				}
 			});
 
 			// draw the edges
-			that.particleSystem.eachEdge(function(edge, pt1, pt2){
+			sys.eachEdge(function(edge, pt1, pt2){
 				//adjust the edge opacity based on the number of times it appears
 				edge.data.source = edge.source.data;
 				edge.data.target = edge.target.data;
@@ -426,7 +425,7 @@ function ArborRenderer(opts) {
 				edge.data.pos2 = pt2;
 			});
 			
-			that.graph.drawProps();
+			graph.drawProps();
 		}
 	};
 	

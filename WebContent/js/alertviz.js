@@ -890,7 +890,7 @@ var AlertViz = function(options) {
 			return false;
     	},
     	
-    	searchIssueId: function (offset, limit) {
+    	searchIssueId: function () {
     		var issues = $('#issue_id_text').val();
     		
     		return that.searchIssueByQueryOpts({
@@ -905,8 +905,8 @@ var AlertViz = function(options) {
             	fixedChk: $('#fixed_check').attr('checked') == 'checked',
             	wondChk: $('#wond_check').attr('checked') == 'checked',
             	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
-            	offset: offset,
-            	limit: limit
+            	offset: 0,
+            	limit: itemsPerPage
     		});
     	},
     	
@@ -959,7 +959,7 @@ var AlertViz = function(options) {
     		switch(queryOpts.type) {
     		case 'duplicateIssue':
     			return that.searchIssueByQueryOpts(queryOpts);
-    		case 'generalQuery':
+    		case 'itemData':
     			return that.searchItemsByQueryOpts(queryOpts);
     		}
     	},
@@ -1634,16 +1634,16 @@ var AlertViz = function(options) {
     		// navigation
     		var info = data.info;
     		var offset = info.offset;
-    		var total = info.totalCount;
+    		var total = info.totalCount == null ? Number.POSITIVE_INFINITY : info.totalCount;
     		
     		var nPages = Math.ceil(total/itemsPerPage);
     		var currentPage = Math.floor(offset/itemsPerPage) + 1;
     		
-    		var navHtml = 'page ' + currentPage + ' of ' + nPages;
+    		var navHtml = (nPages == Number.POSITIVE_INFINITY) ? 'page ' + currentPage : 'page ' + currentPage + ' of ' + nPages;
     		if (currentPage > 1)
-    			navHtml = '<a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
+    			navHtml = '<a onclick="viz.jumpPage(' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
     		if (currentPage < nPages)
-    			navHtml += ' <a onclick="viz.searchItemsGeneral(viz.currentQueryOpts, ' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
+    			navHtml += ' <a onclick="viz.jumpPage(' + (info.offset + info.limit) + ', ' + info.limit + ')">&gt;&gt;</a>';
     		
     		$('#items-div').html(html);
     		$('#page_td').html(navHtml);

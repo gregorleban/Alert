@@ -1314,7 +1314,7 @@ public class MessageUtils {
 			}
 			
 			JSONObject info = new JSONObject();
-			info.put("totalCount", items.size());
+			info.put("totalCount", Double.POSITIVE_INFINITY);
 			info.put("offset", 0);
 			info.put("limit", items.size());
 			

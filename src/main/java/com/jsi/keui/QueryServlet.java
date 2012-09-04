@@ -78,16 +78,6 @@ public class QueryServlet extends MQServlet {
 		if (log.isDebugEnabled())
 			log.debug("Received query request...");
 		
-		// TODO remove this peace of code================================================
-		HttpSession session = request.getSession();
-		
-		if (session.getAttribute(QueryServlet.USER_KEY) != null)
-			log.debug((String) session.getAttribute(QueryServlet.USER_KEY));
-		
-		if (session.isNew())
-			session.setAttribute(USER_KEY, "http://www.alert-project.eu/ontologies/alert_scm.owl#Person17");
-		//===============================================================================
-		
 		try {
 			if (!parameterMap.containsKey(TYPE_PARAM))
 				throw new IllegalArgumentException("The request doesn't contain parameter '" + TYPE_PARAM + "'!");
@@ -169,7 +159,7 @@ public class QueryServlet extends MQServlet {
 				resultJSon = msgUtils.parseKEUIDuplicateResponse(responseMsg);
 			}
 			else if (QueryType.SUGGEST_ISSUES.getValue().equals(type)) {
-				if (session.getAttribute(USER_KEY) == null)
+				/*if (session.getAttribute(USER_KEY) == null)
 					throw new IllegalStateException("No user stored in session!");
 				
 				String userId = (String) session.getAttribute(USER_KEY);
@@ -179,7 +169,7 @@ public class QueryServlet extends MQServlet {
 				
 				String requestMsg = msgUtils.genRecommenderIssuesMsg(Arrays.asList(new String[] {userId}));
 				String responseMsg = getRecommenderIssuesResponse(requestMsg);
-				
+				*/
 			}
 			else if (QueryType.SUGGEST_PEOPLE.getValue().equals(type)) {
 				String people = request.getParameter("people");

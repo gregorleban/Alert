@@ -967,7 +967,8 @@ var AlertViz = function(options) {
     	setIssueDetails: function (data) {
     		// generate accordion
     		// item description
-    		var html = '<table class="heading"><tr>';
+    		var html = '<div class="details_section">';
+    		html += '<table class="heading"><tr>';
     		html += '<td class="title_desc">Item description</td>';
     		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
     		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.dateOpened).format(defaultDateFormat) + '</div></td>';
@@ -976,12 +977,14 @@ var AlertViz = function(options) {
     		html += '</tr></table>';
     		// content
     		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
+    		html += '</div>';
     		
     		// comments
     		var comments = data.comments;
     		for (var i = 0; i < comments.length; i++) {
     			var comment = comments[i];
     			
+    			html += '<div class="details_section">';
     			html += '<table class="heading"><tr>';
     			html += '<td class="title_comm">Comment</td>';
     			html += '<td>Author: <div id="author_comm_' + i + '" class="data">' + comment.person.name + '</div></td>';
@@ -989,6 +992,7 @@ var AlertViz = function(options) {
     			html += '</tr></table>';
     			// content
     			html += '<div class="content">' + comment.commentText + '</div>';
+    			html += '</div>';
     		}
     		
     		// related issues TODO
@@ -1003,7 +1007,8 @@ var AlertViz = function(options) {
     	
     	setCommitDetails: function (data) {
     		// header
-    		var html = '<table class="heading"><tr>';
+    		var html = '<div class="details_section">';
+    		html += '<table class="heading"><tr>';
     		html += '<td class="title_desc">Commit comment</td>';
     		
     		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';	// TODO change class
@@ -1012,8 +1017,10 @@ var AlertViz = function(options) {
     		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';		// TODO change class
     		
     		html += '</tr></table>';
+    	
     		// content
     		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.message + '</div></td></tr></table></div>';
+    		html += '</div>';
     		
     		// files
     		var files = data.files;
@@ -1021,6 +1028,7 @@ var AlertViz = function(options) {
     			var file = files[fileIdx];
     			var modules = file.modules;
     			
+    			html += '<div class="details_section">';
     			html += '<table class="heading"><tr>';
     			html += '<td class="title_comm">File</td>';
     			html += '<td>Name: <div id="name_file_' + fileIdx + '" class="data">' + file.name + '</div></td>';
@@ -1053,6 +1061,7 @@ var AlertViz = function(options) {
     			}
     			
     			html += '</table></div>';
+    			html += '</div>';
     		}
     		
     		$('#details_wrapper').html(html);

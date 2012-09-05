@@ -517,6 +517,18 @@ var SocialGraph = function(options){
 		
 		init: function (data) {
 			that.graph.setData(data);
+		},
+		
+		getHeight: function () {
+			return that.graph.getHeight();
+		},
+		
+		getWidth: function () {
+			return that.graph.getWidth();
+		},
+		
+		resize: function (newWidth, newHeight) {
+			that.graph.setSize(newWidth, newHeight);
 		}
 	};
 	
@@ -689,17 +701,18 @@ var AlertViz = function(options) {
     
     var itemsPerPage = 100;
     
+    var socialGraph = null;
+    
     var that = {
     	searchStateGeneral: generalSearch,
     	searchStatePerson: personSearch,
     	currentQueryOpts: null,
-    	socialGraph: null,
     	
     	cleanData: function () {
     		$('#details_wrapper').html('');
     		$('#wordcloud-div').html('');
-    		if (that.socialGraph != null)
-    			that.socialGraph.clear();
+    		if (socialGraph != null)
+    			socialGraph.clear();
     	},
     	
     	addToSearchField: function (fieldId, data) {
@@ -1659,23 +1672,23 @@ var AlertViz = function(options) {
     	},
 
     	createGraph: function(data) {
-    		if (that.socialGraph == null) {
-	    		that.socialGraph = SocialGraph({
+    		if (socialGraph == null) {
+	    		socialGraph = SocialGraph({
 	    			step: 10,
 	    			container: '#graph-div',    			
 	    		});
     		}
-    		that.socialGraph.init(data);
+    		socialGraph.init(data);
     	},
     	
     	decreaseGraph: function() {
-    		if(that.socialGraph)
-    			that.socialGraph.showLess();
+    		if(socialGraph)
+    			socialGraph.showLess();
     	},
     	
     	increaseGraph: function() {
-    		if(that.socialGraph)
-    			that.socialGraph.showMore();
+    		if(socialGraph)
+    			socialGraph.showMore();
     	}
     };
     
@@ -1867,6 +1880,13 @@ var AlertViz = function(options) {
     		currentTab = i;
     		updateUrl();
     	});
+    });
+    
+    // resize wordcloud and social graph
+    $('.item_right').resize(function (event) {
+    	var width = $('.item_right').width();
+    	
+    	if (socialGraph != null) socialGraph.resize(width, socialGraph.getHeight());
     });
     
     return that;

@@ -2,6 +2,7 @@
  visibility:hidden;
  position: absolute;
  left: -10000px;
+ width: 31%;
 }
 ul.tabbernav
 {

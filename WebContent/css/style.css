@@ -311,7 +311,11 @@ input.button {
 	content: "."; 
 }
 #graph-div {
-	width: 606px;
+	width: 100%;
+	height: 460px;
+}
+#item-div {
+	width: 100%;
 	height: 460px;
 }
 .selected-node {
@@ -329,7 +333,7 @@ input.button {
 	background-color: #7BA857;
 }
 #wordcloud-div {
-	width: 606px !important;
+	width: 100% !important;
 	height: 460px !important;
 }
 ::-webkit-scrollbar {

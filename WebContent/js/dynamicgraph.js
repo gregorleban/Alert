@@ -1,92 +1,99 @@
 
 function DynamicGraph (options) {
-	var that = {
+	var width = options.width;
+	var height = options.height;
+	
+	// init the stage
+	var stage = new Kinetic.Stage({
 		container: options.container,
-		startDisplayLevel: options.startDisplayLevel == null ? 50 : options.startDisplayLevel,
-		step: options.step == null ? 5 : options.step,
-		minDisplayedNodes: options.minNodes == null ? 3 : options.minNodes,
-				
-		width: options.width,
-		height: options.height,
-		
-		drawNodeFunc: options.drawNode,
-		drawEdgeFunc: options.drawEdge,
-		
-		draggable: options.draggable,
-		selectionMode: options.selectionMode,
-		
-		handlers: options.handlers,
-		
-		selectedNodes: {},
-		nodeH: {},
-		displayedNodes: {},
-		displayedEdges: {},
-		totalNodes: 0,
-		
-		stage: null,
-		particleSystem: null,
-		nodeLayer: null,
-		
-		currentDisplayLevel: null,
-		
+		width: width,
+		height: height
+	});
+	
+	var nodeLayer = new Kinetic.Layer();
+	stage.add(nodeLayer);
+	
+	// add handlers
+	for (var handler in options.handlers.stage)
+		stage.on(handler, options.handlers.stage[handler]);
+	
+	// create the particle system
+	var particleSystem = arbor.ParticleSystem(2000, 50, 0.5, true);
+	particleSystem.parameters({gravity:true});
+	particleSystem.parameters({precision:0.9});
+	
+	// structures
+	var selectedNodes = {};
+	var nodeH = {};
+	var displayedNodes = {};
+	var displayedEdges = {};
+	var rankedNodeNames = [];
+	
+	// variables
+	var totalNodes = 0;
+	var startDisplayLevel = options.startDisplayLevel == null ? 50 : options.startDisplayLevel;
+	var	minDisplayedNodes = options.minNodes == null ? 3 : options.minNodes;
+	
+	var currentDisplayLevel = null;
+	var step = options.step == null ? 5 : options.step;
+	
+	var that = {
 		addNode: function (node) {
-			if (!(node.id in that.displayedNodes)) {
-				that.nodeLayer.add(node.prop);
-				if (that.particleSystem.getNode(node.id) == null)
-					node.sysNode = that.particleSystem.addNode(node.id, node.data);
+			if (!(node.id in displayedNodes)) {
+				nodeLayer.add(node.prop);
+				if (particleSystem.getNode(node.id) == null)
+					node.sysNode = particleSystem.addNode(node.id, node.data);
 				
-				that.displayedNodes[node.id] = node;
+				displayedNodes[node.id] = node;
 			}
 		},
 		
 		addEdge: function (edge) {
 			var source = edge.source;
 			var target = edge.target;
-			if (source.id in that.displayedNodes && target.id in that.displayedNodes && !(edge.id in that.displayedEdges)) {
-				that.nodeLayer.add(edge.prop);
-				that.displayedEdges[edge.id] = edge;
+			if (source.id in displayedNodes && target.id in displayedNodes && !(edge.id in displayedEdges)) {
+				nodeLayer.add(edge.prop);
+				displayedEdges[edge.id] = edge;
 				
-				if (that.particleSystem.getEdges(source.id, target.id).length == 0)
-					that.particleSystem.addEdge(source.id, target.id, edge.data);
+				if (particleSystem.getEdges(source.id, target.id).length == 0)
+					particleSystem.addEdge(source.id, target.id, edge.data);
 			}
 		},
 		
 		drawProps: function () {
-			that.nodeLayer.draw();
+			nodeLayer.draw();
 		},
 		
 		draw: function () {
-			that.stage.draw();
+			stage.draw();
 		},
 		
 		clear: function () {
-			that.nodeLayer.removeChildren();
+			nodeLayer.removeChildren();
 			
-			for (var key in that.displayedNodes)
-				that.particleSystem.pruneNode(that.displayedNodes[key].sysNode);
+			for (var key in displayedNodes)
+				particleSystem.pruneNode(displayedNodes[key].sysNode);
 			
-			that.selectedNodes = {};
-			that.nodeH = {};
-			that.displayedNodes = {};
-			that.displayedEdges = {};
-			that.totalNodes = 0;
+			selectedNodes = {};
+			nodeH = {};
+			displayedNodes = {};
+			displayedEdges = {};
+			totalNodes = 0;
 			
 			that.draw();
 		},
 		
 		display: function (n) {
 			// first clear the stage
-			that.nodeLayer.removeChildren();
-			that.displayedNodes = {};
-			that.displayedEdges = {};
+			nodeLayer.removeChildren();
+			displayedNodes = {};
+			displayedEdges = {};
 			
-			that.currentDisplayLevel = n;
-		
-			var nodeH = that.nodeH;
+			currentDisplayLevel = n;
 			
 			// add nodes and edges
 			// add nodes, the edges will be added later, otherwise some will be omitted
-			var nodesToDisplay = that.rankedNodeNames.slice(0, n);
+			var nodesToDisplay = rankedNodeNames.slice(0, n);
 			var edgesToDisplay = [];
 			for (var i = 0; i < nodesToDisplay.length; i++) {
 				var node = nodeH[nodesToDisplay[i]];
@@ -100,27 +107,22 @@ function DynamicGraph (options) {
 			for (var i = 0; i < edgesToDisplay.length; i++)
 				that.addEdge(edgesToDisplay[i]);
 			
-			that.nodeLayer.draw();
+			nodeLayer.draw();
 		},
 		
 		showMore: function () {
-			var step = that.step;
-			
-			that.display(Math.min(that.totalNodes, that.currentDisplayLevel + step));
+			that.display(Math.min(totalNodes, currentDisplayLevel + step));
 		},
 		
 		showLess: function () {
-			var step = that.step;
-			var rankedNodeNames = that.rankedNodeNames;
+			var oldDisplayLevel = currentDisplayLevel;
 			
-			var oldDisplayLevel = that.currentDisplayLevel;
+			that.display(Math.max(minDisplayedNodes, currentDisplayLevel - step));
 			
-			that.display(Math.max(that.minDisplayedNodes, that.currentDisplayLevel - step));
-			
-			var newDisplayLevel = that.currentDisplayLevel;
+			var newDisplayLevel = currentDisplayLevel;
 			var nodesToRemove = rankedNodeNames.slice(newDisplayLevel, oldDisplayLevel);
 			for (var i = 0; i < nodesToRemove.length; i++)
-				that.particleSystem.pruneNode(that.nodeH[nodesToRemove[i]].sysNode);
+				particleSystem.pruneNode(nodeH[nodesToRemove[i]].sysNode);
 		},
 		
 		setData: function (data) {	
@@ -154,12 +156,12 @@ function DynamicGraph (options) {
 			}
 			degNodeList.sort(function (a, b) {return b[0] - a[0];}); // sort in reverse order
 			
-			var rankedNodeNames = [];
+			rankedNodeNames = [];
 			for(var i = 0; i < degNodeList.length; i++)
 				rankedNodeNames.push(degNodeList[i][1]);
 			
-			var nodeH = {};
-			var edgeH = {};
+			nodeH = {};
+//			var edgeH = {};
 			
 			// construct a node hash
 			for (var i = 0; i < allNodes.length; i++) {
@@ -170,11 +172,12 @@ function DynamicGraph (options) {
 				var propNode = Node({
 					id: node.id,
 					data: node,
-					draggable: that.draggable,
-					selectionMode: that.selectionMode,
+					draggable: options.draggable,
+					selectionMode: options.selectionMode,
 					graph: that,
-					sysNode: that.particleSystem.addNode(node.id, node),
-					handlers: that.handlers
+					drawFunc: options.drawNode,
+					sysNode: particleSystem.addNode(node.id, node),
+					handlers: options.handlers
 				});
 				
 				propNode.data.prop = propNode.prop;
@@ -189,7 +192,7 @@ function DynamicGraph (options) {
 				
 				var propEdge = Edge({id: i + '',
 					data: edge.data,
-					drawFunc: that.drawEdgeFunc,
+					drawFunc: options.drawEdge,
 					source: source,
 					target: target
 				});
@@ -204,46 +207,46 @@ function DynamicGraph (options) {
 			// remove all the nodes from the particle system
 			for (var key in nodeH) {
 				var sysNode = nodeH[key].sysNode;
-				that.particleSystem.pruneNode(sysNode);
+				particleSystem.pruneNode(sysNode);
 			}
 			
-			that.totalNodes = allNodes.length;
-			that.nodeH = nodeH;
-			that.edgeH = edgeH;
-			that.rankedNodeNames = rankedNodeNames;
-			that.display(that.startDisplayLevel);
+			that.display(startDisplayLevel);
 		},
 		
+		getWidth: function () {
+			return width;
+		},
 		
-		init: function () {
-			// init the stage
-			var stage = new Kinetic.Stage({
-				container: that.container,
-				width: that.width,
-				height: that.height
-			});
-			
-			that.nodeLayer = new Kinetic.Layer();
-			stage.add(that.nodeLayer);
-			
-			// add handlers
-			for (var handler in that.handlers.stage) {
-				stage.on(handler, that.handlers.stage[handler]);
-			}
-			
-			// create a particle system
-			that.particleSystem = arbor.ParticleSystem(2000, 50, 0.5, true);
-			that.particleSystem.parameters({gravity:true});
-			that.particleSystem.parameters({precision:0.9});
-			that.particleSystem.renderer = ArborRenderer({
-				graph: that
-			});
-			
-			that.stage = stage;
+		getHeight: function () {
+			return height;
+		},
+		
+		setSize: function (newWidth, newHeight) {
+			width = newWidth;
+			height = newHeight;
+			stage.setSize(width, height);
+			particleSystem.screenSize(width, height);
+			particleSystem.start();
+			stage.draw();
+		},
+		
+		getParticleSystem: function () {
+			return particleSystem;
+		},
+		
+		getSelectedNodes: function () {
+			return selectedNodes;
+		},
+		
+		getDisplayedNodes: function () {
+			return displayedNodes;
 		}
 	};
 	
-	that.init();
+	
+	particleSystem.renderer = ArborRenderer({
+		graph: that
+	});
 	
 	return that;
 }
@@ -254,7 +257,7 @@ function Node(opts) {
 		graph: opts.graph,
 		data: opts.data,
 		sysNode: opts.sysNode,
-		drawFunc: opts.graph.drawNodeFunc,
+		drawFunc: opts.drawFunc,
 		draggable: opts.draggable,
 		selectionMode: opts.selectionMode,
 		handlers: opts.handlers.node,
@@ -264,7 +267,7 @@ function Node(opts) {
 		
 		select: function (select) {
 			var data = that.data;
-			var selectedNodes = that.graph.selectedNodes;
+			var selectedNodes = that.graph.getSelectedNodes();
 			
 			if (select == data.selected) return;
 			
@@ -276,7 +279,7 @@ function Node(opts) {
 				var neigh = neighbours[i];
 				if (select) {
 					neigh.neighboursSelected++;
-					if (neigh.id in that.graph.displayedNodes)
+					if (neigh.id in that.graph.getDisplayedNodes())
 						neigh.prop.moveToTop();
 				} else if(neigh.neighboursSelected > 0) {
 					neigh.neighboursSelected--;
@@ -326,7 +329,7 @@ function Node(opts) {
 	
 					var pos = that.prop.getPosition();
 					var s = arbor.Point(pos.x, pos.y);
-					var sys = that.graph.particleSystem;
+					var sys = that.graph.getParticleSystem();;
 					var p = sys.fromScreen(s);
 	
 					that.sysNode.p = arbor.Point(p.x,p.y);
@@ -395,7 +398,7 @@ function ArborRenderer(opts) {
 	var that = {
 		init: function(system) {
 			sys = system;
-			sys.screenSize(graph.width, graph.height); 
+			sys.screenSize(graph.getWidth(), graph.getHeight()); 
 			sys.screenPadding(40);
 		},
 		

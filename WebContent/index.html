@@ -48,7 +48,26 @@
 				viz.decreaseGraph();
 			});			
 			$('#from_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
-			$('#to_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});			
+			$('#to_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
+			
+			// init the separator
+			var leftItemWidth;
+			var rightItemWidth;
+			$('#separator').draggable({
+				axis: 'x',
+				grid: [20, 20],
+				containment: [$('#separator').offset().left - 100, 0, $('#separator').offset().left + 200, 10000],
+				drag: function (event, ui) {
+					$('.item_left').width(leftItemWidth + ui.position.left);
+					$('.item_right').width(rightItemWidth - ui.position.left);
+					event.stopPropagation();
+				},
+				start: function (event, ui) {
+					leftItemWidth = $('.item_left').width();
+					rightItemWidth = $('.item_right').width();
+				}
+			});
+			
 			loadState();
 		});
 		-->
@@ -205,6 +224,7 @@
 			</div>
 		</div>
 	</div>
+	<div id="separator" onselectstart="return false;"></div>
 	<div id="container" class="item_right">
 	<div class="tabber">
  	<div class="tabbertab">

@@ -1890,12 +1890,40 @@ var AlertViz = function(options) {
     	});
     });
     
-    // resize wordcloud and social graph
-    $('.item_right').resize(function (event) {
-    	var width = $('.item_right').width();
-    	
-    	if (socialGraph != null) socialGraph.resize(width, socialGraph.getHeight());
-    });
+    // make the items div and item details div resizable
+    $('#separator').draggable({
+		axis: 'x',
+		grid: [20, 20],
+		containment: [$('#separator').offset().left - 100, 0, $('#separator').offset().left + 200, 10000],
+		drag: function (event, ui) {
+			var prevWidth = $('.item_right').width();
+			
+			$('.item_left').width(leftItemWidth + ui.position.left);
+			$('.item_right').width(rightItemWidth - ui.position.left);
+			event.stopPropagation();
+			
+			// resize the social graph and wordcloud
+			var width = $('.item_right').width();
+	    	
+			if (width != prevWidth) {
+		    	// social graph
+		    	if (socialGraph != null) socialGraph.resize(width, socialGraph.getHeight());
+		    	// wordcloud
+		    	var prevCenter = prevWidth/2;
+		    	var newCenter = width/2;
+		    	
+		    	var dx = newCenter - prevCenter;
+		    	$.each($('#wordcloud-div').children('span'), function (idx, el) {
+		    		var left = $(el).position().left;
+		    		$(el).css('left', (left + dx) + 'px');
+		    	});
+			}
+		},
+		start: function (event, ui) {
+			leftItemWidth = $('.item_left').width();
+			rightItemWidth = $('.item_right').width();
+		}
+	});
     
     return that;
 };

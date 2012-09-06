@@ -23,7 +23,6 @@
 	<script type="application/javascript" src="js/jquery.ba-bbq.min.js"></script>
 	<script type="application/javascript" src="js/jquery.autoSuggest.js"></script>
 	<script type="application/javascript" src="js/jquery.bpopup-0.7.0.min.js"></script>
-	<script type="application/javascript" src="js/jquery.ba-resize.min.js"></script>
 	<script type="application/javascript" src="js/arbor.js"></script>
 	<script type="application/javascript" src="js/kinetic-v3.10.0.js"></script>
 	<script type="application/javascript" src="js/graphics.js"></script>
@@ -54,20 +53,6 @@
 			// init the separator
 			var leftItemWidth;
 			var rightItemWidth;
-			$('#separator').draggable({
-				axis: 'x',
-				grid: [20, 20],
-				containment: [$('#separator').offset().left - 100, 0, $('#separator').offset().left + 200, 10000],
-				drag: function (event, ui) {
-					$('.item_left').width(leftItemWidth + ui.position.left);
-					$('.item_right').width(rightItemWidth - ui.position.left);
-					event.stopPropagation();
-				},
-				start: function (event, ui) {
-					leftItemWidth = $('.item_left').width();
-					rightItemWidth = $('.item_right').width();
-				}
-			});
 			
 			loadState();
 		});

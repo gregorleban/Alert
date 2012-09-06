@@ -332,6 +332,16 @@ input.button {
 .bar-selected {
 	background-color: #7BA857;
 }
+.barchart-axis-title {
+	color: pink;
+}
+.barchart-xaxis-labels {
+	color: magenta;
+}
+.barchart-yaxis-labels {
+	color: cyan;
+}
+
 #wordcloud-div {
 	width: 100% !important;
 	height: 460px !important;

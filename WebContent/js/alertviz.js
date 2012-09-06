@@ -354,11 +354,6 @@ var SocialGraph = function(options){
 	}
 	
 	var that = {
-		selectedTextClr: selectedTextClr,
-		selectedBoxClr: selectedBoxClr,
-		neighbourTextClr: neighbourTextClr,
-		neighbourBoxClr: neighbourBoxClr,
-		
 		step: options.step,
 		minDisplayLevel: 3,
 		
@@ -702,11 +697,11 @@ var AlertViz = function(options) {
     var itemsPerPage = 100;
     
     var socialGraph = null;
+    var currentQueryOpts = null;
     
     var that = {
     	searchStateGeneral: generalSearch,
     	searchStatePerson: personSearch,
-    	currentQueryOpts: null,
     	
     	cleanData: function () {
     		$('#details_wrapper').html('');
@@ -847,7 +842,7 @@ var AlertViz = function(options) {
                 dataType: "json",
                 async: true,
                 success: function (data, textStatus, jqXHR) {
-                	that.currentQueryOpts = queryOpts;
+                	currentQueryOpts = queryOpts;
                 	that.setQueryResults(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
@@ -932,7 +927,7 @@ var AlertViz = function(options) {
 	                dataType: "json",
 	                async: true,
 	                success: function (data, textStatus, jqXHR) {
-	                	that.currentQueryOpts = queryOpts;
+	                	currentQueryOpts = queryOpts;
 	    				that.setQueryResults(data);
 	    			},
 	                error: function (jqXHR, textStatus, errorThrown) { /* for now do nothing */ }
@@ -965,7 +960,7 @@ var AlertViz = function(options) {
     	},
     	
     	jumpPage: function (offset, limit) {
-    		var queryOpts = that.currentQueryOpts;
+    		var queryOpts = currentQueryOpts;
     		queryOpts.offset = offset;
     		queryOpts.limit = limit;
     		
@@ -1131,6 +1126,9 @@ var AlertViz = function(options) {
     		var selectedRange = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
     		var normalColor = getCssValue('bar-normal', 'background-color');
     		var selectedColor = getCssValue('bar-selected', 'background-color');
+    		var textColor = getCssValue('barchart-axis-title', 'color');
+    		var yLabelsColor = getCssValue('barchart-yaxis-labels', 'color');
+    		var xLabelsColor = getCssValue('barchart-xaxis-labels', 'color');
     		var ctrlDown = false;
     		$(document).keydown(function (event) {
     			if (event.keyCode == 17)	// CTRL
@@ -1257,6 +1255,7 @@ var AlertViz = function(options) {
 					}
 				},
 				colors: [normalColor],
+				credits: {enabled: false},
 				title: null,				
 				xAxis: {
 					min: minX,
@@ -1269,7 +1268,8 @@ var AlertViz = function(options) {
 						rotation: -45,
 						align: 'right',
 						style: {
-							 font: 'normal 10px Arial, sans-serif'
+							 font: 'normal 10px Arial, sans-serif',
+							 color: xLabelsColor
 						}
 					},
 					events: {
@@ -1382,7 +1382,15 @@ var AlertViz = function(options) {
 				yAxis: {
 					min: 0,
 					title: {
-						text: 'Posts'
+						text: 'Posts',
+						style: {
+							color: textColor
+						}
+					},
+					labels: {
+						style: {
+							color: yLabelsColor
+						}
 					}
 				},
 				legend: {

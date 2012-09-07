@@ -1256,7 +1256,12 @@ var AlertViz = function(options) {
 				},
 				colors: [normalColor],
 				credits: {enabled: false},
-				title: null,				
+				title: null,
+				toolbar: {
+			        itemStyle: {
+			            color: textColor
+			        }
+			    },
 				xAxis: {
 					min: minX,
 					max: maxX,

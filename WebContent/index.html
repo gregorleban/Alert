@@ -38,22 +38,8 @@
 	<script type="application/javascript">
 		<!--
 		var viz;
-		$(document).ready(function(){
-			$('#tabs').tabs();														
-			viz = AlertViz();			
-			$('#btnShowMore').click(function(){
-				viz.increaseGraph();
-			});			
-			$('#btnShowLess').click(function(){
-				viz.decreaseGraph();
-			});			
-			$('#from_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
-			$('#to_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
-			
-			// init the separator
-			var leftItemWidth;
-			var rightItemWidth;
-			
+		$(document).ready(function(){														
+			viz = AlertViz();
 			loadState();
 		});
 		-->

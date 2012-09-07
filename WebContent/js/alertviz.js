@@ -1890,17 +1890,31 @@ var AlertViz = function(options) {
     	});
     });
     
+    // buttons on social graph
+    $('#btnShowMore').click(function(){
+		viz.increaseGraph();
+	});			
+	$('#btnShowLess').click(function(){
+		viz.decreaseGraph();
+	});
+	
+	// datepickers
+	$('#from_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
+	$('#to_text').datepicker({dateFormat: 'yy-mm-dd', constrainInput: true});
+    
     // make the items div and item details div resizable
+	var leftItemWidth = $('.item_left').width();
+	var rightItemWidth = $('.item_right').width();
     $('#separator').draggable({
 		axis: 'x',
 		grid: [20, 20],
 		containment: [$('#separator').offset().left - 100, 0, $('#separator').offset().left + 200, 10000],
 		drag: function (event, ui) {
+			event.stopPropagation();
 			var prevWidth = $('.item_right').width();
 			
 			$('.item_left').width(leftItemWidth + ui.position.left);
 			$('.item_right').width(rightItemWidth - ui.position.left);
-			event.stopPropagation();
 			
 			// resize the social graph and wordcloud
 			var width = $('.item_right').width();
@@ -1908,6 +1922,7 @@ var AlertViz = function(options) {
 			if (width != prevWidth) {
 		    	// social graph
 		    	if (socialGraph != null) socialGraph.resize(width, socialGraph.getHeight());
+		    	
 		    	// wordcloud
 		    	var prevCenter = prevWidth/2;
 		    	var newCenter = width/2;

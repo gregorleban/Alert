@@ -1,4 +1,4 @@
-package com.jsi.keui;
+package com.jsi.keui.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -121,16 +121,22 @@ public class QueryServlet extends MQServlet {
 			else if (QueryType.ISSUE_DETAILS.getValue().equals(type)) {
 				// check if the ID is a number
 				String itemId = request.getParameter(QUERY_PARAM);
-				String requestMsg = msgUtils.genIssueDetailsMsg(itemId);
+				String requestId = Utils.genRequestID();
 				
-				String responseMsg = getApiIssueResponse(requestMsg);
+				String requestMsg = msgUtils.genIssueDetailsMsg(itemId, requestId);
+				String responseMsg = getAPIResponse(requestMsg, requestId);
+				
 				resultJSon = msgUtils.parseIssueDetailsMsg(responseMsg);
 			}
 			else if (QueryType.COMMIT_DETAILS.getValue().equals(type)) {
 				String itemId = request.getParameter(QUERY_PARAM);
-				String requestMsg = msgUtils.getCommitDetailsMsg(itemId);
+				String requestId = Utils.genRequestID();
 				
-				String responseMsg = getApiCommitResponse(requestMsg);
+				String requestMsg = msgUtils.getCommitDetailsMsg(itemId, requestId);
+				String responseMsg = getAPIResponse(requestMsg, requestId);//getAPIResponse(requestMsg, requestId);
+				
+//				log.info("\n\n\n" + requestMsg + "\n\n\n" + responseMsg + "\n\n\n");		// TODO remove me
+				
 				resultJSon = msgUtils.parseCommitDetailsMessage(responseMsg);
 			}
 			else if (QueryType.ITEM_DETAILS.getValue().equals(type)) {

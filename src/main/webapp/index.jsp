@@ -1,3 +1,4 @@
+<%@page import="com.jsi.keui.utils.LoginUtils"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,22 +37,18 @@
 	<script type="application/javascript" src="js/date.format.js"></script>
 	<script type="application/javascript" src="js/tooltip.js"></script>
 	<script type="application/javascript">
-		<!--
 		var viz;
 		$(document).ready(function(){														
 			viz = AlertViz();
 			loadState();
 		});
-		-->
 	</script>
 	<script type="text/javascript" charset="utf-8">
   	  $(document).ready(function(){
  	     $('.popbox').popbox();
  	   });
 	</script>
-	<script type="text/javascript">
-		document.write('<style type="text/css">.tabber{visibility: hidden;}<\/style>');
-	</script>
+	<style type="text/css">.tabber{visibility: hidden;}</style>
 </head>
 <body>
 	<div id="header-wrap">
@@ -63,6 +60,13 @@
 					 <li id="current"><a href="index.html">Browse</a></li>
 					 <li><a href="visualization.html">Subscribe</a></li>
 					 <li><a href="recommendation.html">Project overview</a></li>
+					 <%
+					 if (LoginUtils.getInstance().isAdmin()) {
+					 %>
+					 	<li><a href="recommendation.html">Administration</a></li>
+					 <%
+					 } 
+					 %>
 					 <li><img src="img/spacer.gif" height="8" width="170" style="padding:0;border:0;opacity:0;"></img></li>
 					 <li><div class='popbox'>
 				  		 <a class="open" href="#" style="text-transform:lowercase;width:160px;margin-top:8px;height:20px;line-height:20px;font-weight:normal;font-size:12px;position:relative;float:left;">ursic.jure@gmail.com</a>
@@ -159,7 +163,7 @@
 											<td class="cells"><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells"><button onclick="return return viz.search();">Search</button></td>
+											<td class="cells"><button onclick="return viz.search();">Search</button></td>
 										</tr>
 									</tbody>
 								</table>

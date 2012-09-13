@@ -1,15 +1,17 @@
 package com.jsi.keui.mq;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.Topic;
 
-import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,74 +24,110 @@ import org.slf4j.LoggerFactory;
  */
 public class MQSessionProvider {
 	
+	public enum ComponentKey {
+		KEUI,
+		API
+	}
+	
 	private static final Logger log = LoggerFactory.getLogger(MQSessionProvider.class);
-	
-	private static final String DEFAULT_MQ_URL = ActiveMQConnection.DEFAULT_BROKER_URL;
-	private static final String DEFAULT_IN_TOPIC = "ALERT.KEUI.Response";
-	private static final String DEFAULT_OUT_TOPIC = "ALERT.*.KEUIRequest";
-	
-	private String mqUrl;
-	private String inTopic;
-	private String outTopic;
 	
 	private static MQSessionProvider instance;
 	
 	private Session mqSession;
-	private Destination inDestination, outDestination;
+	private Map<ComponentKey, Topic> requestTopics, responseTopics;
 	
-	
-	private MQSessionProvider() throws JMSException {
-		readProps();
-		initMQ();
+	public static synchronized MQSessionProvider getInstance() throws JMSException, IOException {
+		if (instance == null)
+			instance = new MQSessionProvider();
+		return instance;
 	}
 	
-	private void readProps() {
-		try {
-			Properties props = new Properties();
-			props.load(this.getClass().getClassLoader().getResourceAsStream("alert.properties"));
-			
-			mqUrl = props.getProperty("mq_url");
-			inTopic = props.getProperty("topic.keui.response");
-			outTopic = props.getProperty("topic.keui.request");
-		} catch (Throwable ex) {
-			log.error("Failed to read properties file! Setting default values.", ex);
-			
-			mqUrl = DEFAULT_MQ_URL;
-			inTopic = DEFAULT_IN_TOPIC;
-			outTopic = DEFAULT_OUT_TOPIC;
-		}
+	private MQSessionProvider() throws JMSException, IOException {
+		initMQ();
 	}
 	
 	/**
 	 * Initializes the connection to ActiveMQ.
 	 * 
 	 * @throws JMSException
+	 * @throws IOException 
 	 */
-	private void initMQ() throws JMSException {
-		ConnectionFactory factory = new ActiveMQConnectionFactory(mqUrl);
+	private void initMQ() throws JMSException, IOException {
+		log.info("Initializing ActiveMQ...");
+		
+		// read the properties
+		if (log.isDebugEnabled()) log.debug("Reading properties...");
+		Properties props = new Properties();
+		props.load(this.getClass().getClassLoader().getResourceAsStream("alert.properties"));
+		
+		// init MQ
+		if (log.isDebugEnabled()) log.debug("Creating connections...");
+		ConnectionFactory factory = new ActiveMQConnectionFactory(props.getProperty("mq_url"));
 		javax.jms.Connection mqConnection = factory.createConnection();
 		mqConnection.start();
 
 		mqSession = mqConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		outDestination = mqSession.createTopic(outTopic);
-		inDestination = mqSession.createTopic(inTopic);
+		
+		requestTopics = new HashMap<>();
+		responseTopics = new HashMap<>();
+		
+		// initiate consumers/producers
+		requestTopics.put(ComponentKey.KEUI, mqSession.createTopic(props.getProperty("topic.keui.request")));
+		requestTopics.put(ComponentKey.API, mqSession.createTopic(props.getProperty("topic.api.request")));
+		
+		responseTopics.put(ComponentKey.KEUI, mqSession.createTopic(props.getProperty("topic.keui.response")));
+		responseTopics.put(ComponentKey.API, mqSession.createTopic(props.getProperty("topic.api.response")));
 	}
 	
-	public MessageProducer createProducer() throws JMSException {
-		return mqSession.createProducer(outDestination);
+	/**
+	 * Creates and returns a <code>MessageProducer</code> posting on the KEUI request topic.
+	 * 
+	 * @return
+	 * @throws JMSException 
+	 */
+	public MessageProducer getKEUIProducer() throws JMSException {
+		return getProducer(ComponentKey.KEUI);
 	}
 	
-	public MessageConsumer createConsumer() throws JMSException {
-		return mqSession.createConsumer(inDestination);
+	/**
+	 * Creates and returns a <code>MessageConsumer</code> listening on the KEUI response topic.
+	 * 
+	 * @return
+	 * @throws JMSException 
+	 */
+	public MessageConsumer getKEUIConsumer() throws JMSException {
+		return getConsumer(ComponentKey.KEUI);
+	}
+	
+	/**
+	 * Creates and returns a <code>MessageProducer</code> posting on the API request topic.
+	 * 
+	 * @return
+	 * @throws JMSException 
+	 */
+	public MessageProducer getAPIProducer() throws JMSException {
+		return getProducer(ComponentKey.API);
+	}
+	
+	/**
+	 * Creates and returns a <code>MessageConsumer</code> listening on the API response topic.
+	 * 
+	 * @return
+	 * @throws JMSException 
+	 */
+	public MessageConsumer getAPIConsumer() throws JMSException {
+		return getConsumer(ComponentKey.API);
+	}
+	
+	private MessageProducer getProducer(ComponentKey componentKey) throws JMSException {
+		return mqSession.createProducer(requestTopics.get(componentKey));
+	}
+	
+	private MessageConsumer getConsumer(ComponentKey componentKey) throws JMSException {
+		return mqSession.createConsumer(responseTopics.get(componentKey));
 	}
 	
 	public Session getSession() {
 		return mqSession;
-	}
-	
-	public static synchronized MQSessionProvider getInstance() throws JMSException {
-		if (instance == null)
-			instance = new MQSessionProvider();
-		return instance;
 	}
 }

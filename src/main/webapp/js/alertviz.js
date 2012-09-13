@@ -13,12 +13,12 @@ function genCurrentUrl() {
 	var result = '';
 	
 	if (state != null)
-		result = window.location.pathname.indexOf('index.html') < 0 ? window.location.pathname + 'index.html?' + $.param(state) : window.location.pathname + '?' + $.param(state);
+		result = window.location.pathname.indexOf('index.jsp') < 0 ? window.location.pathname + 'index.jsp?' + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
-		result = window.location.pathname.replace('index.html', '');
+		result = window.location.pathname.replace('index.jsp', '');
 	
 	if (currentTab != 0)
-		result += result.indexOf('index.html') < 0 ? 'index.html#' + currentTab : '#' + currentTab;
+		result += result.indexOf('index.jsp') < 0 ? 'index.jsp#' + currentTab : '#' + currentTab;
 	
 	return result;
 }
@@ -39,7 +39,8 @@ function getCurrentState() {
 	// general search
 	// search terms
 	var people = searchGeneral.getTypeV('person');
-	var keywords = searchGeneral.getTypeV('keyword');
+//	var keywords = searchGeneral.getTypeV('keyword');
+	var keywords = $('#keyword_text').val();
 	var concepts = searchGeneral.getTypeV('concept');
 	var sources = searchGeneral.getTypeV('source');
 	var products = searchGeneral.getTypeV('product');
@@ -200,7 +201,7 @@ function loadState() {
 	settingManually = true;
 	
 	// general search
-	var searchTerms = {people: true, keywords: true, concepts: true, sources: true, products: true, issues: true};
+	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true};
 	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
 	var issueChks = {u: true, n: true, a: true, r: true, i: true, w: true, f: true, wnd: true, d: true};
 	
@@ -213,11 +214,13 @@ function loadState() {
 			
 			if (searchTerms[attribute]) {	// search terms
 				// the value is an array of search terms
-				for (var i = 0; i < value.length; i++) {
-					var fieldId = attribute == 'keywords' ? 'keyword_text' : 'other_text';
-					viz.addToSearchField(fieldId, value[i]);
-				}
-			} else if(filterChks[attribute]) {	// checkboxes
+				for (var i = 0; i < value.length; i++)
+					viz.addToSearchField('other_text', value[i]);
+			}
+			else if (attribute == 'keywords') {
+				$('#keyword_text').val(value);
+			}
+			else if(filterChks[attribute]) {	// checkboxes
 				var selector = null;
 				switch(attribute) {
 				case 'is':
@@ -241,8 +244,8 @@ function loadState() {
 			} else if (dates[attribute]) {
 				var field = attribute == 'from' ? 'from_text' : 'to_text';
 				$('#' + field).val(value);
-			}
-		}
+			};
+		};
 	}
 	
 	// duplicate issue
@@ -354,12 +357,6 @@ var SocialGraph = function(options){
 	}
 	
 	var that = {
-		step: options.step,
-		minDisplayLevel: 3,
-		
-		data: null,
-		currentDisplayLevel: null,
-			
 		graph: DynamicGraph({
 			container: 'graph-div',
 			width: width,
@@ -531,30 +528,30 @@ var SocialGraph = function(options){
 };
 
 var ZoomHistory = function () {
+	var items = [];
+	var current = {min: null, max: null};
+	
 	var that = {
-		current: {min: null, max: null},
-		items: [],
-		
 		addItem: function (min, max) {
 			// before it was if (current != null), but current is never null
-			that.items.push(that.current);
-			that.current = {min: min, max: max};
+			items.push(current);
+			current = {min: min, max: max};
 		},
 		
 		getPrevious: function () {
-			if (that.items.length > 0) {
-				that.current = that.items.pop();
-				return that.current;
+			if (items.length > 0) {
+				current = items.pop();
+				return current;
 			} return null;
 		},
 		
 		clear: function () {
-			that.items = [];
-			that.current = {min: null, max: null};
+			items = [];
+			current = {min: null, max: null};
 		},
 		
 		isEmpty: function () {
-			return that.items.length == 0;
+			return items.length == 0;
 		}
 	};
 	
@@ -1571,7 +1568,7 @@ var AlertViz = function(options) {
 					
     				// from + date
 					html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 	    			
@@ -1585,7 +1582,7 @@ var AlertViz = function(options) {
 						
 						// similarity
 						if (item.similarity != null)
-							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
+							html += '<td class="item_similarity">sim: ' + (item.similarity*100).toFixed(0) + '%</td>';
 					}
 					else {
 						if (item.url != null)
@@ -1708,7 +1705,7 @@ var AlertViz = function(options) {
     
     // init the search text fields
     // general search  
-    $('#keyword_text').autoSuggest('suggest', {
+    /*$('#keyword_text').autoSuggest('suggest', {
     	selectedItemProp: 'label',
     	searchObjProps: 'label',
     	neverSubmit: true,
@@ -1725,6 +1722,9 @@ var AlertViz = function(options) {
 	  		generalSearch.removeFromSearch(elem);
 	  		updateUrl();
 	  	}
+    });*/
+    $('#keyword_text').change(function (event) {
+    	updateUrl();
     });
     
     $('#other_text').autoSuggest('suggest', {

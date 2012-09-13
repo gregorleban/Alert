@@ -177,7 +177,7 @@ function DynamicGraph (options) {
 					graph: that,
 					drawFunc: options.drawNode,
 					sysNode: particleSystem.addNode(node.id, node),
-					handlers: options.handlers
+					handlers: options.handlers.node
 				});
 				
 				propNode.data.prop = propNode.prop;
@@ -210,6 +210,7 @@ function DynamicGraph (options) {
 				particleSystem.pruneNode(sysNode);
 			}
 			
+			totalNodes = allNodes.length;
 			that.display(startDisplayLevel);
 		},
 		
@@ -252,22 +253,20 @@ function DynamicGraph (options) {
 }
 
 function Node(opts) {
+	var graph = opts.graph;
+	var handlers = opts.handlers;
+	var drawFunc = opts.drawFunc;
+	
 	var that = {
 		id: opts.id,
-		graph: opts.graph,
 		data: opts.data,
 		sysNode: opts.sysNode,
-		drawFunc: opts.drawFunc,
-		draggable: opts.draggable,
-		selectionMode: opts.selectionMode,
-		handlers: opts.handlers.node,
-		
 		edges: [],
 		prop: null,
 		
 		select: function (select) {
 			var data = that.data;
-			var selectedNodes = that.graph.getSelectedNodes();
+			var selectedNodes = graph.getSelectedNodes();
 			
 			if (select == data.selected) return;
 			
@@ -279,7 +278,7 @@ function Node(opts) {
 				var neigh = neighbours[i];
 				if (select) {
 					neigh.neighboursSelected++;
-					if (neigh.id in that.graph.getDisplayedNodes())
+					if (neigh.id in graph.getDisplayedNodes())
 						neigh.prop.moveToTop();
 				} else if(neigh.neighboursSelected > 0) {
 					neigh.neighboursSelected--;
@@ -287,7 +286,7 @@ function Node(opts) {
 			}
 			
 			// if using single selection mode => unselect prevoius nodes
-			if (that.selectionMode == 'single') {
+			if (opts.selectionMode == 'single') {
 				for (var nodeId in selectedNodes) {
 					if (nodeId != that.data.id && selectedNodes[nodeId] != null) {
 						var node = selectedNodes[nodeId];
@@ -303,7 +302,7 @@ function Node(opts) {
 			}
 			
 			that.prop.moveToTop();
-			that.graph.drawProps();
+			graph.drawProps();
 		},
 		
 		addHandler: function (eventName, handler) {
@@ -317,35 +316,34 @@ function Node(opts) {
 				drawFunc: function () {
 					if (that.data.pos == null) return;
 					var context = this.getContext();
-					that.drawFunc(context, that.data);
+					drawFunc(context, that.data);
 				}
 			});
 			
-			if (that.draggable) {
-				var prop = that.prop;
-				prop.draggable(true);
-				prop.on('dragmove', function (event) {
+			if (opts.draggable) {
+				that.prop.draggable(true);
+				that.prop.on('dragmove', function (event) {
 					event.cancelBubble = true;
 	
 					var pos = that.prop.getPosition();
 					var s = arbor.Point(pos.x, pos.y);
-					var sys = that.graph.getParticleSystem();;
+					var sys = graph.getParticleSystem();;
 					var p = sys.fromScreen(s);
 	
 					that.sysNode.p = arbor.Point(p.x,p.y);
 				});
-				prop.on('dragstart', function (event) {
+				that.prop.on('dragstart', function (event) {
 					event.cancelBubble = true;
 					that.sysNode.fixed = true;
 					that.select(true);
 				});
-				prop.on('dragend', function (event) {
+				that.prop.on('dragend', function (event) {
 					event.cancelBubble = true;
 					that.sysNode.fixed = false;
 				});
 			}
 			
-			if (that.selectionMode == 'single' || that.selectionMode == 'multiple') {
+			if (opts.selectionMode == 'single' || opts.selectionMode == 'multiple') {
 				that.prop.on("click", function (event) {
 					event.cancelBubble = true;
 					that.select(!that.data.selected);
@@ -353,11 +351,10 @@ function Node(opts) {
 			}
 			
 			// add other handlers
-			var handlers = that.handlers;
 			var handNames = Object.keys(handlers);
 			for (var i = 0; i < handNames.length; i++) {
 				var hName = handNames[i];
-				that.addHandler(hName, that.handlers[hName]);
+				that.addHandler(hName, handlers[hName]);
 			}
 		}
 	};

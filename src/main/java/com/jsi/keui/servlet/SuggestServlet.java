@@ -1,4 +1,4 @@
-package com.jsi.keui;
+package com.jsi.keui.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -132,8 +132,9 @@ public class QueryServlet extends MQServlet {
 				String itemId = request.getParameter(QUERY_PARAM);
 				String requestId = Utils.genRequestID();
 				
+				// TODO
 				String requestMsg = msgUtils.getCommitDetailsMsg(itemId, requestId);
-				String responseMsg = getAPIResponse(requestMsg, requestId);//getAPIResponse(requestMsg, requestId);
+				String responseMsg = getApiCommitResponse(requestMsg);	// getAPIResponse(requestMsg, requestId);//getAPIResponse(requestMsg, requestId);
 				
 //				log.info("\n\n\n" + requestMsg + "\n\n\n" + responseMsg + "\n\n\n");		// TODO remove me
 				

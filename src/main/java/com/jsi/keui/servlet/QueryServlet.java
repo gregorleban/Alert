@@ -124,7 +124,8 @@ public class QueryServlet extends MQServlet {
 				String requestId = Utils.genRequestID();
 				
 				String requestMsg = msgUtils.genIssueDetailsMsg(itemId, requestId);
-				String responseMsg = getAPIResponse(requestMsg, requestId);
+//				String responseMsg = getAPIResponse(requestMsg, requestId);
+				String responseMsg = getApiIssueResponse(requestMsg);
 				
 				resultJSon = msgUtils.parseIssueDetailsMsg(responseMsg);
 			}

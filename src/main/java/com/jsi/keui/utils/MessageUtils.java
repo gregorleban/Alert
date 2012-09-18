@@ -272,7 +272,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("includeAttachments"), "True");
 			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 			params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
-			params.addAttribute(envelope.createName("snipMatchKeywords"), "1");
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
 			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
 	
@@ -344,22 +344,28 @@ public class MessageUtils {
 			
 			SOAPElement data = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
 			
-			SOAPElement query = data.addChildElement("query");
+			SOAPElement query = (SOAPElement) data.getElementsByTagName("query").item(0);
 			SOAPElement queryArgs = query.addChildElement("queryArgs");
 			SOAPElement conditions = queryArgs.addChildElement("conditions");
 			conditions.addChildElement("itemIds").setTextContent(itemId);
 			
 			SOAPElement params = query.addChildElement("params");
+			params.addAttribute(envelope.createName("resultData"), "itemData");
+			params.addAttribute(envelope.createName("includePeopleData"), "True");
 			params.addAttribute(envelope.createName("offset"), "0");
 			params.addAttribute(envelope.createName("maxCount"), "1");
-			params.addAttribute(envelope.createName("resultData"), "itemData");
-			params.addAttribute(envelope.createName("includeAttachments"), "False");
 			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 			params.addAttribute(envelope.createName("itemDataSnipLen"), "-1");
-			params.addAttribute(envelope.createName("snipMatchKeywords"), "1");
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
+			params.addAttribute(envelope.createName("roleTypes"), "from,to,cc,bcc,author,originalFrom");
+			params.addAttribute(envelope.createName("includeAttachments"), "False");
 			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
-			params.addAttribute(envelope.createName("includePeopleData"), "True");
-			
+			params.addAttribute(envelope.createName("maxCountItems"), "1000");
+			params.addAttribute(envelope.createName("sampleSize"), "-1");
+			params.addAttribute(envelope.createName("keywordCount"), "30");
+			params.addAttribute(envelope.createName("keywordSource"), "text");
+			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
+
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
 			return new String(out.toByteArray());

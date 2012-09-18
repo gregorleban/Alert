@@ -1166,11 +1166,6 @@ public class MessageUtils {
 				}
 			}
 			
-			for (String label : monthLabelV) {
-				System.out.println(String.format("%s: %s", label, monthH.get(label).toString()));	// TODO remove me
-			}
-			
-			
 			// create pairs of type [time, posts]
 			TimeZone zone = TimeZone.getTimeZone("UTC");
 			Calendar calendar = Calendar.getInstance(zone);

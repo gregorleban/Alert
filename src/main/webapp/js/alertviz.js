@@ -363,6 +363,7 @@ var SocialGraph = function(options){
 			height: height,
 			draggable: true,
 			selectionMode: 'single',
+			startDisplayLevel: 50,
 			
 			drawNode: function (context, data) {
 				var pos = data.pos;
@@ -1415,8 +1416,8 @@ var AlertViz = function(options) {
 				series: [
 					{
 						name: 'Posts',
-						data: seriesV,
-						dataLabels: {
+						data: seriesV
+						/*dataLabels: {
 							enabled: false,
 							rotation: -90,
 							color: '#FFFFFF',
@@ -1429,25 +1430,10 @@ var AlertViz = function(options) {
 							style: {
 								font: 'normal 12px Arial, sans-serif'
 							}
-						}			
+						}	*/	
 					},
 					{
-						name: 'Posts',
-						data: seriesV,
-						dataLabels: {
-							enabled: false,
-							rotation: -90,
-							color: '#FFFFFF',
-							align: 'right',
-							x: -5,
-							y: 10,
-							formatter: function() {
-								return this.y;
-							},
-							style: {
-								font: 'normal 12px Arial, sans-serif'
-							}
-						}		
+						data: seriesV
 					}
 				]
 			});

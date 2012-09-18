@@ -1173,7 +1173,7 @@ var AlertViz = function(options) {
     			return color;
     	    }
     		
-    		var minX = 0;	var maxX = seriesV.length;
+    		var minX = 0;	var maxX = seriesV.length - 1;
     		
 			$('#inner-south').html('<div id="chart-div" ></div>');
 			
@@ -1265,7 +1265,7 @@ var AlertViz = function(options) {
 					max: maxX,
 					minRange: 40/allMonths.length,	// 40 is the default range
 					endOnTick: false,
-					tickInterval: (maxX - minX)/seriesV.length,
+//					tickInterval: 1,
 					categories: allMonths,
 					labels: {
 						rotation: -45,

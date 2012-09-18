@@ -697,6 +697,9 @@ var AlertViz = function(options) {
     var socialGraph = null;
     var currentQueryOpts = null;
     
+    var normalBarColor = getCssValue('bar-normal', 'background-color');
+	var selectedBarColor = getCssValue('bar-selected', 'background-color');
+    
     var that = {
     	searchStateGeneral: generalSearch,
     	searchStatePerson: personSearch,
@@ -1116,14 +1119,12 @@ var AlertViz = function(options) {
     	},
     	
     	createTimeline: function(data) {
+    		var nBars = 31;
+    		
     		var allDays = data.days;
-    		var allMonths = data.months;
-    		var monthH = data.monthH;
     		
     		var history = ZoomHistory();
     		var selectedRange = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
-    		var normalColor = getCssValue('bar-normal', 'background-color');
-    		var selectedColor = getCssValue('bar-selected', 'background-color');
     		var textColor = getCssValue('barchart-axis-title', 'color');
     		var yLabelsColor = getCssValue('barchart-yaxis-labels', 'color');
     		var xLabelsColor = getCssValue('barchart-xaxis-labels', 'color');
@@ -1136,44 +1137,54 @@ var AlertViz = function(options) {
     			if (event.keyCode == 17)	// CTRL
     				ctrlDown = false;
     		});
-    		    		
-    		// create a series for the timeline
-    		var monthOffsetH = {};
-    		var seriesV = [];
-    		var dayIdx = 0;
-    		for (var i = 0; i < allMonths.length; i++) {
-    			var monthLabel = allMonths[i];
-    			var monthIdx = parseInt(monthLabel.split('-')[1]) - 1;
-    			var monthLength = monthLengths[monthIdx];
-    			var firstDayIdx = dayIdx;
-    			monthOffsetH[monthLabel] = dayIdx;
+    		
+    		function createSeries(nBars, days) {
+    			if (days.length == 0 || days.length == 1)
+    				return [];
     			
-    			var nDays = 0;
-    			for (var j = 0; j < monthLength; j++)
-    				nDays += allDays[dayIdx++];
+    			var startDate = days[0][0];
+    			var endDate = days[days.length - 1][0];
     			
-    			seriesV.push({name: monthLabel, y: nDays, id: firstDayIdx + '-' + (dayIdx - 1)});
+    			var nDays = days.length;
+    			var perBar = Math.ceil(nDays/nBars);
+    			var barTimeInterval = (endDate - startDate) / nBars;
+    			
+    			var result = [];
+    			var dayIdxGlob = 0;
+    			var currentTime = startDate + barTimeInterval/2;
+    			for (var barIdx = 0; barIdx < nBars; barIdx++) {
+    				var nPosts = 0;
+    				
+    				for (var i = 0; i < perBar && dayIdxGlob < nDays; i++) {
+    					nPosts += days[dayIdxGlob++][1];
+    				}
+    				
+    				result.push({x: currentTime, y: nPosts, color: (currentTime >= selectedRange[0] && currentTime <= selectedRange[1]) ? selectedBarColor : normalBarColor});
+    				currentTime += barTimeInterval;
+    			}
+    			
+    			return result;
     		}
+    		
+    		var seriesV = createSeries(nBars, allDays);
     		
     		function getPointColor(year, month) {
     	    	var fromDate = $('#from_text').datepicker('getDate');
     	    	var toDate = $('#to_text').datepicker('getDate');
     	    	
     	    	if (fromDate == null || toDate == null)
-    	    		return normalColor;
+    	    		return normalBarColor;
     	    	
-    	    	var color = selectedColor;
+    	    	var color = selectedBarColor;
     			if (fromDate == null || toDate == null)
-    				color = normalColor;
+    				color = normalBarColor;
     			else if (year < fromDate.getFullYear() || (year == fromDate.getFullYear() && month < fromDate.getMonth() + 1))
-    				color = normalColor;
+    				color = normalBarColor;
     			else if (year > toDate.getFullYear() || (year == toDate.getFullYear() && month > toDate.getMonth() + 1))
-    				color = normalColor;
+    				color = normalBarColor;
     			
     			return color;
     	    }
-    		
-    		var minX = 0;	var maxX = seriesV.length - 1;
     		
 			$('#inner-south').html('<div id="chart-div" ></div>');
 			
@@ -1190,69 +1201,23 @@ var AlertViz = function(options) {
 							if (ctrlDown) {	// if CTRL+zoom => select columns
 								event.preventDefault();
 								
-								var range = [event.xAxis[0].min, event.xAxis[0].max];
-								var data = chart.series[0].data;
+								var min = event.xAxis[0].min;
+								var max = event.xAxis[0].max;
 								
-								var first = true;
-								var last = true;
-								var firstPoint = null;
-								var lastPoint = null;
-								for (var i = 0; i < data.length; i++) {
-									var point = data[i];
-									var x = point.x;
-									
-									if (x >= range[0] && first) {
-										first = false;
-										var dayIdx = parseInt(point.id.split('-')[0]);
-										selectedRange[0] = dayIdx;
-										firstPoint = point;
-									}
-									if (x >= range[1] && last) {
-										last = false;
-										var dayIdx = parseInt(point.id.split('-')[1]) - 1;
-										selectedRange[1] = dayIdx;
-										lastPoint = data[i-1];
-									}
-									
-									var color = x < range[0] || x > range[1] ? normalColor : selectedColor;
-									point.update({color: color}, false);
-								}
+								selectedRange = [min, max];
 								
-								if (lastPoint == null) { 
-									lastPoint = data[data.length - 1];
-									var dayIdx = parseInt(lastPoint.id.split('-')[1]) - 1;
-									selectedRange[1] = dayIdx;
-								}
+								$('#from_text').datepicker("setDate", new Date(min));
+								$('#to_text').datepicker("setDate", new Date(max));
 								
-								// set dates in the form
-								if (firstPoint != null && lastPoint != null) {
-									var firstLabel = firstPoint.name;
-									var lastLabel = lastPoint.name;
-									
-									var firstLabelV = firstLabel.split('-');
-									var lastLabelV = lastLabel.split('-');
-									
-									// create the dates
-									var firstDate = new Date();
-									var lastDate = new Date();
-									
-									var lastMonthIdx = parseInt(lastLabelV[1]) - 1;
-									var lastMonthLength = monthLengths[lastMonthIdx];
-									
-									firstDate.setFullYear(parseInt(firstLabelV[0]), parseInt(firstLabelV[1]) - 1, 1);
-									lastDate.setFullYear(parseInt(lastLabelV[0]), lastMonthIdx, lastMonthLength);
-									
-									$('#from_text').datepicker("setDate", firstDate);
-									$('#to_text').datepicker("setDate", lastDate);
-									
-									$('#from_text').change();
-									$('#to_text').change();
-								}
+								$('#from_text').change();
+								$('#to_text').change();
 							}
+							
+							return true;
 						}
 					}
 				},
-				colors: [normalColor],
+				colors: [normalBarColor],
 				credits: {enabled: false},
 				title: null,
 				toolbar: {
@@ -1261,18 +1226,11 @@ var AlertViz = function(options) {
 			        }
 			    },
 				xAxis: {
-					min: minX,
-					max: maxX,
-					minRange: 40/allMonths.length,	// 40 is the default range
-					endOnTick: false,
-//					tickInterval: 1,
-					categories: allMonths,
+					type: 'datetime',
+					minRange: 1000*3600*24*31,	// == 1month
 					labels: {
-						rotation: -45,
-						align: 'right',
 						style: {
-							 font: 'normal 10px Arial, sans-serif',
-							 color: xLabelsColor
+							color: xLabelsColor
 						}
 					},
 					events: {
@@ -1280,103 +1238,28 @@ var AlertViz = function(options) {
 							var min = event.min;
 							var max = event.max;
 							
+							if (min != null && max != null && max - min < this.options.minRange)
+								return false;
+							
 							// update the zooming history
-							if (min == null && max == null)
+							if (min == null || max == null)
 								history.clear();
 							else
 								history.addItem(min, max);
 							
 							// process the event
-							if (min == null && max == null) {
-								var data = [];
-								for (var i = 0; i < seriesV.length; i++) {
-									var point = seriesV[i];
-									var label = point.name;
-									
-									var yearMonthV = label.split('-');
-									var year = parseInt(yearMonthV[0]);
-									var month = parseInt(yearMonthV[1]);
-									
-									var color = getPointColor(year, month);
-
-									data.push({name: label, y: point.y, id: point.id, color: color});
-								}
-								
-								chart.series[0].setData(data);
-							} else {
-								// store the months that will be in the chart
-								var selectedMonths = [];
-								var allMonths = [];
-								var monthSet = {};
-								jQuery.each(chart.series[1].data, function (i, point) {
-									if (!monthSet[point.category]) {
-										if (point.x >= min && point.x < max) {
-											selectedMonths.push(point.category);
-										}
-										allMonths.push(point.category);
-										monthSet[point.category] = true;
-									}
+							if (min == null || max == null)
+								chart.series[0].setData(createSeries(nBars, allDays));
+							else {
+								// filter the days which will be in the timeline
+								var newDays = [];
+								jQuery.each(allDays, function (i, point) {
+									if (point[0] >= min && point[0] < max)
+										newDays.push(point);
 								});
 								
-								// display just the current months and their left and right neighbours
-								// the months are already ordered
-								var daysPerCol = selectedMonths.length;
-								
-								// prevent infinite loop
-								if (daysPerCol < 1)
-									return true;
-								
-								// add the neighbours and get the first day index, so I can
-								// compute the offset
-								var beginIdx = allMonths.indexOf(selectedMonths[0]);
-								var endIdx = allMonths.indexOf(selectedMonths[selectedMonths.length-1]);
-								var firstDayIdx = 0;
-								if (endIdx < allMonths.length - 1)
-									selectedMonths.push(allMonths[endIdx + 1]);
-								if (beginIdx > 0) {
-									selectedMonths.unshift(allMonths[beginIdx - 1]);
-									for (var i = 0; i < beginIdx - 1; i++)
-										firstDayIdx += monthH[allMonths[i]].length;
-								}
-								
-								// create new columns
-								var monthW = (maxX - minX)/seriesV.length;
-								var dx = (maxX - minX)/allDays.length;
-								var offset = dx*firstDayIdx - .5*monthW;
-								var zoomDat = [];
-								
-								
-								var days = [];
-								for (var monthIdx = 0; monthIdx < selectedMonths.length; monthIdx++) {
-									var label = selectedMonths[monthIdx];
-									var month = monthH[label];
-									
-									for (var i = 0; i < month.length; i++)
-										days.push([month[i], label]);
-
-								}
-								
-								var daysOffset = monthOffsetH[selectedMonths[0]];
-								var dayIdx = 0;
-								while (dayIdx < days.length) {
-									var x = offset + dayIdx*dx;
-									var y = 0;
-									
-									var first = daysOffset + dayIdx;
-									
-									var label = days[Math.min(days.length - 1, dayIdx + Math.floor(daysPerCol/2))][1];
-									var monthV = label.split('-');
-									var color = getPointColor(parseInt(monthV[0]), parseInt(monthV[1]));
-									
-									for (var i = 0; i < daysPerCol && dayIdx < days.length; i++)
-										y += days[dayIdx++][0];
-									
-									var last = daysOffset + dayIdx - 1;
-																		
-									zoomDat.push({x: x, y: y, name: label, color: color, id: first + '-' + last});
-								}
-
-								chart.series[0].setData(zoomDat);
+								var newSeriesV = createSeries(nBars, newDays);
+								chart.series[0].setData(newSeriesV);
 							}
 							return true;
 						}
@@ -1401,59 +1284,22 @@ var AlertViz = function(options) {
 				},
 				tooltip: {
 					formatter: function() {
-						return '<b>'+ this.point.name +'</b><br/>'+
-							 'Number of posts: ' + Highcharts.numberFormat(this.y, 0);
+						return 'Number of posts: ' + Highcharts.numberFormat(this.y, 0);
 							 
 					}
 				},
-				
 				plotOptions: {
 					column: {
 						cursor: 'pointer'
 					}
 				},
-				
 				series: [
 					{
 						name: 'Posts',
 						data: seriesV
-						/*dataLabels: {
-							enabled: false,
-							rotation: -90,
-							color: '#FFFFFF',
-							align: 'right',
-							x: -5,
-							y: 10,
-							formatter: function() {
-								return this.y;
-							},
-							style: {
-								font: 'normal 12px Arial, sans-serif'
-							}
-						}	*/	
-					},
-					{
-						data: seriesV
 					}
 				]
 			});
-			
-			chart.selectDates = function (beginDate, endDate) {
-				var data = chart.series[0].data;
-				for (var i = 0; i < data.length; i++) {
-					var point = data[i];
-					var label = point.name;
-					
-					var yearMonthV = label.split('-');
-					var month = parseInt(yearMonthV[1]);
-					var year = parseInt(yearMonthV[0]);
-					
-					var color = getPointColor(year, month);
-					point.update({color: color}, false);
-				}
-			};
-			
-			chart.series[1].hide();
 			
 			// read some forums of Highcharts, it appears this is the only way to 
 			// register a right-click listener
@@ -1690,25 +1536,6 @@ var AlertViz = function(options) {
     
     
     // init the search text fields
-    // general search  
-    /*$('#keyword_text').autoSuggest('suggest', {
-    	selectedItemProp: 'label',
-    	searchObjProps: 'label',
-    	neverSubmit: true,
-    	showResultList: false,
-    	startText: 'keywords,...',
-    	asHtmlID: 'keyword_text',
-    	selectionAdded: function(elem, data) {
-    		if (!settingManually) {
-	    		generalSearch.addToSearch(data);
-	    		updateUrl();
-    		}
-    	},
-	  	selectionRemoved: function(elem) {
-	  		generalSearch.removeFromSearch(elem);
-	  		updateUrl();
-	  	}
-    });*/
     $('#keyword_text').change(function (event) {
     	updateUrl();
     });
@@ -1815,8 +1642,13 @@ var AlertViz = function(options) {
     	var fromDate = $('#from_text').datepicker('getDate');
     	var toDate = $('#to_text').datepicker('getDate');
     	
-    	if (fromDate != null && toDate != null && chart != null) {
-	    	chart.selectDates(fromDate, toDate);
+    	if (chart != null) {
+    		var min = fromDate == null ? Number.POSITIVE_INFINITY : fromDate.getTime();
+    		var max = toDate == null ? Number.NEGATIVE_INFINITY : toDate.getTime();
+    		
+    		$.each(chart.series[0].data, function (idx, point) {
+				point.update({color: (point.x >= min && point.x <= max) ? selectedBarColor : normalBarColor}, false);
+			});
     	}
     }
     

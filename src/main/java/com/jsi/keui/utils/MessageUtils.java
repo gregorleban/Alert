@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1159,21 +1160,38 @@ public class MessageUtils {
 				}
 			}
 			
-			List<Integer> allDays = new ArrayList<Integer>(monthLabelV.size()*31);
-			for (String month : monthLabelV)
-				allDays.addAll(monthH.get(month));
+			for (String label : monthLabelV) {
+				System.out.println(String.format("%s: %s", label, monthH.get(label).toString()));	// TODO remove me
+			}
+			
+			
+			// create pairs of type [time, posts]
+			TimeZone zone = TimeZone.getTimeZone("UTC");
+			Calendar calendar = Calendar.getInstance(zone);
+			
+			JSONArray allDays = new JSONArray();
+			for (String month : monthLabelV) {
+				String[] yearMonthPr = month.split("-");
+				int year = Integer.parseInt(yearMonthPr[0]);
+				int monthIdx = Integer.parseInt(yearMonthPr[1]) - 1;
+				
+				List<Integer> days = monthH.get(month);
+				for (int dayIdx = 0; dayIdx < days.size(); dayIdx++) {
+					calendar.clear();
+					calendar.set(year, monthIdx, dayIdx);
+					long time = calendar.getTime().getTime();
+					
+					JSONArray dayArray = new JSONArray();
+					dayArray.add(time);
+					dayArray.add(days.get(dayIdx));
+					allDays.add(dayArray);
+				}
+			}
 			
 			JSONObject result = new JSONObject();
-			JSONArray allDaysJSon = new JSONArray();
-			JSONArray monthsVJSon = new JSONArray();
-			
-			allDaysJSon.addAll(allDays);
-			monthsVJSon.addAll(monthLabelV);
 			
 			result.put("type", "timelineData");
-			result.put("days", allDaysJSon);
-			result.put("months", monthsVJSon);
-			result.put("monthH", new JSONObject(monthH));
+			result.put("days", allDays);
 			
 			return result.toJSONString();
 		} catch (Throwable t) {

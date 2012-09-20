@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -271,7 +272,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("includeAttachments"), "True");
 			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 			params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
-			params.addAttribute(envelope.createName("snipMatchKeywords"), "1");
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
 			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
 	
@@ -343,22 +344,28 @@ public class MessageUtils {
 			
 			SOAPElement data = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
 			
-			SOAPElement query = data.addChildElement("query");
+			SOAPElement query = (SOAPElement) data.getElementsByTagName("query").item(0);
 			SOAPElement queryArgs = query.addChildElement("queryArgs");
 			SOAPElement conditions = queryArgs.addChildElement("conditions");
 			conditions.addChildElement("itemIds").setTextContent(itemId);
 			
 			SOAPElement params = query.addChildElement("params");
+			params.addAttribute(envelope.createName("resultData"), "itemData");
+			params.addAttribute(envelope.createName("includePeopleData"), "True");
 			params.addAttribute(envelope.createName("offset"), "0");
 			params.addAttribute(envelope.createName("maxCount"), "1");
-			params.addAttribute(envelope.createName("resultData"), "itemData");
-			params.addAttribute(envelope.createName("includeAttachments"), "False");
 			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
 			params.addAttribute(envelope.createName("itemDataSnipLen"), "-1");
-			params.addAttribute(envelope.createName("snipMatchKeywords"), "1");
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
+			params.addAttribute(envelope.createName("roleTypes"), "from,to,cc,bcc,author,originalFrom");
+			params.addAttribute(envelope.createName("includeAttachments"), "False");
 			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
-			params.addAttribute(envelope.createName("includePeopleData"), "True");
-			
+			params.addAttribute(envelope.createName("maxCountItems"), "1000");
+			params.addAttribute(envelope.createName("sampleSize"), "-1");
+			params.addAttribute(envelope.createName("keywordCount"), "30");
+			params.addAttribute(envelope.createName("keywordSource"), "text");
+			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
+
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
 			return new String(out.toByteArray());
@@ -995,9 +1002,9 @@ public class MessageUtils {
 			JSONObject result = new JSONObject();
 			
 			// parse all the people
-			List<JSONObject> nodeV = new ArrayList<JSONObject>();
-			List<JSONObject> edgeV = new ArrayList<JSONObject>();
-			Map<Long, JSONObject> nodeH = new HashMap<Long, JSONObject>();
+			List<JSONObject> nodeV = new ArrayList<>();
+			List<JSONObject> edgeV = new ArrayList<>();
+			Map<Long, JSONObject> nodeH = new HashMap<>();
 			
 			NodeList personNodeList = doc.getElementsByTagName("person");
 			for (int i = 0; i < personNodeList.getLength(); i++) {
@@ -1102,14 +1109,14 @@ public class MessageUtils {
 			
 			NodeList monthEls = doc.getElementsByTagName("month");
 			
-			Map<String, List<Integer>> monthH = new HashMap<String, List<Integer>>();
-			List<String> monthLabelV = new ArrayList<String>(monthEls.getLength());
+			Map<String, List<Integer>> monthH = new HashMap<>();
+			List<String> monthLabelV = new ArrayList<>(monthEls.getLength());
 			for (int i = 0; i < monthEls.getLength(); i++) {
 				Element month = (Element) monthEls.item(i);
 				
 				String label = month.getAttribute("val");
 				
-				List<Integer> days = new ArrayList<Integer>(31);
+				List<Integer> days = new ArrayList<>(31);
 				String[] dayStrV = month.getTextContent().split(",");
 				for (String dayStr : dayStrV)
 					days.add(Integer.parseInt(dayStr));
@@ -1151,7 +1158,7 @@ public class MessageUtils {
 						int monthIdx = Integer.parseInt(newLabel.split("-")[1]) - 1;
 						int monthLength = MONTH_LENGTHS[monthIdx];
 						
-						List<Integer> days = new ArrayList<Integer>(monthLength);
+						List<Integer> days = new ArrayList<>(monthLength);
 						for (int j = 0; j < monthLength; j++)
 							days.add(0);
 						monthH.put(newLabel, days);
@@ -1159,21 +1166,33 @@ public class MessageUtils {
 				}
 			}
 			
-			List<Integer> allDays = new ArrayList<Integer>(monthLabelV.size()*31);
-			for (String month : monthLabelV)
-				allDays.addAll(monthH.get(month));
+			// create pairs of type [time, posts]
+			TimeZone zone = TimeZone.getTimeZone("UTC");
+			Calendar calendar = Calendar.getInstance(zone);
+			
+			JSONArray allDays = new JSONArray();
+			for (String month : monthLabelV) {
+				String[] yearMonthPr = month.split("-");
+				int year = Integer.parseInt(yearMonthPr[0]);
+				int monthIdx = Integer.parseInt(yearMonthPr[1]) - 1;
+				
+				List<Integer> days = monthH.get(month);
+				for (int dayIdx = 0; dayIdx < days.size(); dayIdx++) {
+					calendar.clear();
+					calendar.set(year, monthIdx, dayIdx);
+					long time = calendar.getTime().getTime();
+					
+					JSONArray dayArray = new JSONArray();
+					dayArray.add(time);
+					dayArray.add(days.get(dayIdx));
+					allDays.add(dayArray);
+				}
+			}
 			
 			JSONObject result = new JSONObject();
-			JSONArray allDaysJSon = new JSONArray();
-			JSONArray monthsVJSon = new JSONArray();
-			
-			allDaysJSon.addAll(allDays);
-			monthsVJSon.addAll(monthLabelV);
 			
 			result.put("type", "timelineData");
-			result.put("days", allDaysJSon);
-			result.put("months", monthsVJSon);
-			result.put("monthH", new JSONObject(monthH));
+			result.put("days", allDays);
 			
 			return result.toJSONString();
 		} catch (Throwable t) {
@@ -1248,7 +1267,7 @@ public class MessageUtils {
 			info.put("offset", offset);
 			info.put("limit", limit);
 			
-			List<String> keywords = new ArrayList<String>();
+			List<String> keywords = new ArrayList<>();
 			Element keywordsEl = doc.getElementsByTagName("keywords").getLength() > 0 ? (Element) doc.getElementsByTagName("keywords").item(0) : null;
 			if (keywordsEl != null) {
 				NodeList kwElV = keywordsEl.getElementsByTagName("kw");
@@ -1432,7 +1451,7 @@ public class MessageUtils {
 	
 	@SuppressWarnings("unchecked")
 	private Map<Long, JSONObject> parsePeopleH(NodeList peopleNodes) {
-		Map<Long, JSONObject> result = new HashMap<Long, JSONObject>();
+		Map<Long, JSONObject> result = new HashMap<>();
 		for (int i = 0; i < peopleNodes.getLength(); i++) {
 			Element node = (Element) peopleNodes.item(i);
 			JSONObject person = new JSONObject();

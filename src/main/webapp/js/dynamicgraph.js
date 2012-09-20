@@ -271,7 +271,10 @@ function Node(opts) {
 			if (select == data.selected) return;
 			
 			data.selected = select;
-			selectedNodes[that.data.id] = select ? that : null;
+			if (select)
+				selectedNodes[that.data.id] = that;
+			else
+				delete selectedNodes[that.data.id];
 			
 			var neighbours = data.neighbours;
 			for (var i = 0; i < neighbours.length; i++) {
@@ -288,7 +291,7 @@ function Node(opts) {
 			// if using single selection mode => unselect prevoius nodes
 			if (opts.selectionMode == 'single') {
 				for (var nodeId in selectedNodes) {
-					if (nodeId != that.data.id && selectedNodes[nodeId] != null) {
+					if (nodeId != that.data.id && nodeId in selectedNodes) {
 						var node = selectedNodes[nodeId];
 						node.data.selected = false;
 						
@@ -297,6 +300,8 @@ function Node(opts) {
 							if (neighbours[i].neighboursSelected > 0)
 								neighbours[i].neighboursSelected--;
 						}
+						
+						delete selectedNodes[nodeId];
 					}
 				}
 			}

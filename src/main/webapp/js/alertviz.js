@@ -1400,7 +1400,7 @@ var AlertViz = function(options) {
 					
     				// from + date
 					html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
+					html += '<td class="item_header">' + (peopleH[item.authorID] != null ? peopleH[item.authorID].name : 'unknown') + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 	    			
@@ -1468,8 +1468,8 @@ var AlertViz = function(options) {
     				
     				// author + date
     				html += '<tr>';
-					html += '<td colspan="2" class="item_header">' + peopleH[item.authorID].name + '</td>';
-					html += '<td colspan="2" class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
+					html += '<td class="item_header">' + peopleH[item.authorID].name + '</td>';
+					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
     				
 					// content

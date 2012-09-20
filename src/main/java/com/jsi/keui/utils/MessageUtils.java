@@ -1384,7 +1384,7 @@ public class MessageUtils {
 		tagsArr.addAll(Arrays.asList(tags));
 		
 		if (type == ItemType.BUG_DESCRIPTION.getValue()) {
-			long authorId = Long.parseLong(node.getAttribute("author"));
+			Long authorId = node.getAttribute("author").isEmpty() ? null : Long.parseLong(node.getAttribute("author"));
 			int count = Integer.parseInt(node.getAttribute("count"));
 			long threadId = Long.parseLong(node.getAttribute("threadId"));
 			String subject = node.getElementsByTagName("subject").item(0).getTextContent();

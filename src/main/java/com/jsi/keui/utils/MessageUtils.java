@@ -1002,9 +1002,9 @@ public class MessageUtils {
 			JSONObject result = new JSONObject();
 			
 			// parse all the people
-			List<JSONObject> nodeV = new ArrayList<JSONObject>();
-			List<JSONObject> edgeV = new ArrayList<JSONObject>();
-			Map<Long, JSONObject> nodeH = new HashMap<Long, JSONObject>();
+			List<JSONObject> nodeV = new ArrayList<>();
+			List<JSONObject> edgeV = new ArrayList<>();
+			Map<Long, JSONObject> nodeH = new HashMap<>();
 			
 			NodeList personNodeList = doc.getElementsByTagName("person");
 			for (int i = 0; i < personNodeList.getLength(); i++) {
@@ -1109,14 +1109,14 @@ public class MessageUtils {
 			
 			NodeList monthEls = doc.getElementsByTagName("month");
 			
-			Map<String, List<Integer>> monthH = new HashMap<String, List<Integer>>();
-			List<String> monthLabelV = new ArrayList<String>(monthEls.getLength());
+			Map<String, List<Integer>> monthH = new HashMap<>();
+			List<String> monthLabelV = new ArrayList<>(monthEls.getLength());
 			for (int i = 0; i < monthEls.getLength(); i++) {
 				Element month = (Element) monthEls.item(i);
 				
 				String label = month.getAttribute("val");
 				
-				List<Integer> days = new ArrayList<Integer>(31);
+				List<Integer> days = new ArrayList<>(31);
 				String[] dayStrV = month.getTextContent().split(",");
 				for (String dayStr : dayStrV)
 					days.add(Integer.parseInt(dayStr));
@@ -1158,7 +1158,7 @@ public class MessageUtils {
 						int monthIdx = Integer.parseInt(newLabel.split("-")[1]) - 1;
 						int monthLength = MONTH_LENGTHS[monthIdx];
 						
-						List<Integer> days = new ArrayList<Integer>(monthLength);
+						List<Integer> days = new ArrayList<>(monthLength);
 						for (int j = 0; j < monthLength; j++)
 							days.add(0);
 						monthH.put(newLabel, days);
@@ -1267,7 +1267,7 @@ public class MessageUtils {
 			info.put("offset", offset);
 			info.put("limit", limit);
 			
-			List<String> keywords = new ArrayList<String>();
+			List<String> keywords = new ArrayList<>();
 			Element keywordsEl = doc.getElementsByTagName("keywords").getLength() > 0 ? (Element) doc.getElementsByTagName("keywords").item(0) : null;
 			if (keywordsEl != null) {
 				NodeList kwElV = keywordsEl.getElementsByTagName("kw");
@@ -1451,7 +1451,7 @@ public class MessageUtils {
 	
 	@SuppressWarnings("unchecked")
 	private Map<Long, JSONObject> parsePeopleH(NodeList peopleNodes) {
-		Map<Long, JSONObject> result = new HashMap<Long, JSONObject>();
+		Map<Long, JSONObject> result = new HashMap<>();
 		for (int i = 0; i < peopleNodes.getLength(); i++) {
 			Element node = (Element) peopleNodes.item(i);
 			JSONObject person = new JSONObject();

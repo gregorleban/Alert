@@ -71,7 +71,7 @@ td {
 input, select, textarea {
 	margin: 5px 0;
 	padding: 5px;
-	color: #666;
+	color: #333;
 	border-width: 1px;
 	border-style: solid;
   	border-color: #d4d4d4 #ebebeb #ebebeb #d4d4d4; 	
@@ -184,7 +184,6 @@ input.button {
 	padding: 0 0 0 15px;					
 }
 #header #nav ul li {
-	float: left;
 	margin: 0; 
 	padding: 0 0 0 0;		
 }
@@ -203,7 +202,7 @@ input.button {
 	background: transparent;
 }
 #header #nav ul li#current {
-	background: transparent url(../img/left-tab.gif) no-repeat;	
+	background: transparent url(../img/left-tab.gif) no-repeat;
 }
 #header #nav ul li#current a {	
 	color: #444;
@@ -319,12 +318,12 @@ input.button {
 	height: 460px;
 }
 .selected-node {
-	color: #ddd;
-	background-color: #7BA857;
+	color: #fff;
+	background-color: #900;
 }
 .neighbour-node {
 	color: #fff;
-	background-color: #666;
+	background-color: #7BA857;
 }
 .bar-normal {
 	background-color: #7BA857;
@@ -333,13 +332,13 @@ input.button {
 	background-color: #7BA857;
 }
 .barchart-axis-title {
-	color: pink;
+	color: #7BA857;
 }
 .barchart-xaxis-labels {
-	color: magenta;
+	color: #900;
 }
 .barchart-yaxis-labels {
-	color: cyan;
+	color: #900;
 }
 
 #wordcloud-div {

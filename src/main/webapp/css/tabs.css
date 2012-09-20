@@ -65,7 +65,7 @@
     list-style:none;
 	padding:0px;
 	font-size:14px;
-	margin-left:12px;
+	margin-left:14px;
 }
 #navigation ul li{
 	float:left;
@@ -167,6 +167,7 @@
 #steps form textarea,
 #steps form p.submit{
     background:white;
+    color:#333;
 }
 #steps form button {
 	border:none;

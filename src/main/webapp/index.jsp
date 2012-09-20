@@ -55,21 +55,19 @@
 		<div id="header" class="container_wide">
 			<div id="nav">
 				<ul>
-				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;"></img></li>
-				     <li><img src="img/spacer.gif" height="8" width="20" style="padding:0;border:0;opacity:0;"></img></li>
+				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;margin-right:10px;"></img></li>
 					 <li id="current"><a href="index.html">Browse</a></li>
-					 <li><a href="visualization.html">Subscribe</a></li>
-					 <li><a href="recommendation.html">Project overview</a></li>
+					 <li><a href="subscribe.html">Subscribe</a></li>
+					 <li><a href="overview.html">Project overview</a></li>
 					 <%
 					 if (LoginUtils.getInstance().isAdmin()) {
 					 %>
-					 	<li><a href="recommendation.html">Administration</a></li>
+					 <li><a href="admin.html">Administration</a></li>
 					 <%
 					 } 
 					 %>
-					 <li><img src="img/spacer.gif" height="8" width="170" style="padding:0;border:0;opacity:0;"></img></li>
 					 <li><div class='popbox'>
-				  		 <a class="open" href="#" style="text-transform:lowercase;width:160px;margin-top:8px;height:20px;line-height:20px;font-weight:normal;font-size:12px;position:relative;float:left;">ursic.jure@gmail.com</a>
+				  		 <a class="open" href="#">ursic.jure@gmail.com</a>
 					 		<div class='collapse'>
  					 			<div class='box'>
    					 				<div class='arrow'></div>
@@ -84,8 +82,6 @@
      			     		</div>
      			     	</div>
      			     </li>
-     			     <li><img src="img/spacer.gif" height="8" width="200" style="padding:0;border:0;opacity:0;"></img></li>
-     			     <li><img src="img/sfp.png" style="width:60px;height:40px;"></img></li>
      			 </ul>
      		</div>
     	</div>
@@ -186,7 +182,7 @@
 	</div>
 <div id="container" class="container_wide">
 	<div id="container" class="item_left">
-		<div style="width:306px !important;">
+		<div>
 			<div class="items"><div class="items-div" id="items-div"></div></div>
 			<div class="pages" id="item_nav">
 				<table class="pages_table">

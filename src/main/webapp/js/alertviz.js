@@ -622,8 +622,8 @@ var Search = function (opts) {
 				var array = searchTerms[data.type];
 				if (that.indexOfLabel(data.type, label) < 0)
 					array.push({type: data.type, label: label, value: value});
-			} else if (that.indexOfLabel(data.type, data.label) < 0)
-				searchTerms[data.type].push({type: 'keyword', label: data.label, value: data.label});
+			} else if (that.indexOfLabel(data.type, data.value) < 0)
+				searchTerms[data.type].push({type: 'keyword', label: data.value, value: data.value});
 		},
 		
 		removeFromSearch: function (elem) {
@@ -713,11 +713,22 @@ var AlertViz = function(options) {
     	
     	addToSearchField: function (fieldId, data) {
     		generalSearch.addToSearch(data);
-        	
-    		var label = data.label;
-        	var selector = '#' + fieldId;
-        	$(selector).val(label + ':' + data.type + '|');
-        	$(selector).change();
+    		var selector = '#' + fieldId;
+    		
+    		if (fieldId == 'keyword_text') {
+    			generalSearch.addToSearch(data);
+
+    			var value = data.value;
+    			
+    			$(selector).val($(selector).val() + ' ' + value);
+    		} else {
+    			generalSearch.addToSearch(data);
+            	
+        		var label = data.label;
+            	$(selector).val(label + ':' + data.type + '|');
+    		}
+    		
+    		$(selector).change();
     	},
     	
     	searchItemDetails: function (itemId) {
@@ -1108,8 +1119,7 @@ var AlertViz = function(options) {
     		for (var i = 0; i < data.length; i++) {
     			data[i].handlers = {
     					click: function (event) {
-    						var value = $(event.srcElement).text();
-    		    			viz.addToSearchField('keyword_text', {type: 'keyword', label: value, value: value});
+    						viz.addToSearchField('keyword_text', {type: 'keyword', value: $(event.srcElement).text()});
     					}
     			};
     		}

@@ -776,7 +776,7 @@ standard deployment descriptor.
   <javaee:display-name>Archetype Created Web Application</javaee:display-name>
   <servlet>
     <servlet-name>QueryServlet</servlet-name>
-    <servlet-class>com.jsi.keui.servlet.QueryServlet</servlet-class>
+    <servlet-class>com.jsi.alert.servlet.QueryServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>QueryServlet</servlet-name>
@@ -786,7 +786,7 @@ standard deployment descriptor.
     <javaee:description></javaee:description>
     <javaee:display-name>SuggestServlet</javaee:display-name>
     <servlet-name>SuggestServlet</servlet-name>
-    <servlet-class>com.jsi.keui.servlet.SuggestServlet</servlet-class>
+    <servlet-class>com.jsi.alert.servlet.SuggestServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>SuggestServlet</servlet-name>

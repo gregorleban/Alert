@@ -1,4 +1,4 @@
-package com.jsi.keui.servlet;
+package com.jsi.alert.servlet;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.keui.mq.MQSessionProvider;
-import com.jsi.keui.mq.MQSessionProvider.ComponentKey;
+import com.jsi.alert.mq.MQSessionProvider;
+import com.jsi.alert.mq.MQSessionProvider.ComponentKey;
 
 /**
  * An abstract <code>Servlet</code> which send a sync request to the KEUI component.
@@ -159,7 +159,7 @@ public abstract class MQServlet extends HttpServlet {
 	 */
 	@Override
 	public void destroy() {
-		if (log.isDebugEnabled()) log.debug("Destroying the servlet, closing ActiveMQ consumers and producers...");
+		if (log.isDebugEnabled()) log.debug("Destroying a servlet, closing ActiveMQ consumers and producers...");
 		try {
 			// clean up
 			for (ComponentKey key : producerH.keySet()) {

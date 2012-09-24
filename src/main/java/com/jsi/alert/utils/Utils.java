@@ -1,4 +1,4 @@
-package com.jsi.keui.utils;
+package com.jsi.alert.utils;
 
 import java.util.Random;
 

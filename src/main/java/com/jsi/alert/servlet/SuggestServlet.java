@@ -1,4 +1,4 @@
-package com.jsi.keui.servlet;
+package com.jsi.alert.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.keui.utils.MessageUtils;
-import com.jsi.keui.utils.Utils;
+import com.jsi.alert.utils.MessageUtils;
+import com.jsi.alert.utils.Utils;
 
 /**
  * A <code>Servlet</code> which handles suggestion requests.

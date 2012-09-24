@@ -352,7 +352,7 @@ var SocialGraph = function(options){
 		tooltip.show(html);
 	}
 	
-	function hideToolip() {
+	function hideTooltip() {
 		tooltip.hide();
 	}
 	
@@ -485,12 +485,20 @@ var SocialGraph = function(options){
 						if (node.data.mouseOver != true) return;	// fix
 						node.data.mouseOver = false;
 						
-						hideToolip();
+						hideTooltip();
 						
 						document.body.style.cursor = 'default';
 					},
 					'mousemove': function (event) {
 						showTooltip(node.data);
+					},
+					'mousedown': function (event) {
+						hideTooltip();
+					}
+				},
+				stage: {
+					'mousedown': function () {
+						hideTooltip();
 					}
 				}
 			}

@@ -3,7 +3,7 @@ var tooltip = function() {
 	var top = 3;
 	var left = 3;
 	var maxw = 300;
-	var speed = 10;
+	var speed = 80;
 	var timer = 20;
 	var delay = 1000;
 	var endalpha = 95;
@@ -78,7 +78,7 @@ var tooltip = function() {
 			} else {
 				clearInterval(tt.timer);
 				if (d == -1) {
-					tt.style.display = 'none'
+					tt.style.display = 'none';
 				}
 			}
 		},
@@ -86,7 +86,7 @@ var tooltip = function() {
 			clearTimeout(showTimer);
 			clearInterval(tt.timer);
 			tt.timer = setInterval(function() {
-				tooltip.fade(-1)
+				tooltip.fade(-1);
 			}, timer);
 		}
 	};

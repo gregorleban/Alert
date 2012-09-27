@@ -19,21 +19,11 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class UserAuthenticator {
 	
-	private static final UserAuthenticator instance = new UserAuthenticator();
-	
 	private static final Logger log = LoggerFactory.getLogger(UserAuthenticator.class);
 	
-	private static Client client;
+	private static Client client = Client.create(new DefaultClientConfig());
 	
-	public static synchronized UserAuthenticator getInstance() {
-		return instance;
-	}
-	
-	private UserAuthenticator() {
-		client = Client.create(new DefaultClientConfig());
-	}
-	
-	private AlertUser getUserInfo(String email) {
+	private static AlertUser getUserInfo(String email) {
 		if (log.isDebugEnabled())
 			log.debug("Fetching info of user: " + email);
 		
@@ -70,7 +60,7 @@ public class UserAuthenticator {
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Checks weather the user is authenticated, if so, it puts the user into the session,
 	 * otherwise it removed the user from the session.
@@ -78,7 +68,7 @@ public class UserAuthenticator {
 	 * @param session
 	 * @return
 	 */
-	public boolean authenticateUser(HttpSession session) {
+	public static boolean authenticateUser(HttpSession session) {
 		AlertUser user = session.getAttribute(Configuration.USER_PRINCIPAL) != null ? (AlertUser) session.getAttribute(Configuration.USER_PRINCIPAL) : null;
 		if (user == null) return false;
 		
@@ -90,30 +80,5 @@ public class UserAuthenticator {
 		else session.setAttribute(Configuration.USER_PRINCIPAL, userInfo);
 		
 		return userInfo != null;
-	}
-	
-	/**
-	 * Checks if the current user in the session is an Admin
-	 * @return
-	 */
-	public boolean isAdmin(HttpSession session) {
-		if (log.isDebugEnabled()) log.debug("Checking if the current user is Admin...");
-		
-		if (!authenticateUser(session))
-			return false;
-		
-		AlertUser user = (AlertUser) session.getAttribute(Configuration.USER_PRINCIPAL);
-		return user.getAdmin() == true;
-	}
-	
-	public boolean isLoggedIn(HttpSession session) {
-		return session.getAttribute(Configuration.USER_PRINCIPAL) != null;
-	}
-	
-	public String getUserEmail(HttpSession session) {
-		if (!isLoggedIn(session)) return null;
-		
-		AlertUser user = (AlertUser) session.getAttribute(Configuration.USER_PRINCIPAL);
-		return user.getEmail();
 	}
 }

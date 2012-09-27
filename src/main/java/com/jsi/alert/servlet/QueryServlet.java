@@ -2,6 +2,7 @@ package com.jsi.alert.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -125,10 +126,9 @@ public class QueryServlet extends MQServlet {
 
 	private void processPeopleRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Properties props = createRequestProps(request);
-		MessageUtils msgUtils = MessageUtils.getInstance();
 		
 		final String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.genKEUIPeopleMessage(props, requestId);
+		String requestMsg = MessageUtils.genKEUIPeopleMessage(props, requestId);
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseKEUIPeopleResponse(responseMsg);
 		
@@ -137,10 +137,9 @@ public class QueryServlet extends MQServlet {
 	
 	private void processKeywordRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		Properties props = createRequestProps(request);
-		MessageUtils msgUtils = MessageUtils.getInstance();
 		
 		final String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.genKEUIKeywordMessage(props, requestId);
+		String requestMsg = MessageUtils.genKEUIKeywordMessage(props, requestId);
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseKEUIKeywordsResponse(responseMsg);
 		
@@ -149,10 +148,9 @@ public class QueryServlet extends MQServlet {
 
 	private void processTimelineRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		Properties props = createRequestProps(request);
-		MessageUtils msgUtils = MessageUtils.getInstance();
 		
 		final String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.genKEUITimelineMessage(props, requestId);
+		String requestMsg = MessageUtils.genKEUITimelineMessage(props, requestId);
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseKEUITimelineResponse(responseMsg);
 		
@@ -162,10 +160,9 @@ public class QueryServlet extends MQServlet {
 	
 	private void processItemsRq(HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		Properties props = createRequestProps(request);
-		MessageUtils msgUtils = MessageUtils.getInstance();
 		
 		final String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.getKEUIItemsMessage(props, requestId);
+		String requestMsg = MessageUtils.getKEUIItemsMessage(props, requestId);
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseKEUIItemsResponse(responseMsg);
 		
@@ -173,13 +170,11 @@ public class QueryServlet extends MQServlet {
 	}
 	
 	private void processIssueDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		MessageUtils msgUtils = MessageUtils.getInstance();
-		
 		// check if the ID is a number
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 		
-		String requestMsg = msgUtils.genIssueDetailsMsg(itemId, requestId);
+		String requestMsg = MessageUtils.genIssueDetailsMsg(itemId, requestId);
 		String responseMsg = getAPIResponse(requestMsg, requestId);
 		
 		String resultJSon = MessageParser.parseIssueDetailsMsg(responseMsg);
@@ -187,12 +182,10 @@ public class QueryServlet extends MQServlet {
 	}
 	
 	private void processCommitDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		MessageUtils msgUtils = MessageUtils.getInstance();
-		
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
 
-		String requestMsg = msgUtils.getCommitDetailsMsg(itemId, requestId);
+		String requestMsg = MessageUtils.getCommitDetailsMsg(itemId, requestId);
 		String responseMsg = getAPIResponse(requestMsg, requestId);
 		
 		String resultJSon = MessageParser.parseCommitDetailsMessage(responseMsg);
@@ -200,11 +193,9 @@ public class QueryServlet extends MQServlet {
 	}
 	
 	private void processItemDetailsRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		MessageUtils msgUtils = MessageUtils.getInstance();
-		
 		String itemId = request.getParameter(QUERY_PARAM);
 		String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.genKEUIItemDetailsMessage(itemId, requestId);
+		String requestMsg = MessageUtils.genKEUIItemDetailsMessage(itemId, requestId);
 		
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseItemDetailsMsg(responseMsg);
@@ -212,11 +203,10 @@ public class QueryServlet extends MQServlet {
 	}
 	
 	private void processDuplicateIssueRq(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		MessageUtils msgUtils = MessageUtils.getInstance();
 		Properties props = createRequestProps(request);
 		
 		String requestId = Utils.genRequestID();
-		String requestMsg = msgUtils.genKEUIDuplicateIssueMsg(props, requestId);
+		String requestMsg = MessageUtils.genKEUIDuplicateIssueMsg(props, requestId);
 		
 		String responseMsg = getKEUIResponse(requestMsg, requestId);
 		String resultJSon = MessageParser.parseKEUIDuplicateResponse(responseMsg);
@@ -228,12 +218,18 @@ public class QueryServlet extends MQServlet {
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
 		
-		boolean isAuthenticated = UserAuthenticator.getInstance().authenticateUser(session);
+		boolean isAuthenticated = UserAuthenticator.authenticateUser(session);
 		
 		if (isAuthenticated) {
 			AlertUser user = (AlertUser) session.getAttribute(Configuration.USER_PRINCIPAL);
 			String uuid = user.getUuid();
+			String requestId = Utils.genRequestID();
 			
+			String recommenderRq = MessageUtils.genRecommenderIssuesMsg(Arrays.asList(new String[] {uuid}), requestId);
+			String recommenderResp = getRecommenderIssuesResponse(recommenderRq);
+			
+			
+			// send a message to Recommender to get the IDs of issues
 			
 			// TODO
 		}
@@ -261,7 +257,9 @@ public class QueryServlet extends MQServlet {
 		writer.close();
 	}
 	
-	
+	private String getRecommenderIssuesResponse(String requestMsg) {
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:wsnt=\"http://docs.oasis-open.org/wsn/b-2\" xmlns:wsa=\"http://www.w3.org/2005/08/addressing\"><soap:Header>Header</soap:Header><soap:Body><wsnt:Notify><wsnt:NotificationMessage><wsnt:Topic>ALERT.Recommender.IssueRecommendation</wsnt:Topic><wsnt:ProducerReference><wsa:Address>http://www.alert-project.eu/socrates</wsa:Address></wsnt:ProducerReference><wsnt:Message><ns1:event xmlns:ns1=\"http://www.alert-project.eu/\" xmlns:o=\"http://www.alert-project.eu/ontoevents-mdservice\" xmlns:r=\"http://www.alert-project.eu/rawevents-forum\" xmlns:r1=\"http://www.alert-project.eu/rawevents-mailinglist\" xmlns:r2=\"http://www.alert-project.eu/rawevents-wiki\" xmlns:s=\"http://www.alert-project.eu/strevents-kesi\" xmlns:sm=\"http://www.alert-project.eu/stardom\" xmlns:s1=\"http://www.alert-project.eu/strevents-keui\" xmlns:sc=\"http://www.alert-project.eu/socrates\" xmlns:p=\"http://www.alert-project.eu/panteon\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.alert-project.eu/alert-root.xsd\" ><ns1:head><ns1:sender>SOCRATES</ns1:sender><ns1:timestamp>1331676396932</ns1:timestamp><ns1:sequencenumber>570749432</ns1:sequencenumber></ns1:head><ns1:payload><ns1:meta><ns1:startTime>1331676396932</ns1:startTime><ns1:endTime>1331676396937</ns1:endTime><ns1:eventName>ALERT.Recommender.IssueRecommendation</ns1:eventName><ns1:eventId>1818516212</ns1:eventId><ns1:eventType>Reply</ns1:eventType></ns1:meta><ns1:eventData><sc:issues><sc:issue><sc:id>1010</sc:id><o:bug>owl#1</o:bug></sc:issue><sc:issue><sc:id>2050</sc:id><o:bug>owl#2</o:bug></sc:issue><sc:issue><sc:id>2030</sc:id><o:bug>owl#3</o:bug></sc:issue><sc:issue><sc:id>2040</sc:id><o:bug>owl#4</o:bug></sc:issue></sc:issues></ns1:eventData></ns1:payload></ns1:event></wsnt:Message></wsnt:NotificationMessage></wsnt:Notify></soap:Body></soap:Envelope>";
+	}
 	/* TODO remove me
 	private String getRecommenderIssuesResponse(String requestMsg) {
 		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:wsnt=\"http://docs.oasis-open.org/wsn/b-2\" xmlns:wsa=\"http://www.w3.org/2005/08/addressing\"><soap:Header>Header</soap:Header><soap:Body><wsnt:Notify><wsnt:NotificationMessage><wsnt:Topic>ALERT.Recommender.IssueRecommendation</wsnt:Topic><wsnt:ProducerReference><wsa:Address>http://www.alert-project.eu/socrates</wsa:Address></wsnt:ProducerReference><wsnt:Message><ns1:event xmlns:ns1=\"http://www.alert-project.eu/\" xmlns:o=\"http://www.alert-project.eu/ontoevents-mdservice\" xmlns:r=\"http://www.alert-project.eu/rawevents-forum\" xmlns:r1=\"http://www.alert-project.eu/rawevents-mailinglist\" xmlns:r2=\"http://www.alert-project.eu/rawevents-wiki\" xmlns:s=\"http://www.alert-project.eu/strevents-kesi\" xmlns:sm=\"http://www.alert-project.eu/stardom\" xmlns:s1=\"http://www.alert-project.eu/strevents-keui\" xmlns:sc=\"http://www.alert-project.eu/socrates\" xmlns:p=\"http://www.alert-project.eu/panteon\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.alert-project.eu/alert-root.xsd\" ><ns1:head><ns1:sender>SOCRATES</ns1:sender><ns1:timestamp>1331676396932</ns1:timestamp><ns1:sequencenumber>570749432</ns1:sequencenumber></ns1:head><ns1:payload><ns1:meta><ns1:startTime>1331676396932</ns1:startTime><ns1:endTime>1331676396937</ns1:endTime><ns1:eventName>ALERT.Recommender.IssueRecommendation</ns1:eventName><ns1:eventId>1818516212</ns1:eventId><ns1:eventType>Reply</ns1:eventType></ns1:meta><ns1:eventData><sc:issues><sc:issue><sc:id>1010</sc:id><o:bug>owl#1</o:bug></sc:issue><sc:issue><sc:id>2050</sc:id><o:bug>owl#2</o:bug></sc:issue><sc:issue><sc:id>2030</sc:id><o:bug>owl#3</o:bug></sc:issue><sc:issue><sc:id>2040</sc:id><o:bug>owl#4</o:bug></sc:issue></sc:issues></ns1:eventData></ns1:payload></ns1:event></wsnt:Message></wsnt:NotificationMessage></wsnt:Notify></soap:Body></soap:Envelope>";

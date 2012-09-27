@@ -46,7 +46,7 @@ public class LoginServlet extends HttpServlet {
 				user.setEmail(email);
 				
 				session.setAttribute(Configuration.USER_PRINCIPAL, user);
-				response.sendRedirect("index.jsp");
+				response.sendRedirect("index.xhtml");
 			} else {
 				if (log.isInfoEnabled())
 					log.info("Cannot create a session: email=" + email + ", redirecting to login page!");

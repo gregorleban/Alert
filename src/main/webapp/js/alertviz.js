@@ -11,14 +11,15 @@ function genCurrentUrl() {
 	// collect all the parameters
 	var state = getCurrentState();
 	var result = '';
+	var indexPage = 'index.xhtml';
 	
 	if (state != null)
-		result = window.location.pathname.indexOf('index.jsp') < 0 ? window.location.pathname + 'index.jsp?' + $.param(state) : window.location.pathname + '?' + $.param(state);
+		result = window.location.pathname.indexOf(indexPage) < 0 ? window.location.pathname + indexPage + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
-		result = window.location.pathname.replace('index.jsp', '');
+		result = window.location.pathname.replace(indexPage, '');
 	
 	if (currentTab != 0)
-		result += result.indexOf('index.jsp') < 0 ? 'index.jsp#' + currentTab : '#' + currentTab;
+		result += result.indexOf(indexPage) < 0 ? indexPage + '#' + currentTab : '#' + currentTab;
 	
 	return result;
 }

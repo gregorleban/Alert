@@ -20,6 +20,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 
 
@@ -29,7 +31,7 @@ import org.w3c.dom.DOMException;
  */
 public class MessageUtils {
 	
-	private static MessageUtils instance;
+	private static final Logger log = LoggerFactory.getLogger(MessageUtils.class);
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
 	private static final String DEFAULT_DATE_FORMAT = "yy-mm-dd";
@@ -54,14 +56,15 @@ public class MessageUtils {
 
 	private static MessageFactory msgFactory;
 	
-	private MessageUtils() throws SOAPException {
-		msgFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+	static {
+		try {
+			msgFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+		} catch (SOAPException e) {
+			log.error("Failed to initialize MessageFactory!", e);
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static synchronized MessageUtils getInstance() throws SOAPException {
-		if (instance == null) instance = new MessageUtils();
-		return instance;
-	}
 	
 	/**
 	 * Generates a SOAPMessage with the envelope prefix set to 's' and 2 new namespaces added. The last child element
@@ -70,7 +73,7 @@ public class MessageUtils {
 	 * @throws SOAPException 
 	 * @throws DOMException 
 	 */
-	private SOAPMessage getMsgTemplate(String address, String eventName, String requestId) throws DOMException, SOAPException {
+	private static SOAPMessage getMsgTemplate(String address, String eventName, String requestId) throws DOMException, SOAPException {
 		// set the namespaces
 		SOAPMessage soapMsg = msgFactory.createMessage();
 		soapMsg.setProperty(SOAPMessage.WRITE_XML_DECLARATION, "true");
@@ -128,7 +131,7 @@ public class MessageUtils {
 		return soapMsg;
 	}
 	
-	private SOAPMessage getAPITemplate(String apiCall, String requestId) throws DOMException, SOAPException {
+	private static SOAPMessage getAPITemplate(String apiCall, String requestId) throws DOMException, SOAPException {
 		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/search", "ALERT.Search.APICallRequest", requestId);
 		
 		SOAPBody body = msg.getSOAPBody();
@@ -150,7 +153,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String genKEUIPeopleMessage(Properties props, String requestId) {
+	public static String genKEUIPeopleMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -176,7 +179,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String genKEUITimelineMessage(Properties props, String requestId) {
+	public static String genKEUITimelineMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			
@@ -201,7 +204,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String getKEUIItemsMessage(Properties props, String requestId) {
+	public static String getKEUIItemsMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			
@@ -234,7 +237,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String genKEUIKeywordMessage(Properties props, String requestId) {
+	public static String genKEUIKeywordMessage(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryMsg(props, requestId);
 			
@@ -263,7 +266,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String genKEUISuggestionMessage(String term, String suggestionTypes, String requestId) {
+	public static String genKEUISuggestionMessage(String term, String suggestionTypes, String requestId) {
 		try {
 			SOAPMessage msg = getKEUITemplate("GetSuggestions", requestId);
 			SOAPElement data = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s1:requestData").item(0);
@@ -280,7 +283,7 @@ public class MessageUtils {
 		}
 	}
 	
-	public String genKEUIItemDetailsMessage(String itemId, String requestId) {
+	public static String genKEUIItemDetailsMessage(String itemId, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
 			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -324,7 +327,7 @@ public class MessageUtils {
 	 * @param requestId
 	 * @return
 	 */
-	public String genKEUIDuplicateIssueMsg(Properties props, String requestId) {
+	public static String genKEUIDuplicateIssueMsg(Properties props, String requestId) {
 		try {
 			String issueId = props.getProperty("issues");
 			String offset = props.getProperty("offset");
@@ -362,7 +365,7 @@ public class MessageUtils {
 		}
 	}
 	
-	private SOAPMessage getKEUIQueryTemplate(String requestType, String queryType, String requestId) throws DOMException, SOAPException {
+	private static SOAPMessage getKEUIQueryTemplate(String requestType, String queryType, String requestId) throws DOMException, SOAPException {
 		SOAPMessage msg = getKEUITemplate(requestType, requestId);
 		SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
 		
@@ -373,7 +376,7 @@ public class MessageUtils {
 		return msg;
 	}
 	
-	private SOAPMessage getKEUITemplate(String requestType, String requestId) throws DOMException, SOAPException {
+	private static SOAPMessage getKEUITemplate(String requestType, String requestId) throws DOMException, SOAPException {
 		SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/keui", "KEUIRequest", requestId);
 		
 		SOAPBody body = msg.getSOAPBody();
@@ -392,7 +395,7 @@ public class MessageUtils {
 	 * @param props
 	 * @return
 	 */
-	private SOAPMessage getKEUIQueryMsg(Properties props, String requestId) {
+	private static SOAPMessage getKEUIQueryMsg(Properties props, String requestId) {
 		try {
 			SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
 			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
@@ -487,7 +490,7 @@ public class MessageUtils {
 	 * @throws SOAPException 
 	 * @throws IOException 
 	 */
-	public String getCommitDetailsMsg(String commitURI, String requestId) throws SOAPException, IOException {
+	public static String getCommitDetailsMsg(String commitURI, String requestId) throws SOAPException, IOException {
 		SOAPMessage msg = getAPITemplate("commit.getInfo", requestId);
 		
 		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
@@ -508,7 +511,7 @@ public class MessageUtils {
 	 * @throws SOAPException
 	 * @throws IOException
 	 */
-	public String genIssueDetailsMsg(String issueId, String requestId) throws SOAPException, IOException {
+	public static String genIssueDetailsMsg(String issueId, String requestId) throws SOAPException, IOException {
 		SOAPMessage msg = getAPITemplate("issue.getInfo", requestId);
 		
 		SOAPElement inputEl = (SOAPElement) msg.getSOAPBody().getElementsByTagName("s2:inputParameter").item(0);
@@ -527,7 +530,7 @@ public class MessageUtils {
 	 * @param userIds
 	 * @return
 	 */
-	public String genRecommenderIssuesMsg(Collection<String> userIds, String requestId) {
+	public static String genRecommenderIssuesMsg(Collection<String> userIds, String requestId) {
 		try {
 			SOAPMessage msg = getMsgTemplate("http://www.alert-project.eu/metadata", "ALERT.*.Recommender.IssueRecommendationRequest", requestId);
 			SOAPElement eventData = (SOAPElement) msg.getSOAPBody().getElementsByTagName("ns1:eventData").item(0);

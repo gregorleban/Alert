@@ -2,6 +2,8 @@ package com.jsi.alert.utils;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 /**
  * A utility class with various static methods.
  * 
@@ -36,5 +38,12 @@ public class Utils {
 		} catch (Throwable t) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Escapes <code>String</code> to HTML.
+	 */
+	public static String escapeHtml(String input) {
+		return StringEscapeUtils.escapeHtml4(input).replaceAll("\n", "<br />");
 	}
 }

@@ -39,9 +39,7 @@ function getCurrentState() {
 	// general search
 	// search terms
 	var people = searchGeneral.getTypeV('person');
-//	var keywords = searchGeneral.getTypeV('keyword');
 	var keywords = $('#keyword_text').val();
-	var concepts = searchGeneral.getTypeV('concept');
 	var sources = searchGeneral.getTypeV('source');
 	var products = searchGeneral.getTypeV('product');
 	var issues = searchGeneral.getTypeV('issue');
@@ -50,7 +48,6 @@ function getCurrentState() {
 	
 	if (people.length > 0) general.people = people;
 	if (keywords.length > 0) general.keywords = keywords;
-	if (concepts.length > 0) general.concepts = concepts;
 	if (sources.length > 0) general.sources = sources;
 	if (products.length > 0) general.products = products;
 	if (issues.length > 0) general.issues = issues;
@@ -680,9 +677,7 @@ var Search = function (opts) {
 	    
 	    init: function () {
 	    	searchTerms = {
-	    		'keyword': [],
 	    		'person': [],
-	    		'concept': [],
 	    		'source': [],
 	    		'product': [],
 	    		'issue': []
@@ -737,6 +732,21 @@ var AlertViz = function(options) {
     		}
     		
     		$(selector).change();
+    	},
+    	
+    	searchRelated: function () {
+    		$.ajax({
+    			type: 'GET',
+    			url: 'query',
+    			data: {type: 'suggestMyCode'},
+    			dataType: 'json',
+    			async: true,
+    			success: function (data, textStatus, jqXHR) {
+    				that.setQueryResults(data);
+    			}
+    		});
+    		
+    		return false;
     	},
     	
     	searchItemDetails: function (itemId) {
@@ -809,7 +819,6 @@ var AlertViz = function(options) {
                 data: {
                 	type: queryType,
                 	keywords: queryOpts.keywords,
-                	concepts: queryOpts.concepts,
         			people: queryOpts.people,
         			sources: queryOpts.sources,
         			products: queryOpts.products,
@@ -838,7 +847,6 @@ var AlertViz = function(options) {
     		return that.searchItemsByQueryOpts({
     			type: 'itemData',
             	keywords: queryOpts.keywords,
-            	concepts: queryOpts.concepts,
     			people: queryOpts.people,
     			sources: queryOpts.sources,
     			products: queryOpts.products,
@@ -882,8 +890,7 @@ var AlertViz = function(options) {
     	},
     	
     	searchGeneral: function() {	
-    		var keywords = generalSearch.getSearchStr('keyword');
-    		var concepts = generalSearch.getSearchStr('concept');
+    		var keywords = $('#keyword_text').val();
     		var people = generalSearch.getSearchStr('person');
     		var sources = generalSearch.getSearchStr('source');
     		var products = generalSearch.getSearchStr('product');
@@ -895,7 +902,6 @@ var AlertViz = function(options) {
     		var queryOpts = {
     			type: 'generalSearch',
     			keywords: keywords,
-    			concepts: concepts,
     			people: people,
     			sources: sources,
     			products: products,

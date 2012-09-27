@@ -164,7 +164,7 @@ ul.as-selections li.as-original input {
 	border: none !important;
 	outline: none !important;
 	font-size: 13px;
-	width: 120px !important;
+	width: 320px;
 	height: 18px !important;
 	padding-top: 0px !important;
 }

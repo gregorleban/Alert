@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;
 import com.jsi.alert.utils.Utils;
 
@@ -43,7 +44,6 @@ public class SuggestServlet extends MQServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
@@ -74,7 +74,7 @@ public class SuggestServlet extends MQServlet {
 			
 			String requestMsg = msgUtils.genKEUISuggestionMessage(currInput, "Other".equals(suggType) ? "People,Products,Sources" : suggType, requestId);
 			String responseMsg = getKEUIResponse(requestMsg, requestId).replaceAll("&", "&amp;");
-			String responseJSon = msgUtils.parseKEUISuggestMessage(responseMsg);
+			String responseJSon = MessageParser.parseKEUISuggestMessage(responseMsg);
 			
 			PrintWriter writer = new PrintWriter(response.getOutputStream());
 			writer.write(responseJSon);

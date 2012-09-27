@@ -1,4 +1,5 @@
-<%@page import="com.jsi.alert.utils.LoginUtils"%>
+<%@page import="com.jsi.alert.utils.UserAuthenticator"%>
+<% UserAuthenticator authenticator = UserAuthenticator.getInstance(); %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,14 +61,15 @@
 					 <li><a href="subscribe.html">Subscribe</a></li>
 					 <li><a href="overview.html">Project overview</a></li>
 					 <%
-					 if (LoginUtils.getInstance().isAdmin()) {
+					 if (authenticator.isAdmin(session)) {
 					 %>
 					 <li><a href="admin.html">Administration</a></li>
 					 <%
-					 } 
+					 }
+					 if (authenticator.isLoggedIn(session)) {
 					 %>
 					 <li><div class='popbox'>
-				  		 <a class="open" href="#">ursic.jure@gmail.com</a>
+				  		 <a class="open" href="#"><% out.write(authenticator.getUserEmail(session)); %></a>
 					 		<div class='collapse'>
  					 			<div class='box'>
    					 				<div class='arrow'></div>
@@ -82,6 +84,9 @@
      			     		</div>
      			     	</div>
      			     </li>
+     			     <%
+					 }
+     			     %>
      			 </ul>
      		</div>
     	</div>
@@ -159,7 +164,7 @@
 											<td class="cells"><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells"><button onclick="return viz.search();">Search</button></td>
+											<td class="cells"><button onclick="return viz.searchRelated();">Search</button></td>
 										</tr>
 									</tbody>
 								</table>

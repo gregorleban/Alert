@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jsi.alert.mq.MQSessionProvider;
 import com.jsi.alert.mq.MQSessionProvider.ComponentKey;
+import com.jsi.alert.utils.Configuration;
 
 /**
  * An abstract <code>Servlet</code> which send a sync request to the KEUI component.
@@ -79,8 +80,11 @@ public abstract class MQServlet extends HttpServlet {
     }
     
     private void sendMessage(String requestMsg, ComponentKey componentKey) throws JMSException {
-    	if (log.isDebugEnabled())
+    	if (log.isDebugEnabled()) {
     		log.debug("Sending message to " + componentKey + " component...");
+    		if (Configuration.LOG_EVENTS)
+    			log.debug(requestMsg);
+    	}
     	
     	MessageProducer producer = producerH.get(componentKey);
     	Message msg = mqSession.createTextMessage(requestMsg);
@@ -106,7 +110,7 @@ public abstract class MQServlet extends HttpServlet {
 		
 		// loop until you get the response with the correct ID
 		String receivedID = null;
-		String responseXML = null;
+		String responseMsg = null;
 		long beginTime = System.currentTimeMillis();
 		while (!requestID.equals(receivedID)) {
 			// check if KEUI is taking too long
@@ -116,10 +120,10 @@ public abstract class MQServlet extends HttpServlet {
 			Message receivedMsg = consumer.receive(2000);
 			if (receivedMsg instanceof TextMessage) {
 				TextMessage received = (TextMessage) receivedMsg;
-				responseXML = received.getText();
+				responseMsg = received.getText();
 				
 				// check the ID
-				Matcher matcher = REQUEST_ID_PATTERN.matcher(responseXML);				
+				Matcher matcher = REQUEST_ID_PATTERN.matcher(responseMsg);				
 				if (matcher.find()) {
 					String idTag = matcher.group(0);
 					if (REQUEST_ID_TAG.replace("\\d+", requestID).equals(idTag))
@@ -128,10 +132,13 @@ public abstract class MQServlet extends HttpServlet {
 			}
 		}
 		
-		if (log.isDebugEnabled())
-			log.debug("Received response from the " + componentKey + " component.");
+		if (log.isDebugEnabled()) {
+			log.debug("Received response from the " + componentKey + " component!");
+			if (Configuration.LOG_EVENTS)
+				log.debug(responseMsg);
+		}
 		
-		return responseXML;
+		return responseMsg;
 	}
 	
 	private String getMqResponse(String requestMsg, String requestId, ComponentKey componentKey) throws JMSException, ServletException {

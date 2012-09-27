@@ -131,11 +131,16 @@
 				var totalSelections = 0;
 				var tab_press = false;
 				
+				var blurWidth = '320px';
+				
+				$(input).css('width', blurWidth);
+				
 				// Handle input field events
 				input.focus(function(){	
 					input_focus = true;
 					if($(this).val() == opts.startText && values_input.val() == ""){
 						$(this).val("");
+						$(this).css("width", "200px");
 					} else if(input_focus){
 						$("li.as-selection-item", selections_holder).removeClass("blur");
 						if($(this).val() != ""){
@@ -146,8 +151,10 @@
 					input_focus = true;
 					return true;
 				}).blur(function(){
+					$(this).css("width", blurWidth);
 					if($(this).val() == "" && values_input.val() == "" && prefill_value == ""){
 						$(this).val(opts.startText);
+						$(this).css('width', blurWidth);
 					} else if(input_focus){
 						$("li.as-selection-item", selections_holder).addClass("blur").removeClass("selected");
 						results_holder.hide();

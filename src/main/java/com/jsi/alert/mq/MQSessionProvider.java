@@ -3,7 +3,6 @@ package com.jsi.alert.mq;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -15,6 +14,8 @@ import javax.jms.Topic;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jsi.alert.utils.Configuration;
 
 /**
  * A singleton class which has a reference to the ActiveMQ session.
@@ -54,15 +55,10 @@ public class MQSessionProvider {
 	 */
 	private void initMQ() throws JMSException, IOException {
 		log.info("Initializing ActiveMQ...");
-		
-		// read the properties
-		if (log.isDebugEnabled()) log.debug("Reading properties...");
-		Properties props = new Properties();
-		props.load(this.getClass().getClassLoader().getResourceAsStream("alert.properties"));
-		
+
 		// init MQ
 		if (log.isDebugEnabled()) log.debug("Creating connections...");
-		ConnectionFactory factory = new ActiveMQConnectionFactory(props.getProperty("mq_url"));
+		ConnectionFactory factory = new ActiveMQConnectionFactory(Configuration.ACTIVEMQ_URL);
 		javax.jms.Connection mqConnection = factory.createConnection();
 		mqConnection.start();
 
@@ -73,11 +69,11 @@ public class MQSessionProvider {
 		responseTopics = new HashMap<>();
 		
 		// initiate consumers/producers
-		requestTopics.put(ComponentKey.KEUI, mqSession.createTopic(props.getProperty("topic.keui.request")));
-		requestTopics.put(ComponentKey.API, mqSession.createTopic(props.getProperty("topic.api.request")));
+		requestTopics.put(ComponentKey.KEUI, mqSession.createTopic(Configuration.KEUI_REQUEST_TOPIC));
+		requestTopics.put(ComponentKey.API, mqSession.createTopic(Configuration.API_REQUEST_TOPIC));
 		
-		responseTopics.put(ComponentKey.KEUI, mqSession.createTopic(props.getProperty("topic.keui.response")));
-		responseTopics.put(ComponentKey.API, mqSession.createTopic(props.getProperty("topic.api.response")));
+		responseTopics.put(ComponentKey.KEUI, mqSession.createTopic(Configuration.KEUI_RESPONSE_TOPIC));
+		responseTopics.put(ComponentKey.API, mqSession.createTopic(Configuration.API_RESPONSE_TOPIC));
 		
 		log.info("Initialization finished!");
 	}

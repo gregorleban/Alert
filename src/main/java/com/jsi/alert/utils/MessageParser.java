@@ -69,7 +69,7 @@ public class MessageParser {
 	private static final int[] MONTH_LENGTHS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	@SuppressWarnings("unchecked")
-	public static String parseCommitDetailsMessage(String responseMsg) {
+	public static String parseAPICommitDetailsMessage(String responseMsg) {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -219,7 +219,7 @@ public class MessageParser {
 	 * @throws SAXException 
 	 */
 	@SuppressWarnings("unchecked")
-	public static String parseIssueDetailsMsg(String responseMsg) throws ParserConfigurationException, SAXException, IOException {
+	public static String parseAPIIssueDetailsMsg(String responseMsg) throws ParserConfigurationException, SAXException, IOException {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -383,7 +383,7 @@ public class MessageParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String parseItemDetailsMsg(String responseMsg) {
+	public static String parseKEUIItemDetailsMsg(String responseMsg) {
 		try {
 			JSONObject result = new JSONObject();
 			
@@ -980,8 +980,8 @@ public class MessageParser {
 				} else throw new IllegalArgumentException("An unexpected suggestion node appeared in the KEUI response: " + tagName);
 			
 				JSONObject jsonObj = new JSONObject();
-				jsonObj.put("label", label);
-				jsonObj.put("value", value);
+				jsonObj.put("label", Utils.escapeHtml(label));
+				jsonObj.put("value", Utils.escapeHtml(value));
 				jsonObj.put("type", type);
 				
 				jsonArray.add(jsonObj);
@@ -990,6 +990,37 @@ public class MessageParser {
 			return jsonArray.toJSONString();
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing KEUI suggestion response!!", t);
+		}
+	}
+
+	/**
+	 * Parses Recommenders ALERT.Recommender.IssueRecommendation.xml message to extract issue IDs.
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public static List<Long> parseRecommenderIssueIdsMsg(String msg) {
+		try {
+			List<Long> result = new ArrayList<>();
+			
+			DocumentBuilderFactory xmlFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = xmlFactory.newDocumentBuilder();
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(msg.getBytes()));
+			
+			Element eventData = (Element) xmlDoc.getElementsByTagName("ns1:eventData").item(0);
+			NodeList issues = eventData.getElementsByTagName("sc:issue");
+			
+			for (int i = 0; i < issues.getLength(); i++) {
+				Element issue = (Element) issues.item(i);
+				
+				Element idEl = (Element) issue.getElementsByTagName("sc:id").item(0);
+				Long id = Long.parseLong(idEl.getTextContent());
+				result.add(id);
+			}
+			
+			return result;
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unexpected exception occurred while parsing Recommender IssueRecommendation.xml message!", t);
 		}
 	}
 }

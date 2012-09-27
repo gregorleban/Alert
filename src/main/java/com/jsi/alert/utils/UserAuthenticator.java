@@ -17,12 +17,21 @@ import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+/**
+ * A utilities class which contacts a web service to fetch the logged in users data
+ * and see if they are authenticated.
+ */
 public class UserAuthenticator {
 	
 	private static final Logger log = LoggerFactory.getLogger(UserAuthenticator.class);
-	
 	private static Client client = Client.create(new DefaultClientConfig());
 	
+	/**
+	 * Contacts the web service to see, if the user is authenticated.
+	 * 
+	 * @param email
+	 * @return
+	 */
 	private static AlertUser getUserInfo(String email) {
 		if (log.isDebugEnabled())
 			log.debug("Fetching info of user: " + email);

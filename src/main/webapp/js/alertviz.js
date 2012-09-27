@@ -14,7 +14,7 @@ function genCurrentUrl() {
 	var indexPage = 'index.xhtml';
 	
 	if (state != null)
-		result = window.location.pathname.indexOf(indexPage) < 0 ? window.location.pathname + indexPage + $.param(state) : window.location.pathname + '?' + $.param(state);
+		result = window.location.pathname.indexOf(indexPage) < 0 ? window.location.pathname + indexPage + '?' + $.param(state) : window.location.pathname + '?' + $.param(state);
 	else
 		result = window.location.pathname.replace(indexPage, '');
 	
@@ -620,7 +620,7 @@ var Search = function (opts) {
 		},
 		
 		addToSearch: function (data) {
-			if (data.type == 'concept' || data.type == 'source' || data.type == 'product' || data.type == 'person') {
+			if (data.type == 'source' || data.type == 'product' || data.type == 'person') {
 				// have to send URI
 				var value = data.value;
 				var label = data.label;
@@ -628,8 +628,7 @@ var Search = function (opts) {
 				var array = searchTerms[data.type];
 				if (that.indexOfLabel(data.type, label) < 0)
 					array.push({type: data.type, label: label, value: value});
-			} else if (that.indexOfLabel(data.type, data.value) < 0)
-				searchTerms[data.type].push({type: 'keyword', label: data.value, value: data.value});
+			}
 		},
 		
 		removeFromSearch: function (elem) {

@@ -72,7 +72,7 @@ public class SuggestServlet extends MQServlet {
 			String requestId = Utils.genRequestID();
 			
 			String requestMsg = MessageUtils.genKEUISuggestionMessage(currInput, "Other".equals(suggType) ? "People,Products,Sources" : suggType, requestId);
-			String responseMsg = getKEUIResponse(requestMsg, requestId).replaceAll("&", "&amp;");
+			String responseMsg = getKEUIResponse(requestMsg, requestId);
 			String responseJSon = MessageParser.parseKEUISuggestMessage(responseMsg);
 			
 			PrintWriter writer = new PrintWriter(response.getOutputStream());

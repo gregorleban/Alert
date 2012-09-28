@@ -27,7 +27,7 @@
         if(box.css('display') == 'block'){
           methods.close();
         } else {
-          box.css({'display': 'block', 'top': 40, 'left': -107});
+          box.css({'display': 'block', 'top': 0, 'left': 0});
         }
       },
       close: function(){

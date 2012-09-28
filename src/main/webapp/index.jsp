@@ -66,24 +66,28 @@
 					 <%
 					 } 
 					 %>
-					 <li><div class='popbox'>
-				  		 <a class="open" href="#">ursic.jure@gmail.com</a>
-					 		<div class='collapse'>
- 					 			<div class='box'>
-   					 				<div class='arrow'></div>
-     		 		 				<div class='arrow-border'></div>
-        			 				<form method="post" id="subForm">
-        				 				<p>
-<a href="#" style="float:right;text-transform:normalcase;">Logout</a>
-<script type="text/javascript" src="http://output21.rssinclude.com/output?type=js&amp;id=526079&amp;hash=ee25e8943dc9de3f8d68f5bf9e0b5c5c"></script>
+					 <li>
+						 <div class='popbox'>
+					  		 <a class="open" href="#">ursic.jure@gmail.com</a>
+						 		<div class='collapse'>
+						 			<div class='box'>
+	  					 				<div class='arrow'></div>
+	    		 		 				<div class='arrow-border'></div>
+	       			 				<form method="post" id="subForm">
+	       				 				<p>
+		<a href="#">Logout</a>
+		<script type="text/javascript" src="http://output97.rssinclude.com/output?type=js&amp;id=526083&amp;hash=c1a1fd88ca61686a3f9c80b2b211d8d3"></script>
 		 								</p>
-     			    				</form>
-     			     			</div>
-     			     		</div>
-     			     	</div>
-     			     </li>
+	   			    				</form>
+	   			     			</div>
+	   			     		</div>
+	   			     	</div>
+	    			</li>
      			 </ul>
      		</div>
+
+
+     		
     	</div>
     </div>
 <div id="container_main" class="container_main">
@@ -108,19 +112,35 @@
 											<td colspan="7"><input type="text" class="text" id="keyword_text" name="keywords"/></td>
 										</tr>
 										<tr>
-											<td  colspan="7"><input type="text" class="text" id="other_text" name="other"/></td>
+											<td colspan="7"><input type="text" class="text" id="other_text" name="other"/></td>
 										</tr>
 										<tr>
 											<td class="cells"><label for="from_text">Between:</label>
 												<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
 												<label for="to_text">and</label>
 												<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
-											<td class="cells"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
+											<td class="cells"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label>
+											
+		
+											
+											
+											</td>
 											<td class="cells"><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
-											<td class="cells"><button onclick="return viz.searchGeneral();">Search</button></td>
+											<td class="cells">
+												<table id="searchbtntbl" class="searchbtntbl">
+													<tr>
+														<td id="searchbtnlefttd" class="searchbtntd">
+															<button id="searchbtnleft" class="searchbtnleft" onclick="return viz.searchGeneral();">Search</button>
+														</td>	
+														<td id="searchbtnrighttd" class="searchbtntd">
+															<button id="searchbtnright" class="searchbtnright" onclick="return viz.searchGeneral();">+</button>
+														</td>
+													</tr>
+												</table>	
+											</td>						
 										</tr>
 									</tbody>
 								</table>
@@ -141,7 +161,18 @@
 											<td class="cells"><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells"><button id="issue_search" onclick="return viz.searchIssueId();">Search</button></td>
+											<td class="cells">
+												<table id="searchbtntbl" class="searchbtntbl">
+													<tr>
+														<td id="searchbtnlefttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnleft" onclick="return viz.searchIssueId();">Search</button>
+														</td>	
+														<td id="searchbtnrighttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnright" onclick="return viz.searchIssueId();">+</button>
+														</td>
+													</tr>
+												</table>
+											</td>
 										</tr>
 									</tbody>
 								</table>
@@ -159,7 +190,18 @@
 											<td class="cells"><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td class="cells"><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells"><button onclick="return viz.search();">Search</button></td>
+											<td class="cells">
+												<table id="searchbtntbl" class="searchbtntbl">
+													<tr>
+														<td id="searchbtnlefttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnleft" onclick="return viz.search();">Search</button>
+														</td>	
+														<td id="searchbtnrighttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnright" onclick="return viz.search();">+</button>
+														</td>
+													</tr>
+												</table>
+											</td>
 										</tr>
 									</tbody>
 								</table>
@@ -169,7 +211,18 @@
 									<tbody>
 										<tr style="line-hight:12px;">
 											<td style="width:100%;"><input id="person_text" name="other"/></td>
-											<td><button onclick="return viz.search();">Search</button></td>
+											<td>
+												<table id="searchbtntbl" class="searchbtntbl">
+													<tr>
+														<td id="searchbtnlefttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnleft" onclick="return viz.search();">Search</button>
+														</td>	
+														<td id="searchbtnrighttd" class="searchbtntd">
+															<button id="issue_search" class="searchbtnright" onclick="return viz.search();">+</button>
+														</td>
+													</tr>
+												</table>
+											</td>
 										</tr>
 									</tbody>
 								</table>

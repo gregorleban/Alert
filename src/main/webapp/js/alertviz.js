@@ -1068,36 +1068,35 @@ var AlertViz = function(options) {
     			html += '<td>Name: <div id="name_file_' + fileIdx + '" class="data">' + file.name + '</div></td>';
     			html += '<td>Action: <div id="action_file_' + fileIdx + '" class="data">' + file.action + '</div></td>';
     			html += '</tr></table>';
-    			// modules
-    			html += '<div class="content"><table class="module_table">';
     			
-    			for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
-    				var module = modules[moduleIdx];
-    				var methods = module.methods;
+    			html += '<div class="tree">';
+    			
+    			// modules
+    			html += '<ul>';
+    			for (var i = 0; i < modules.length; i++) {
+    				var module = modules[i];
     				
-    				html += '<tr>';
-    				html += '<table>';
-    				html +='<tr><td>Start line: ' + module.startLine + '</td><td>' + module.endLine + '</td></tr>';
-    				html += '<tr><td colspan="2">Name: ' + module.name + '</td></tr>';
-    				html += '<tr><td>Methods</td></tr>';
-    				html += '<tr><td><ul class="methods_ul">';
-    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
-    					var method = methods[methodIdx];
-    					
-    					html += '<li><table class="method_table">';
-    					html += '<tr><td>Start line: ' + method.startLine + '</td><td>End line: ' + method.endLine + '</td></tr>';
-    					html += '<tr><td colspan="2">' + method.moduleMethods + '</td></tr>';
-    					html += '</table></li>';
+    				html += '<li><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+    				
+    				var methods = module.methods;
+    				html += '<ul>';
+    				for (var j = 0; j < methods.length; j++) {
+    					var method = methods[j];
+    					html += '<li><a>' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
     				}
-    				html += '</ul></td></tr>';
-    				html += '</table>';
-    				html += '</tr>';
+    				html += '</ul>';
+    				
+    				html += '</li>';
     			}
     			
-    			html += '</table></div>';
+    			html += '</ul>';
+    			
+    			
+    			html += '</div>';
     			html += '</div>';
     		}
     		
+    		createTrees();
     		$('#details_wrapper').html(html);
     		jQuery(".content").hide();
     		jQuery(".heading").click(function() {

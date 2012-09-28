@@ -41,6 +41,7 @@
 	<script type="application/javascript" src="js/sliding.form.js"></script>
 	<script type="application/javascript" src="js/date.format.js"></script>
 	<script type="application/javascript" src="js/tooltip.js"></script>
+	<script type="application/javascript" src="js/popup.js"></script>
 	<script type="application/javascript">
 		var viz;
 		$(document).ready(function() {
@@ -122,21 +123,11 @@
 												<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
 											<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
 											<td>
-												<button id="propertiesbtn">+</button>
-												<div id="propertiesdiv" style="display: none; z-index: 100;">HELLO</div>
+												<button id="propertiesbtn" onclick="return false;">+</button>
+												<div id="propertiesdiv">HELLO</div>
 												<script type="application/javascript">
 													<!--
-													$('#propertiesbtn').click(function (event) {
-														var parentPos = $('#propertiesbtn').position();	// relative to the parent
-
-														var parentCenterX = parentPos.left + $('#propertiesbtn').width()/2;
-														var parentBottom = parentPos.top + $('#propertiesbtn').height();
-														
-														$('#propertiesdiv').css('left', parentCenterX - $('#propertiesdiv').width()/2);
-														$('#propertiesdiv').css('top', parentBottom + 10);
-														$('#propertiesdiv').css('display', 'block');
-														return false;
-													});
+													$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', verticatOffset: 10, event: 'mouseover'});
 													-->
 												</script>
 											</td>
@@ -151,7 +142,13 @@
 															<button id="searchbtnleft" class="searchbtnleft" onclick="return viz.searchGeneral();">Search</button>
 														</td>	
 														<td id="searchbtnrighttd" class="searchbtntd">
-															<button id="searchbtnright" class="searchbtnright" onclick="return viz.searchGeneral();">+</button>
+															<button id="searchbtnright" class="searchbtnright" onclick="return false;">+</button>
+															<div id="sort_div"></div>
+															<script type="application/javascript">
+															<!--
+															$('#sort_div').popup({trigger: '#searchbtnrighttd', align: 'right', duration: 'fast', verticatOffset: 0, event: 'click'});
+															-->
+															</script>
 														</td>
 													</tr>
 												</table>	

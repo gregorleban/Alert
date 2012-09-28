@@ -1,6 +1,11 @@
 #propertiesdiv {
 	width: 300px;
 	height: 300px;
-	position: absolute;
+	background-color: black;
+}
+
+#sort_div {
+	width: 50px;
+	height: 30px;
 	background-color: black;
 }

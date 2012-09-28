@@ -1,4 +1,4 @@
-package com.jsi.keui.servlet;
+package com.jsi.alert.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.keui.utils.MessageUtils;
-import com.jsi.keui.utils.Utils;
+import com.jsi.alert.utils.MessageUtils;
+import com.jsi.alert.utils.Utils;
 
 /**
  * Servlet implementation class QueryServlet
@@ -124,8 +124,10 @@ public class QueryServlet extends MQServlet {
 				String requestId = Utils.genRequestID();
 				
 				String requestMsg = msgUtils.genIssueDetailsMsg(itemId, requestId);
-//				String responseMsg = getAPIResponse(requestMsg, requestId);
-				String responseMsg = getApiIssueResponse(requestMsg);
+				String responseMsg = getAPIResponse(requestMsg, requestId);
+//				String responseMsg = getApiIssueResponse(requestMsg);
+				
+				log.info("\n\n\n" + requestMsg + "\n\n\n" + responseMsg + "\n\n\n");		// TODO remove me
 				
 				resultJSon = msgUtils.parseIssueDetailsMsg(responseMsg);
 			}
@@ -135,9 +137,11 @@ public class QueryServlet extends MQServlet {
 				
 				// TODO
 				String requestMsg = msgUtils.getCommitDetailsMsg(itemId, requestId);
-				String responseMsg = getApiCommitResponse(requestMsg);	// getAPIResponse(requestMsg, requestId);//getAPIResponse(requestMsg, requestId);
+				String responseMsg = getAPIResponse(requestMsg, requestId);//getAPIResponse(requestMsg, requestId);
+//				String responseMsg = getApiCommitResponse(requestMsg); 
 				
-//				log.info("\n\n\n" + requestMsg + "\n\n\n" + responseMsg + "\n\n\n");		// TODO remove me
+				
+				log.info("\n\n\n" + requestMsg + "\n\n\n" + responseMsg + "\n\n\n");		// TODO remove me
 				
 				resultJSon = msgUtils.parseCommitDetailsMessage(responseMsg);
 			}

@@ -1,4 +1,4 @@
-package com.jsi.keui.mq;
+package com.jsi.alert.mq;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,6 +68,7 @@ public class MQSessionProvider {
 
 		mqSession = mqConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		
+		if (log.isDebugEnabled()) log.debug("Creating consumers and producers...");
 		requestTopics = new HashMap<>();
 		responseTopics = new HashMap<>();
 		
@@ -77,6 +78,8 @@ public class MQSessionProvider {
 		
 		responseTopics.put(ComponentKey.KEUI, mqSession.createTopic(props.getProperty("topic.keui.response")));
 		responseTopics.put(ComponentKey.API, mqSession.createTopic(props.getProperty("topic.api.response")));
+		
+		log.info("Initialization finished!");
 	}
 	
 	/**

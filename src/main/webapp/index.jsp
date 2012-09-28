@@ -1,4 +1,4 @@
-<%@page import="com.jsi.keui.utils.LoginUtils"%>
+<%@page import="com.jsi.alert.utils.LoginUtils"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,9 +31,9 @@
 	<script type="application/javascript" src="js/highcharts.js"></script>
 	<script type="application/javascript" src="js/dynamicgraph.js"></script>
 	<script type="application/javascript" src="js/alertviz.js"></script>
-	<script type="text/javascript" src="js/tabber.js"></script>
-	<script type="text/javascript" src="js/popbox.js"></script>	
-	<script type="text/javascript" src="js/sliding.form.js"></script>
+	<script type="application/javascript" src="js/tabber.js"></script>
+	<script type="application/javascript" src="js/popbox.js"></script>	
+	<script type="application/javascript" src="js/sliding.form.js"></script>
 	<script type="application/javascript" src="js/date.format.js"></script>
 	<script type="application/javascript" src="js/tooltip.js"></script>
 	<script type="application/javascript">
@@ -109,7 +109,7 @@
 								<table>
 									<tbody>
 										<tr>
-											<td colspan="7"><input type="text" class="text" id="keyword_text" name="keywords"/></td>
+											<td colspan="7"><input type="text" class="text" id="keyword_text" name="keywords" /></td>
 										</tr>
 										<tr>
 											<td colspan="7"><input type="text" class="text" id="other_text" name="other"/></td>
@@ -264,7 +264,7 @@
 			<button class="zoom_btns" id="btnShowMore">+</button>
 			<button class="zoom_btns" id="btnShowLess">-</button>
 		</div>
-			<div id="graph-div"></div>
+			<div id="graph-div" onselectstart="return false;"></div>
     	</div>
      <div class="tabbertab">
 	  <h2>Word cloud</h2>

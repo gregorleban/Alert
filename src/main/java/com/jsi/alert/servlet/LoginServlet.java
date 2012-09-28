@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 			String email = request.getParameter(EMAIL_PARAM);
 			if (email != null) {
 				if (log.isDebugEnabled())
-					log.debug("Saving credentials to session...");
+					log.debug("Saving credentials to session [" + email + "]...");
 				
 				// create a session and redirect to the index page
 				HttpSession session = request.getSession();

@@ -50,7 +50,7 @@ public class AuthenticatorBean {
 	}
 	
 	public String getLogoutUrl() {
-		return getLoginUrl();
+		return Configuration.LOGOUT_URL;
 	}
 
 	public AlertUser getUser() {

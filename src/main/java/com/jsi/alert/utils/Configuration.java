@@ -18,7 +18,7 @@ public class Configuration {
 	
 	public static boolean LOG_EVENTS;
 	
-	public static String LOGIN_URL, AUTHENTICATE_URL;
+	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
 
 	static {
 		// read the properties
@@ -28,7 +28,7 @@ public class Configuration {
 		try {
 			props.load(Configuration.class.getClassLoader().getResourceAsStream("alert.properties"));
 			
-			ACTIVEMQ_URL = props.getProperty("activemq.url");
+			ACTIVEMQ_URL = props.getProperty("url.activemq");
 			KEUI_REQUEST_TOPIC = props.getProperty("topic.keui.request");
 			KEUI_RESPONSE_TOPIC = props.getProperty("topic.keui.response");
 			API_REQUEST_TOPIC = props.getProperty("topic.api.request");
@@ -36,8 +36,9 @@ public class Configuration {
 			
 			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("log_events"));
 			
-			LOGIN_URL = props.getProperty("login.form.url");
-			AUTHENTICATE_URL = props.getProperty("login.authenticate.url");
+			LOGIN_URL = props.getProperty("url.login.form");
+			LOGOUT_URL = props.getProperty("url.logout.form");
+			AUTHENTICATE_URL = props.getProperty("url.login.authenticate");
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

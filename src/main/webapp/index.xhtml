@@ -63,13 +63,13 @@
 					 <li id="current"><a href="index.html">Browse</a></li>
 					 <li><a href="subscribe.html">Subscribe</a></li>
 					 <li><a href="overview.html">Project overview</a></li>
-     			     	</div>
 					 <c:choose>
 					 	<c:when test="#{authenticatorBean.isUserLoggedIn()}">
 					 		<c:if test="#{authenticatorBean.user.admin}">
 					 			<li><a href="admin.html">Administration</a></li>
 					 		</c:if>
-					 		<li><div class='popbox'>
+					 		<li>
+					 			<div class='popbox'>
 						  		 <a class="open" href="#">#{authenticatorBean.user.email}</a>
 							 		<div class='collapse'>
 		 					 			<div class='box'>

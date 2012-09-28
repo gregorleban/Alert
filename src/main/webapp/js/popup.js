@@ -4,7 +4,7 @@
 		var trigger = config.trigger;
 		var align = config.align || 'center';
 		var fadeDuration = config.duration || 'fast';
-		var verticalOffset = config.verticatOffset == null ? 10 : config.verticatOffset;
+		var verticalOffset = config.verticatOffset == null ? 2 : config.verticatOffset;
 		var eventType = config.event || 'click';
 		
 		$(popup).css('display', 'none');

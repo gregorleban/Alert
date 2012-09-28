@@ -42,15 +42,11 @@
 	<script type="application/javascript" src="js/tooltip.js"></script>
 	<script type="application/javascript">
 		var viz;
-		$(document).ready(function(){														
+		$(document).ready(function() {
+			$('.popbox').popbox();
 			viz = AlertViz();
 			loadState();
 		});
-	</script>
-	<script type="text/javascript" charset="utf-8">
-  	  $(document).ready(function(){
- 	     $('.popbox').popbox();
- 	   });
 	</script>
 	<style type="text/css">.tabber{visibility: hidden;}</style>
 </head>

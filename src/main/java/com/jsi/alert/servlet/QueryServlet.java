@@ -265,8 +265,8 @@ public class QueryServlet extends MQServlet {
 			
 			// now that I have the issueIDs I have to send them to the KEUI component
 			requestId = Utils.genRequestID();
-			String keuiRq = "";//MessageUtils.genKEUIIssueListMsg(issueIds, requestId); TODO
-			String keuiResp = getKEUIResponse(keuiRq, requestId);
+			String keuiRq = MessageUtils.genKEUIIssueListMsg(issueIds, requestId);
+			String keuiResp = "";	//getKEUIResponse(keuiRq, requestId);	TODO
 			
 			String resultJSon = MessageParser.parseKEUIItemsResponse(keuiResp);
 			writeJSon(resultJSon, response);

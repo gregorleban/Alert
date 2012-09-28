@@ -34,7 +34,7 @@ public class UserAuthenticator {
 	 */
 	private static AlertUser getUserInfo(String email) {
 		if (log.isDebugEnabled())
-			log.debug("Fetching info of user: " + email);
+			log.debug("Fetching info of user: " + email + "...");
 		
 		WebResource service = client.resource(Configuration.AUTHENTICATE_URL);
 		Builder builder = service.accept(MediaType.APPLICATION_JSON);

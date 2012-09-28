@@ -547,4 +547,54 @@ public class MessageUtils {
 			throw new IllegalArgumentException("An unecpected exception occurred while generating Recommender suggest issues message!", t);
 		}
 	}
+
+	/**
+	 * Generates a KEUI message to request issue short content from issueIDs.
+	 * 
+	 * @param issueIds
+	 * @param requestId
+	 * @return
+	 */
+	public static String genKEUIIssueListMsg(List<Long> issueIds, String requestId) {
+		try {
+			SOAPMessage msg = getKEUIQueryTemplate("Query", "generalQuery", requestId);
+			SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+			SOAPElement query = (SOAPElement) msg.getSOAPBody().getElementsByTagName("query").item(0);
+			
+			SOAPElement args = query.addChildElement("queryArgs");
+			SOAPElement conditions = args.addChildElement("conditions");
+			SOAPElement bugIds = conditions.addChildElement("bugIds");
+			SOAPElement postTypes = conditions.addChildElement("postTypes");
+			
+			// set the conditions
+			// generate a String of issueIDs
+			StringBuilder idBuilder = new StringBuilder();
+			for (int i = 0; i < issueIds.size(); i++) {
+				idBuilder.append(issueIds.get(i));
+				if (i < issueIds.size() - 1)
+					idBuilder.append(",");
+			}
+				
+			bugIds.setTextContent(idBuilder.toString());
+			postTypes.setTextContent("issueDescriptions");
+			
+			// set the parameters
+			SOAPElement params = query.addChildElement("params");
+			params.addAttribute(envelope.createName("resultData"), "itemData");
+			params.addAttribute(envelope.createName("offset"), "0");	// TODO get offset from client
+			params.addAttribute(envelope.createName("maxCount"), "100");	// TODO get limit from client
+			params.addAttribute(envelope.createName("includeAttachments"), "True");
+			params.addAttribute(envelope.createName("sortBy"), "dateDesc");
+			params.addAttribute(envelope.createName("itemDataSnipLen"), KEUI_ITEM_SNIP_LEN);
+			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
+			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
+			params.addAttribute(envelope.createName("includePeopleData"), "True");
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			msg.writeTo(out);
+			return new String(out.toByteArray());
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("An unecpected exception occurred while generating KEUI get issues from IDs message!", t);
+		}
+	}
 }

@@ -64,19 +64,19 @@
 					 <li><a href="subscribe.html">Subscribe</a></li>
 					 <li><a href="overview.html">Project overview</a></li>
 					 <c:choose>
-					 	<c:when test="#{indexPresenter.isUserLoggedIn()}">
-					 		<c:if test="#{indexPresenter.user.admin}">
+					 	<c:when test="#{authenticatorBean.isUserLoggedIn()}">
+					 		<c:if test="#{authenticatorBean.user.admin}">
 					 			<li><a href="admin.html">Administration</a></li>
 					 		</c:if>
 					 		<li><div class='popbox'>
-						  		 <a class="open" href="#">#{indexPresenter.user.email}</a>
+						  		 <a class="open" href="#">#{authenticatorBean.user.email}</a>
 							 		<div class='collapse'>
 		 					 			<div class='box'>
 		   					 				<div class='arrow'></div>
 		     		 		 				<div class='arrow-border'></div>
 		        			 				<form method="post" id="subForm">
 		        				 				<p>
-													<a href="#{indexPresenter.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
+													<a href="#{authenticatorBean.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
 													<script type="text/javascript" src="http://output21.rssinclude.com/output?type=js&amp;id=526079&amp;hash=ee25e8943dc9de3f8d68f5bf9e0b5c5c"></script>
 				 								</p>
 		     			    				</form>
@@ -86,7 +86,7 @@
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>
-					 		<li><a href="#{indexPresenter.getLoginUrl()}">Login</a></li>
+					 		<li><a href="#{authenticatorBean.getLoginUrl()}">Login</a></li>
 					 	</c:otherwise>
 					 </c:choose>
      			 </ul>

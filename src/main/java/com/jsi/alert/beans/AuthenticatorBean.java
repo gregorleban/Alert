@@ -1,4 +1,4 @@
-package com.jsi.alert.presentation;
+package com.jsi.alert.beans;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -19,9 +19,9 @@ import com.jsi.alert.utils.UserAuthenticator;
  */
 @ManagedBean
 @RequestScoped
-public class IndexPresenter {
+public class AuthenticatorBean {
 	
-	private static final Logger log = LoggerFactory.getLogger(IndexPresenter.class);
+	private static final Logger log = LoggerFactory.getLogger(AuthenticatorBean.class);
 	
 	private HttpSession session;
 	private AlertUser user;

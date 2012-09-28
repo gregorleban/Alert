@@ -21,6 +21,7 @@
 	<link type="text/css" rel="stylesheet" href="css/tables.css" />
 	<link type="text/css" rel="stylesheet" href="css/main.css" media="screen" />
 	<link type="text/css" rel="stylesheet" href="css/tooltip.css" media="screen" />
+	<link type="text/css" rel="stylesheet" href="css/popups.css" />
 	
 	<script type="application/javascript" src="js/jquery-1.7.1.js"></script>
 	<script type="application/javascript" src="js/jquery.layout-latest.js"></script>
@@ -88,9 +89,6 @@
 					 </c:choose>
      			 </ul>
      		</div>
-
-
-     		
     	</div>
     </div>
 <div id="container_main" class="container_main">
@@ -123,7 +121,25 @@
 												<label for="to_text">and</label>
 												<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
 											<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
-											<td><button id="propertiesbtn" onclick="return viz.searchGeneral();">+</button></td>
+											<td>
+												<button id="propertiesbtn">+</button>
+												<div id="propertiesdiv" style="display: none; z-index: 100;">HELLO</div>
+												<script type="application/javascript">
+													<!--
+													$('#propertiesbtn').click(function (event) {
+														var parentPos = $('#propertiesbtn').position();	// relative to the parent
+
+														var parentCenterX = parentPos.left + $('#propertiesbtn').width()/2;
+														var parentBottom = parentPos.top + $('#propertiesbtn').height();
+														
+														$('#propertiesdiv').css('left', parentCenterX - $('#propertiesdiv').width()/2);
+														$('#propertiesdiv').css('top', parentBottom + 10);
+														$('#propertiesdiv').css('display', 'block');
+														return false;
+													});
+													-->
+												</script>
+											</td>
 											<td><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
 											<td><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
 											<td><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>

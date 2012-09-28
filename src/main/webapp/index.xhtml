@@ -116,27 +116,23 @@
 								<table>
 									<tbody>
 										<tr>
-											<td colspan="7"><input type="text" class="text" id="keyword_text" name="keywords" /></td>
+											<td colspan="8"><input type="text" class="text" id="keyword_text" name="keywords" /></td>
 										</tr>
 										<tr>
-											<td colspan="7"><input type="text" class="text" id="other_text" name="other"/></td>
+											<td colspan="8"><input type="text" class="text" id="other_text" name="other"/></td>
 										</tr>
 										<tr>
-											<td class="cells"><label for="from_text">Between:</label>
+											<td><label for="from_text">Between:</label>
 												<input type="text" id="from_text" class="text_date" onchange="updateUrl();" style="width:100px;"/>
 												<label for="to_text">and</label>
 												<input type="text" id="to_text" class="text_date" onchange="updateUrl();" style="width:100px;"/></td>
-											<td class="cells"><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label>
-											
-		
-											
-											
-											</td>
-											<td class="cells"><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
-											<td class="cells">
+											<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
+											<td><button id="propertiesbtn" onclick="return viz.searchGeneral();">+</button></td>
+											<td><input class="check" type="checkbox" id="commits_check" checked="checked" onchange="updateUrl();"/><label> Commits</label></td>
+											<td><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
+											<td><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
+											<td><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
+											<td>
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">
@@ -159,16 +155,16 @@
 											<td colspan="10"><input type="text" id="issue_id_text" class="text_issue"/></td>
 										</tr>
 										<tr>
-											<td class="cells"><input class="check" type="checkbox" id="dup_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells">
+											<td><input class="check" type="checkbox" id="dup_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
+											<td><input class="check" type="checkbox" id="dup_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
+											<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+											<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+											<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+											<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
+											<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+											<td><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
+											<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+											<td>
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">
@@ -188,16 +184,16 @@
 								<table>
 									<tbody>
 										<tr>
-											<td class="cells"><input class="check" type="checkbox" id="my_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>	
-											<td class="cells"><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
-											<td class="cells"><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td class="cells">
+											<td><input class="check" type="checkbox" id="my_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
+											<td><input class="check" type="checkbox" id="my_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
+											<td><input class="check" type="checkbox" id="my_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+											<td><input class="check" type="checkbox" id="my_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>	
+											<td><input class="check" type="checkbox" id="my_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+											<td><input class="check" type="checkbox" id="my_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
+											<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+											<td><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
+											<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+											<td>
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">

@@ -69,8 +69,6 @@ td {
 	padding:5px;	
 }	
 input, select, textarea {
-	margin: 5px 0;
-	padding: 5px;
 	color: #333;
 	border-width: 1px;
 	border-style: solid;
@@ -174,7 +172,9 @@ input.button {
 	padding: 0;		
 	width: 960px;	
 	left: 0;	
-	top: 5px;		
+	top: 5px;
+	height:66px;		
+	
 }
 #header #nav ul {
 	float: center;	

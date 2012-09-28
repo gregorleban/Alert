@@ -29,60 +29,70 @@ div.jqcloud span.w10 {
 	line-height: 54px;
 	font-size: 54px;
 	color: #c00;
+	cursor:pointer;
 }
 
 div.jqcloud span.w9 {
 	line-height: 50px;
 	font-size: 50px;
 	color: #b00;
+	cursor:pointer;
 }
 
 div.jqcloud span.w8 {
 	line-height: 44px;
 	font-size: 44px;
 	color: #b00;
+	cursor:pointer;
 }
 
 div.jqcloud span.w7 {
 	line-height: 40px;
 	font-size: 40px;
 	color: #b00;
+	cursor:pointer;
 }
 
 div.jqcloud span.w6 {
 	line-height: 34px;
 	font-size: 34px;
 	color: #800;
+	cursor:pointer;
 }
 
 div.jqcloud span.w5 {
 	line-height: 30px;
 	font-size: 30px;
 	color: #700;
+	cursor:pointer;
 }
 
 div.jqcloud span.w4 {
 	line-height: 24px;
 	font-size: 24px;
 	color: #600;
+	cursor:pointer;
 }
 
 div.jqcloud span.w3 {
 	line-height: 20px;
 	font-size: 20px;
 	color: #300;
+	cursor:pointer;
 }
 
 div.jqcloud span.w2 {
 	line-height: 14px;
 	font-size: 14px;
 	color: #200;
+	cursor:pointer;
 }
 
 div.jqcloud span.w1 {
 	line-height: 10px;
 	font-size: 10px;
 	color: #100;
+	cursor:pointer;
 }
 
 #tabs-wordcloud span:HOVER {

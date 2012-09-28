@@ -124,7 +124,38 @@
 											<td><input class="check" type="checkbox" id="issues_check" checked="checked" onchange="updateUrl();"/><label> Issues</label></td>
 											<td>
 												<button id="propertiesbtn" onclick="return false;">+</button>
-												<div id="propertiesdiv">HELLO</div>
+												<div id="popupdiv">
+													<div class="arrow1"></div>
+													<div class="arrow1-border"></div>
+													<div id="propertiesdiv">
+														<table id="popuptbl">
+															<tr>
+																<td><label><span>Status:</span></label></td>
+																<td><label><span>Resolution:</span></label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="dup_unconfirmed_check" checked="checked" onchange="updateUrl();" /><label> Uncomfirmed</label></td>
+																<td><input class="check" type="checkbox" id="dup_invalid_check" checked="checked" onchange="updateUrl();" /><label> Invalid</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="dup_new_check" checked="checked" onchange="updateUrl();" /><label> New</label></td>
+																<td><input class="check" type="checkbox" id="dup_works_check" checked="checked" onchange="updateUrl();" /><label> Works for me</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="dup_assigned_check" checked="checked" onchange="updateUrl();" /><label> Assigned</label></td>
+																<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
+															</tr>
+															<tr>
+																<td><input class="check" type="checkbox" id="dup_resolved_check" checked="checked" onchange="updateUrl();" /><label> Resolved</label></td>
+																<td><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
+															</tr>
+															<tr>
+																<td></td>
+																<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
+															</tr>
+														</table>
+													</div>
+												</div>
 												<script type="application/javascript">
 													<!--
 													$('#propertiesdiv').popup({trigger: '#propertiesbtn', align: 'center', duration: 'fast', verticatOffset: 10, event: 'mouseover'});
@@ -135,7 +166,7 @@
 											<td><input class="check" type="checkbox" id="forums_check" checked="checked" onchange="updateUrl();"/><label> Forums</label></td>
 											<td><input class="check" type="checkbox" id="mailing_check" checked="checked" onchange="updateUrl();"/><label> Mailing lists</label></td>
 											<td><input class="check" type="checkbox" id="wikis_check" checked="checked" onchange="updateUrl();"/><label> Wiki</label></td>
-											<td>
+											<td style="float:right;">
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">
@@ -143,7 +174,9 @@
 														</td>	
 														<td id="searchbtnrighttd" class="searchbtntd">
 															<button id="searchbtnright" class="searchbtnright" onclick="return false;">+</button>
-															<div id="sort_div"></div>
+															<div id="sort_div">
+																<button id="searchbtnrel" onclick="return viz.searchGeneral();">by relevance</button>
+															</div>
 															<script type="application/javascript">
 															<!--
 															$('#sort_div').popup({trigger: '#searchbtnrighttd', align: 'right', duration: 'fast', verticatOffset: 0, event: 'click'});
@@ -173,7 +206,7 @@
 											<td><input class="check" type="checkbox" id="dup_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td><input class="check" type="checkbox" id="dup_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td><input class="check" type="checkbox" id="dup_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td>
+											<td style="float:right;">
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">
@@ -202,7 +235,7 @@
 											<td><input class="check" type="checkbox" id="my_fixed_check" checked="checked" onchange="updateUrl();" /><label> Fixed</label></td>
 											<td><input class="check" type="checkbox" id="my_wond_check" checked="checked" onchange="updateUrl();" /><label> Wond for</label></td>
 											<td><input class="check" type="checkbox" id="my_duplicate_check" checked="checked" onchange="updateUrl();" /><label> Duplicate</label></td>
-											<td>
+											<td style="float:right;">
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">
@@ -223,7 +256,7 @@
 									<tbody>
 										<tr style="line-hight:12px;">
 											<td style="width:100%;"><input id="person_text" name="other"/></td>
-											<td>
+											<td style="float:right;">
 												<table id="searchbtntbl" class="searchbtntbl">
 													<tr>
 														<td id="searchbtnlefttd" class="searchbtntd">

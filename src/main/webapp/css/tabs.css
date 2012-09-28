@@ -190,14 +190,14 @@
         );
 }
 #propertiesbtn{
-	height:33px !important;
-	width:24px !important;
+	height:25px !important;
+	width:25px !important;
 	padding:0px !important;
 	-moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
-    margin-left:0px !important;
-    margin-right:10px !important;
+    margin-left:-6px !important;
+    margin-right:28px !important;
 	background:
         -webkit-gradient(
         linear,

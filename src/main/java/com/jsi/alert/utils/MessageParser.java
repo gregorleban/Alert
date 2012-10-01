@@ -74,7 +74,7 @@ public class MessageParser {
 			JSONObject result = new JSONObject();
 			
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			JSONArray filesArr = new JSONArray();
 			
@@ -174,7 +174,7 @@ public class MessageParser {
 										else if ("s3:methodEndLine".equals(methodLabel))
 											method.put("endLine", Integer.parseInt(methodProp.getTextContent()));
 										else 
-											method.put(moduleLabel.substring(3), methodProp.getTextContent());
+											method.put(methodLabel.substring(3), methodProp.getTextContent());
 									}
 									
 									methods.add(method);
@@ -224,7 +224,7 @@ public class MessageParser {
 			JSONObject result = new JSONObject();
 			
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			JSONArray commentsJSon = new JSONArray();
 			JSONArray activitiesJSon = new JSONArray();
@@ -390,7 +390,7 @@ public class MessageParser {
 			Map<Long, JSONObject> personH = new HashMap<Long, JSONObject>();
 			
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			Element results = (Element) doc.getElementsByTagName("results").item(0);
 			
@@ -464,7 +464,7 @@ public class MessageParser {
 		
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			JSONObject result = new JSONObject();
 			
@@ -572,7 +572,7 @@ public class MessageParser {
 	public static String parseKEUITimelineResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			NodeList monthEls = doc.getElementsByTagName("month");
 			
@@ -679,7 +679,7 @@ public class MessageParser {
 			JSONArray kwsJSon = new JSONArray();
 			
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			Element resultsNode = (Element) doc.getElementsByTagName("results").item(0);
 			
@@ -717,7 +717,7 @@ public class MessageParser {
 	public static String parseKEUIItemsResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			JSONArray items = new JSONArray();
 			
@@ -748,9 +748,10 @@ public class MessageParser {
 				// emphasize the keywords
 				if (!keywords.isEmpty()) {
 					String content = (String) itemJSon.get("content");
-					for (String keyword : keywords)
+					for (String keyword : keywords) {
+						keyword = keyword.replaceAll("[\\+-]", "");
 						content = content.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
-					
+					}
 					itemJSon.put("content", content);
 					if (itemJSon.containsKey("subject")) {
 						String subject = (String) itemJSon.get("subject");
@@ -786,7 +787,7 @@ public class MessageParser {
 	public static String parseKEUIDuplicateResponse(String responseMsg) {
 		try {
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document doc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			Element results = (Element) doc.getElementsByTagName("results").item(0);
 			
@@ -941,7 +942,7 @@ public class MessageParser {
 			JSONArray jsonArray = new JSONArray();
 			DocumentBuilderFactory xmlFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = xmlFactory.newDocumentBuilder();
-			Document xmlDoc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes()));
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			NodeList suggRootNodes = xmlDoc.getElementsByTagName("suggestions");
 			if (suggRootNodes.getLength() != 1)
@@ -1005,7 +1006,7 @@ public class MessageParser {
 			
 			DocumentBuilderFactory xmlFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = xmlFactory.newDocumentBuilder();
-			Document xmlDoc = builder.parse(new ByteArrayInputStream(msg.getBytes()));
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(msg.getBytes("UTF-8")));
 			
 			Element eventData = (Element) xmlDoc.getElementsByTagName("ns1:eventData").item(0);
 			NodeList issues = eventData.getElementsByTagName("sc:issue");

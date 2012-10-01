@@ -1,0 +1,10 @@
+.tree_ul {
+	list-style-type: none;
+	padding-left: 15px;
+}
+
+.tree_a, .tree_li {
+	color: gray;
+	text-decoration: none;
+	padding-bottom: 3px;
+}

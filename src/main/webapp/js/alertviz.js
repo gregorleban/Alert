@@ -1069,20 +1069,20 @@ var AlertViz = function(options) {
     			html += '<td>Action: <div id="action_file_' + fileIdx + '" class="data">' + file.action + '</div></td>';
     			html += '</tr></table>';
     			
-    			html += '<div class="tree">';
+    			html += '<div class="content">';
     			
     			// modules
-    			html += '<ul>';
+    			html += '<ul class="tree_ul">';
     			for (var i = 0; i < modules.length; i++) {
     				var module = modules[i];
     				
-    				html += '<li><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+    				html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
     				
     				var methods = module.methods;
-    				html += '<ul>';
+    				html += '<ul class="tree_ul">';
     				for (var j = 0; j < methods.length; j++) {
     					var method = methods[j];
-    					html += '<li><a>' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
+    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
     				}
     				html += '</ul>';
     				
@@ -1096,11 +1096,12 @@ var AlertViz = function(options) {
     			html += '</div>';
     		}
     		
-    		createTrees();
     		$('#details_wrapper').html(html);
     		jQuery(".content").hide();
     		jQuery(".heading").click(function() {
-			    jQuery(this).next(".content").slideToggle(500);
+			    jQuery(this).next(".content").slideToggle(500, function () {
+			    	tree();
+			    });
 			});
     	},
     	
@@ -1526,7 +1527,7 @@ var AlertViz = function(options) {
     		var nPages = Math.ceil(total/itemsPerPage);
     		var currentPage = Math.floor(offset/itemsPerPage) + 1;
     		
-    		var navHtml = (nPages == Number.POSITIVE_INFINITY) ? 'page ' + currentPage : 'page ' + currentPage + ' of ' + nPages;
+    		var navHtml = (nPages == Number.POSITIVE_INFINITY) ? 'page ' + currentPage : 'page ' + currentPage + ' of ' + nPages;	// TODO
     		if (currentPage > 1)
     			navHtml = '<a onclick="viz.jumpPage(' + (info.offset - info.limit) + ', ' + info.limit + ')">&lt;&lt;</a> ' + navHtml;
     		if (currentPage < nPages)

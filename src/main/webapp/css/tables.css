@@ -6,27 +6,11 @@
     color:#000;
     font-weight:bold;
     font-size:12px;
-    text-shadow:1px 1px 1px #fff;
+    text-shadow:1px 1px 1px #ccc;
     text-overflow: ellipsis;
     max-width: 1ex;
     white-space: nowrap;
     overflow:hidden;
-    background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-		color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(220,220,220)),
-        color-stop(0.78, rgb(240,240,240))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
-        );
 }
 .item_date{
 	width:40%;
@@ -36,23 +20,7 @@
     text-align:center;
     color:#000;
     font-size:12px;
-    text-shadow:1px 1px 1px #fff;
-    background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-		color-stop(0.09, rgb(220,220,220)),
-        color-stop(0.55, rgb(220,220,220)),
-        color-stop(0.78, rgb(240,240,240))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
-        );
+    text-shadow:1px 1px 1px #ccc;
 }
 .item_subject{
     padding:4px;
@@ -60,33 +28,49 @@
     color:#333;
     font-weight:bold;
     text-shadow:1px 1px 1px #fff;
-    background-color: #eee;
     -moz-border-radius:0px 0px 8px 8px;
     -webkit-border-radius:0px 0px 8px 8px;
     border-radius:0px 0px 8px 8px;
-    background:
-        -webkit-gradient(
-        linear,
-        left bottom,
-        left top,
-        color-stop(0.09, rgb(240,240,240)),
-        color-stop(0.55, rgb(255,255,255)),
-        color-stop(0.78, rgb(255,255,255))
-        );
-    background:
-        -moz-linear-gradient(
-        center bottom,
-        rgb(240,240,240) 9%,
-        rgb(227,227,227) 55%,
-        rgb(240,240,240) 78%
-        );
 }
 .item_similarity {
 	
 }
-/*.item_content {
-	width: 100%;
-}*/
+.item-wrapper.issue .item_table{
+	background-image:url("../img/bug.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
+.item-wrapper.comment .item_table{
+	background-image:url("../img/bug.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
+.item-wrapper.commit .item_table{
+	background-image:url("../img/commit.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
+.item-wrapper.wiki_post .item_table{
+	background-image:url("../img/bulb.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
+.item-wrapper.forum_post .item_table{
+	background-image:url("../img/forum.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
+.item-wrapper.email .item_table{
+	background-image:url("../img/email.png");
+	background-repeat:no-repeat;
+	background-position:center;
+	background-size:contain;
+}
 .item_table{
 	color:#333;
     text-shadow:1px 1px 1px #fff;
@@ -107,7 +91,7 @@
    hyphens: auto;
 }
 .item_table em{
-    color:#f00;
+    color:#d00;
     text-shadow:1px 1px 1px #fff;
     font-weight:bold;
 }

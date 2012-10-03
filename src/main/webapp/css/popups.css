@@ -1,9 +1,7 @@
 #propertiesdiv {
 	width: 220px;
-	height: 170px;
+	height: 220px;
 	background-color: #fff;
-	display: none;
-	z-index: 100;
 	-moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
@@ -11,7 +9,6 @@
     -webkit-box-shadow:0px 0px 8px #aaa;
     box-shadow:0px 0px 8px #aaa;
     padding:10px;
-    position:absolute;
 }
 #propertiesdiv span{
 	font-weight:bold;
@@ -27,7 +24,7 @@
     -webkit-box-shadow:0px 0px 0px #fff !important;
     box-shadow:0px 0px 0px #fff !important;
     border:none;
-	margin:0px;
+	margin:0px !important;
 	padding:0px;
 	background:#fff;
 }
@@ -38,8 +35,9 @@
    border-right: 11px solid transparent;
    border-bottom: 11px solid #FFF;
    position:absolute;
-   top:176px;
-   z-index:1001;
+   top: -10px;
+   left: 102px;
+   z-index:20;
    display:inherit;
 }
 .arrow1-border {
@@ -49,14 +47,13 @@
    border-right: 11px solid transparent;
    border-bottom: 11px solid #BBBBBB;
    position:absolute;
-   top:175px;
-   z-index:1000;
+   top: -12px;
+   left: 102px;
+   z-index:19;
    display:inherit;
 }
 #sort_div {
-	width: 103px;
-	height: 25px;
-	background-color: #fff;
+	background-color: #B6DE8F !important;
 	-moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
@@ -64,7 +61,32 @@
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
     position:absolute;
+    padding: 8px !important;
+    padding: 5px;
 }
+#sort_div table {
+	margin-left: auto !important;
+	margin-right: auto !important;
+	margin-top: auto !important;
+	margin-bottom: auto !important;
+	width: 100% !important;
+	height: 100% !important;
+	background-color: #B6DE8F !important;
+	
+	moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	-moz-box-shadow: 0px 0px 0px #aaa;
+	-webkit-box-shadow: 0px 0px 0px #AAA;
+	box-shadow: none !important;
+}
+#sort_div table tr, #sort_div table tbody {
+	width: 100%;
+}
+#sort_div tr td {
+	padding: 8px !important;
+}
+
 #searchbtnrel{
 	width:100%;
 	height: 25px !important;

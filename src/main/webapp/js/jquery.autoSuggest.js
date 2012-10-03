@@ -369,9 +369,11 @@
 							if(opts.resultsHighlight){
 								this_data[opts.selectedItemProp] = this_data[opts.selectedItemProp].replace(regx,"<em>$1</em>");
 							}
+							
 							if(!opts.formatList){
 								formatted = formatted.html(this_data[opts.selectedItemProp]);
 							} else {
+								formatted = formatted.html(this_data[opts.selectedItemProp]);
 								formatted = opts.formatList.call(this, this_data, formatted);	
 							}
 							results_ul.append(formatted);

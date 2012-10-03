@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.xml.soap.MessageFactory;
@@ -53,6 +56,9 @@ public class MessageUtils {
     	"wondChk",
     	"duplicateChk"
 	};
+	
+	private static final Set<String> availableResolutions = new HashSet<>(Arrays.asList(new String[] {"None", "Fixed", "WontFix", "Invalid", "Duplicate", "WorksForMe", "Unknown"}));
+	private static final Set<String> availableStatuses = new HashSet<>(Arrays.asList(new String[] {"Open", "Verified", "Assigned", "Resolved", "Closed"}));
 
 	private static MessageFactory msgFactory;
 	
@@ -163,6 +169,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("resultData"), "peopleData");
 			params.addAttribute(envelope.createName("maxCountItems"), "1000");
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
+			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -188,6 +195,7 @@ public class MessageUtils {
 			
 			SOAPElement params = queryEl.addChildElement("params");
 			params.addAttribute(envelope.createName("resultData"), "timelineData");
+			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -221,6 +229,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("snipMatchKeywords"), "True");
 			params.addAttribute(envelope.createName("keywordMatchOffset"), "25");
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
+			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 	
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -249,6 +258,7 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("keywordCount"), "30");
 			params.addAttribute(envelope.createName("sampleSize"), "-1");
 			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
+			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -352,10 +362,20 @@ public class MessageUtils {
 			params.addAttribute(envelope.createName("includePeopleData"), "True");
 			
 			// add condition to only return issues
-			SOAPElement postTypes = query.addChildElement("queryArgs")
-										 .addChildElement("conditions")
-										 .addChildElement("postTypes");
+			SOAPElement conditions = query.addChildElement("queryArgs")
+										  .addChildElement("conditions");
+			SOAPElement postTypes = conditions.addChildElement("postTypes");
+			
 			postTypes.setTextContent("issues");
+			
+			// add status and resolution conditions
+			String resolutionsStr = getResolutionsStr(props);
+			String statusesStr = getStatusesStr(props);
+			
+			if (!resolutionsStr.isEmpty())
+				conditions.addChildElement("issueResolution").setTextContent(resolutionsStr);
+			if (!statusesStr.isEmpty())
+				conditions.addChildElement("issueStatus").setTextContent(statusesStr);
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -389,6 +409,51 @@ public class MessageUtils {
 		return msg;
 	}
 	
+	private static List<String> getResolutions(Properties props) {
+		List<String> result = new ArrayList<>();
+		
+		for (String resolution : availableResolutions) {
+			String resKey = resolution + "Chk";
+			if (props.containsKey(resKey) && Utils.parseBoolean(props.getProperty(resKey)))
+				result.add(resolution);
+		}
+		
+		return result;
+	}
+	
+	private static List<String> getStatuses(Properties props) {
+		List<String> result = new ArrayList<>();
+		for (String status : availableStatuses) {
+			String statusKey = status + "Chk";
+			if (props.containsKey(statusKey) && Utils.parseBoolean(props.getProperty(statusKey)))
+				result.add(status);
+		}
+		
+		return result;
+	}
+	
+	private static String getResolutionsStr(Properties props) {
+		List<String> resolutions = getResolutions(props);
+		StringBuilder builder = new StringBuilder();
+		for (Iterator<String> it = resolutions.iterator(); it.hasNext();) {
+			builder.append(it.next());
+			if (it.hasNext())
+				builder.append(",");
+		}
+		return builder.toString();
+	}
+	
+	private static String getStatusesStr(Properties props) {
+		List<String> statuses = getStatuses(props);
+		StringBuilder builder = new StringBuilder();
+		for (Iterator<String> it = statuses.iterator(); it.hasNext();) {
+			builder.append(it.next());
+			if (it.hasNext())
+				builder.append(",");
+		}
+		return builder.toString();
+	}
+	
 	/**
 	 * Constructs a template KEUI query message, only the parameters have to be filled in.
 	 * 
@@ -407,7 +472,14 @@ public class MessageUtils {
 			SOAPElement conditions = args.addChildElement("conditions");
 			
 			if (props.containsKey("keywords")) {
-				conditions.addChildElement("enrychableKeywords").setTextContent(props.getProperty("keywords"));
+				SOAPElement kwsEl = conditions.addChildElement("enrychableKeywords");
+				kwsEl.setTextContent(props.getProperty("keywords"));
+				
+				if (props.containsKey("optional")) {
+					boolean optional = Utils.parseBoolean(props.getProperty("optional"));
+					if (optional)
+						kwsEl.addAttribute(envelope.createName("optional"), "1");
+				}
 			}
 			
 			if (props.containsKey("people")) {
@@ -466,6 +538,17 @@ public class MessageUtils {
 			for (String key : keuiIgnoreKeys) {
 				if (props.containsKey(key) && Utils.parseBoolean(props.getProperty(key)))
 					qFields.add(key.substring(0, key.length() - 3));
+				
+				if ("issuesChk".equals(key)) {
+					// get the resolutions and statuses
+					String resolutionsStr = getResolutionsStr(props);
+					String statusesStr = getStatusesStr(props);
+					
+					if (!resolutionsStr.isEmpty())
+						conditions.addChildElement("issueResolution").setTextContent(resolutionsStr);
+					if (!statusesStr.isEmpty())
+						conditions.addChildElement("issueStatus").setTextContent(statusesStr);
+				}
 			}
 			
 			StringBuilder builder = new StringBuilder();

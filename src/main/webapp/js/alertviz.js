@@ -60,11 +60,37 @@ function getCurrentState() {
 	var mailingChk = $('#mailing_check').attr('checked') == 'checked';
 	var wikisChk = $('#wikis_check').attr('checked') == 'checked';
 	
+	var genOpen = $('#gen_open_check').attr('checked') == 'checked';
+	var genNone = $('#gen_none_check').attr('checked') == 'checked';
+	var genVerified = $('#gen_verified_check').attr('checked') == 'checked';
+	var genFixed = $('#gen_fixed_check').attr('checked') == 'checked';
+	var genAssigned = $('#gen_assigned_check').attr('checked') == 'checked';
+	var genWont = $('#gen_wont_check').attr('checked') == 'checked';
+	var genResolved = $('#gen_resolved_check').attr('checked') == 'checked';
+	var genInvalid = $('#gen_invalid_check').attr('checked') == 'checked';
+	var genClosed = $('#gen_closed_check').attr('checked') == 'checked';
+	var genWorks = $('#gen_works_check').attr('checked') == 'checked';
+	var genUnknown = $('#gen_unknown_check').attr('checked') == 'checked';
+	var genDuplicate = $('#gen_duplicate_check').attr('checked') == 'checked';
+	
 	if (!issueChk) general.is = false;
 	if (!commitsChk) general.c = false;
 	if (!forumsChk) general.fi = false;
 	if (!mailingChk) general.m = false;
 	if (!wikisChk) general.wo = false;
+	
+	if (!genOpen) general.go = false;
+	if (!genNone) general.gn = false;
+	if (!genVerified) general.gv = false;	
+	if (!genFixed) general.gf = false;
+	if (!genAssigned) general.ga = false;
+	if (!genWont) general.gw = false;
+	if (!genResolved) general.gr = false;
+	if (!genInvalid) general.gi = false;
+	if (!genClosed) general.gc = false;
+	if (!genWorks) general.gwo = false;
+	if (!genUnknown) general.gu = false;
+	if (!genDuplicate) general.gd = false;
 	
 	// dates
 	var fromDate = $('#from_text').val();
@@ -73,50 +99,71 @@ function getCurrentState() {
 	if (fromDate != null && fromDate != '') general.from = fromDate;
 	if (toDate != null && toDate != '') general.to = toDate;
 	
+	// search options
+	var sort = $('input[name=sort_radio]:checked').val();
+	if (sort == 'date')
+		general.sort = 'date';
+	
+	var orSearch = $('#use_or_check').attr('checked') == 'checked';
+	if (orSearch)
+		general.or = true;
+	
 	// duplicate issue
 	var issueId = $('#issue_id_text').val();
 	if (issueId.length > 0) duplicate.iid = issueId;
 	
-	var duplUnconfirmedChk = $('#dup_unconfirmed_check').attr('checked') == 'checked';
-	var duplNewChk = $('#dup_new_check').attr('checked') == 'checked';
+	var duplNoneChk = $('#dup_none_check').attr('checked') == 'checked';
+	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
+	var duplWontChk = $('#dup_wont_check').attr('checked') == 'checked';
+	var duplInvalidChk = $('#dup_invalid_check').attr('checked') == 'checked';
+	var duplDuplicateChk = $('#dup_duplicate_check').attr('checked') == 'checked';
+	var duplWorksChk = $('#dup_works_check').attr('checked') == 'checked';
+	var duplUnknownChk = $('#dup_unknown_check').attr('checked') == 'checked';
+	var duplOpenChk = $('#dup_open_check').attr('checked') == 'checked';
+	var duplVerifiedChk = $('#dup_veririfed_check').attr('checked') == 'checked';
 	var duplAssignedChk = $('#dup_assigned_check').attr('checked') == 'checked';
 	var duplResolvedChk = $('#dup_resolved_check').attr('checked') == 'checked';
-	var duplInvalidChk = $('#dup_invalid_check').attr('checked') == 'checked';
-	var duplWorksChk = $('#dup_works_check').attr('checked') == 'checked';
-	var duplFixedChk = $('#dup_fixed_check').attr('checked') == 'checked';
-	var duplWondChk = $('#dup_wond_check').attr('checked') == 'checked';
-	var duplDuplicateChk = $('#dup_duplicate_check').attr('checked') == 'checked';
+	var duplClosedChk = $('#dup_closed_check').attr('checked') == 'checked';
 	
-	if (!duplUnconfirmedChk) duplicate.u = false;
-	if (!duplNewChk) duplicate.n = false;
+	if (!duplNoneChk) duplicate.n = false;
+	if (!duplFixedChk) duplicate.f = false;
+	if (!duplWontChk) duplicate.w = false;
+	if (!duplInvalidChk) duplicate.i = false;
+	if (!duplDuplicateChk) duplicate.d = false;
+	if (!duplWorksChk) duplicate.wo = false;
+	if (!duplUnknownChk) duplicate.u = false;
+	if (!duplOpenChk) duplicate.o = false;
+	if (!duplVerifiedChk) duplicate.v = false;
 	if (!duplAssignedChk) duplicate.a = false;
 	if (!duplResolvedChk) duplicate.r = false;
-	if (!duplInvalidChk) duplicate.i = false;
-	if (!duplWorksChk) duplicate.w = false;
-	if (!duplFixedChk) duplicate.f = false;
-	if (!duplWondChk) duplicate.wnd = false;
-	if (!duplDuplicateChk) duplicate.d = false;
+	if (!duplClosedChk) duplicate.c = false;
 	
 	// issues related to my code
-	var myUnconfirmedChk = $('#my_unconfirmed_check').attr('checked') == 'checked';
-	var myNewChk = $('#my_new_check').attr('checked') == 'checked';
+	var myNoneChk = $('#my_none_check').attr('checked') == 'checked';
+	var myFixedChk = $('#my_fixed_check').attr('checked') == 'checked';
+	var myWontChk = $('#my_wont_check').attr('checked') == 'checked';
+	var myInvalidChk = $('#my_invalid_check').attr('checked') == 'checked';
+	var myDuplicateChk = $('#my_duplicate_check').attr('checked') == 'checked';
+	var myWorksChk = $('#my_works_check').attr('checked') == 'checked';
+	var myUnknownChk = $('#my_unknown_check').attr('checked') == 'checked';
+	var myOpenChk = $('#my_open_check').attr('checked') == 'checked';
+	var myVerifiedChk = $('#my_veririfed_check').attr('checked') == 'checked';
 	var myAssignedChk = $('#my_assigned_check').attr('checked') == 'checked';
 	var myResolvedChk = $('#my_resolved_check').attr('checked') == 'checked';
-	var myInvalidChk = $('#my_invalid_check').attr('checked') == 'checked';
-	var myWorksChk = $('#my_works_check').attr('checked') == 'checked';
-	var myFixedChk = $('#my_fixed_check').attr('checked') == 'checked';
-	var myWondChk = $('#my_wond_check').attr('checked') == 'checked';
-	var myDuplicateChk = $('#my_duplicate_check').attr('checked') == 'checked';
+	var myClosedChk = $('#my_closed_check').attr('checked') == 'checked';
 	
-	if (!myUnconfirmedChk) myCode.u = false;
-	if (!myNewChk) myCode.n = false;
+	if (!myNoneChk) myCode.n = false;
+	if (!myFixedChk) myCode.f = false;
+	if (!myWontChk) myCode.w = false;
+	if (!myInvalidChk) myCode.i = false;
+	if (!myDuplicateChk) myCode.d = false;
+	if (!myWorksChk) myCode.wo = false;
+	if (!myUnknownChk) myCode.u = false;
+	if (!myOpenChk) myCode.o = false;
+	if (!myVerifiedChk) myCode.v = false;
 	if (!myAssignedChk) myCode.a = false;
 	if (!myResolvedChk) myCode.r = false;
-	if (!myInvalidChk) myCode.i = false;
-	if (!myWorksChk) myCode.w = false;
-	if (!myFixedChk) myCode.f = false;
-	if (!myWondChk) myCode.wnd = false;
-	if (!myDuplicateChk) myCode.d = false;
+	if (!myClosedChk) myCode.c = false;
 	
 	// construct result
 	if (Object.getOwnPropertyNames(general).length > 0) result.gen = general;
@@ -126,13 +173,15 @@ function getCurrentState() {
 	return Object.getOwnPropertyNames(result).length === 0 ? null : result;
 }
 
-function updateUrl() {
+function updateUrl(event) {
 	if (!settingManually) {
 		var url = genCurrentUrl();
 		var state = getCurrentState();
 		
 		history.replaceState(state, '', url);
 	}
+	
+	return false;
 }
 
 /**
@@ -151,11 +200,32 @@ function decodeUrl() {
 function uncheckByAttr(attribute, prefix) {
 	var selector = '#' + prefix;
 	switch(attribute) {
-	case 'u':
-		selector += 'unconfirmed_check';
-		break;
 	case 'n':
-		selector += 'new_check';
+		selector += 'none_check';
+		break;
+	case 'f':
+		selector += 'fixed_check';
+		break;
+	case 'w':
+		selector += 'wont_check';
+		break;
+	case 'i':
+		selector += 'invalid_check';
+		break;
+	case 'd':
+		selector += 'duplicate_check';
+		break;
+	case 'wo':
+		selector += 'works_check';
+		break;
+	case 'u':
+		selector += 'unknown_check';
+		break;
+	case 'o':
+		selector += 'open_check';
+		break;
+	case 'v':
+		selector += 'veririfed_check';
 		break;
 	case 'a':
 		selector += 'assigned_check';
@@ -163,22 +233,11 @@ function uncheckByAttr(attribute, prefix) {
 	case 'r':
 		selector += 'resolved_check';
 		break;
-	case 'i':
-		selector += 'invalid_check';
-		break;
-	case 'w':
-		selector += 'works_check';
-		break;
-	case 'f':
-		selector += 'fixed_check';
-		break;
-	case 'wnd':
-		selector += 'wond_check';
-		break;
-	case 'd':
-		selector += 'duplicate_check';
+	case 'c':
+		selector += 'closed_check';
 		break;
 	};
+	
 	$(selector).attr('checked', false);
 }
 
@@ -201,7 +260,8 @@ function loadState() {
 	// general search
 	var searchTerms = {people: true, concepts: true, sources: true, products: true, issues: true};
 	var filterChks = {is: true, c: true, fi: true, m: true, wo: true};
-	var issueChks = {u: true, n: true, a: true, r: true, i: true, w: true, f: true, wnd: true, d: true};
+	var issueChks = {n: true, f: true, w: true, i: true, d: true, wo: true, u: true, o: true, v: true, a: true, r: true, c: true};
+	var issueChksGen = {go: true, gn: true, gv: true, gf: true, ga: true, gw: true, gr: true, gi: true, gc: true, gwo: true, gu: true, gd: true};
 	
 	var dates = {from: true, to: true};
 	
@@ -218,7 +278,7 @@ function loadState() {
 			else if (attribute == 'keywords') {
 				$('#keyword_text').val(value);
 			}
-			else if(filterChks[attribute]) {	// checkboxes
+			else if(filterChks[attribute] || issueChksGen[attribute]) {	// checkboxes
 				var selector = null;
 				switch(attribute) {
 				case 'is':
@@ -236,12 +296,53 @@ function loadState() {
 				case 'wo':
 					selector = '#wikis_check';
 					break;
+				case 'go':
+					selector = '#gen_open_check';
+					break;
+				case 'gn':
+					selector = '#gen_none_check';
+					break;
+				case 'gv':
+					selector = '#gen_verified_check';
+					break;
+				case 'gf':
+					selector = '#gen_fixed_check';
+					break;
+				case 'ga':
+					selector = '#gen_assigned_check';
+					break;
+				case 'gw':
+					selector = '#gen_wont_check';
+					break;
+				case 'gr':
+					selector = '#gen_resolved_check';
+					break;
+				case 'gi':	
+					selector = '#gen_invalid_check';
+					break;
+				case 'gc':
+					selector = '#gen_closed_check';
+					break;
+				case 'gwo':
+					selector = '#gen_works_check';
+					break;
+				case 'gu':
+					selector = '#gen_unknown_check';
+					break;
+				case 'gd':
+					selector = '#gen_duplicate_check';
+					break;
 				}
 				
 				$(selector).attr('checked', false);
 			} else if (dates[attribute]) {
 				var field = attribute == 'from' ? 'from_text' : 'to_text';
 				$('#' + field).val(value);
+			} else if (attribute == 'sort') {
+				if (value == 'date')
+					$('#date_sort').attr('checked', 'checked');
+			} else if (attribute == 'or') {
+				$('#use_or_check').attr('checked', 'checked');
 			};
 		};
 	}
@@ -736,7 +837,7 @@ var AlertViz = function(options) {
     	
     	searchRelated: function () {
     		$.ajax({
-    			type: 'GET',
+    			type: 'POST',
     			url: 'query',
     			data: {type: 'suggestMyCode'},
     			dataType: 'json',
@@ -751,7 +852,7 @@ var AlertViz = function(options) {
     	
     	searchItemDetails: function (itemId) {
     		$.ajax({
-    			type: 'GET',
+    			type: 'POST',
     			url: 'query',
     			data: {type: 'itemDetails', query: itemId},
     			dataType: 'json',
@@ -762,22 +863,22 @@ var AlertViz = function(options) {
     		});
     	},
     	
-    	searchIssueDetails: function (itemId) {
+    	searchIssueDetails: function (itemId, itemUri) {
     		$.ajax({
-    			type: 'GET',
+    			type: 'POST',
     			url: 'query',
     			data: {type: 'issueDetails', query: itemId},
     			dataType: 'json',
     			async: true,
     			success: function (data, textStatus, jqXHR) {
-    				that.setIssueDetails(data);
+    				that.setIssueDetails(data, itemUri);
     			}
     		});
     	},
     	
     	searchCommitDetails: function (itemUri) {
     		$.ajax({
-    			type: 'GET',
+    			type: 'POST',
     			url: 'query',
     			data: {type: 'commitDetails', query: itemUri},
     			success: function (data, textStatus, jqXHR) {
@@ -814,7 +915,7 @@ var AlertViz = function(options) {
     	
     	searchQueryGeneral: function (queryType, queryOpts) {
     		$.ajax({
-                type: "GET",
+                type: "POST",
                 url: "query",
                 data: {
                 	type: queryType,
@@ -825,11 +926,25 @@ var AlertViz = function(options) {
         			issues: queryOpts.issues,
         			from: queryOpts.from,
         			to: queryOpts.to,
+        			sort: queryOpts.sort,
+        			optional: queryOpts.optional,
         			issuesChk: queryOpts.issuesChk,
         			commitsChk: queryOpts.commitsChk,
         			forumsChk: queryOpts.forumsChk,
         			mailsChk: queryOpts.mailingListsChk,
-        			wikisChk: queryOpts.wikisChk
+        			wikisChk: queryOpts.wikisChk,
+        			OpenChk: queryOpts.openChk,
+        			NoneChk: queryOpts.noneChk,
+        			VerifiedChk: queryOpts.verifiedChk,
+        			FixedChk: queryOpts.fixedChk,
+        			AssignedChk: queryOpts.assignedChk,
+        			WondFixChk: queryOpts.wondFixChk,
+        			ResolvedChk: queryOpts.resolvedChk,
+        			InvalidChk: queryOpts.invalidChk,
+        			ClosedChk: queryOpts.closedChk,
+        			WorksForMeChk: queryOpts.worksForMeChk,
+        			UnknownChk: queryOpts.unknownChk,
+        			DuplicateChk: queryOpts.duplicateChk
                 },
                 dataType: "json",
                 async: true,
@@ -852,11 +967,25 @@ var AlertViz = function(options) {
     			products: queryOpts.products,
     			from: queryOpts.from,
     			to: queryOpts.to,
+    			sort: queryOpts.sort,
+    			optional: queryOpts.optional,
     			issuesChk: queryOpts.issuesChk,
     			commitsChk: queryOpts.commitsChk,
     			forumsChk: queryOpts.forumsChk,
     			mailsChk: queryOpts.mailingListsChk,
     			wikisChk: queryOpts.wikisChk,
+    			OpenChk: queryOpts.openChk,
+    			NoneChk: queryOpts.noneChk,
+    			VerifiedChk: queryOpts.verifiedChk,
+    			FixedChk: queryOpts.fixedChk,
+    			AssignedChk: queryOpts.assignedChk,
+    			WondFixChk: queryOpts.wondFixChk,
+    			ResolvedChk: queryOpts.resolvedChk,
+    			InvalidChk: queryOpts.invalidChk,
+    			ClosedChk: queryOpts.closedChk,
+    			WorksForMeChk: queryOpts.worksForMeChk,
+    			UnknownChk: queryOpts.unknownChk,
+    			DuplicateChk: queryOpts.duplicateChk,
     			offset: offset,
     			maxCount: limit
     		});
@@ -864,7 +993,7 @@ var AlertViz = function(options) {
     	
     	searchItemsByQueryOpts: function (queryOpts) {
     		$.ajax({
-                type: "GET",
+                type: "POST",
                 url: "query",
                 data: queryOpts,
                 dataType: "json",
@@ -908,11 +1037,25 @@ var AlertViz = function(options) {
     			issues: issues,
     			from: from,
     			to: to,
+    			sort: ($('#relevance_sort').attr('checked') == 'checked') ? 'relevance' : 'dateDesc',
+    			optional: $('#use_or_check').attr('checked') == 'checked',
     			issuesChk: $('#issues_check').attr('checked') == 'checked',
     			commitsChk: $('#commits_check').attr('checked') == 'checked',
     			forumsChk: $('#forums_check').attr('checked') == 'checked',
     			mailingListsChk: $('#mailing_check').attr('checked') == 'checked',
-    			wikisChk: $('#wikis_check').attr('checked') == 'checked'
+    			wikisChk: $('#wikis_check').attr('checked') == 'checked',
+    			openChk: $('#gen_open_check').attr('checked') == 'checked',
+    			noneChk: $('#gen_none_check').attr('checked') == 'checked',
+    			verifiedChk: $('#gen_verified_check').attr('checked') == 'checked',
+    			fixedChk: $('#gen_fixed_check').attr('checked') == 'checked',
+    			assignedChk: $('#gen_assigned_check').attr('checked') == 'checked',
+    			wondFixChk: $('#gen_wont_check').attr('checked') == 'checked',
+    			resolvedChk: $('#gen_resolved_check').attr('checked') == 'checked',
+    			invalidChk: $('#gen_invalid_check').attr('checked') == 'checked',
+    			closedChk: $('#gen_closed_check').attr('checked') == 'checked',
+    			worksForMeChk: $('#gen_works_check').attr('checked') == 'checked',
+    			unknownChk: $('#gen_unknown_check').attr('checked') == 'checked',
+    			duplicateChk: $('#gen_duplicate_check').attr('checked') == 'checked'
     		};
 			
 			that.searchKeywordsGeneral(queryOpts);
@@ -930,15 +1073,18 @@ var AlertViz = function(options) {
     		return that.searchIssueByQueryOpts({
 				type: 'duplicateIssue',
     			issues: issues,
-    			unconfirmedChk: $('#unconfirmed_check').attr('checked') == 'checked',
-            	newChk: $('#new_check').attr('checked') == 'checked',
-            	assignedChk: $('#assigned_check').attr('checked') == 'checked',
-            	resolveChk: $('#resolved_check').attr('checked') == 'checked',
-            	invalidChk: $('#invalid_check').attr('checked') == 'checked',
-            	worksChk: $('#works_check').attr('checked') == 'checked',
-            	fixedChk: $('#fixed_check').attr('checked') == 'checked',
-            	wondChk: $('#wond_check').attr('checked') == 'checked',
-            	duplicateChk: $('#duplicate_check').attr('checked') == 'checked',
+    			NoneChk: $('#dup_none_check').attr('checked') == 'checked',
+    			FixedChk: $('#dup_fixed_check').attr('checked') == 'checked',
+    			WontFixChk: $('#dup_wont_check').attr('checked') == 'checked',
+    			InvalidChk: $('#dup_invalid_check').attr('checked') == 'checked',
+    			DuplicateChk: $('#dup_duplicate_check').attr('checked') == 'checked',
+    			WorksForMeChk: $('#dup_works_check').attr('checked') == 'checked',
+    			UnknownChk: $('#dup_unknown_check').attr('checked') == 'checked',
+    			OpenChk: $('#dup_open_check').attr('checked') == 'checked',
+    			VerifiedChk: $('#dup_veririfed_check').attr('checked') == 'checked',
+    			AssignedChk: $('#dup_assigned_check').attr('checked') == 'checked',
+    			ResolvedChk: $('#dup_resolved_check').attr('checked') == 'checked',
+    			ClosedChk: $('#dup_closed_check').attr('checked') == 'checked',
             	offset: 0,
             	limit: itemsPerPage
     		});
@@ -998,19 +1144,19 @@ var AlertViz = function(options) {
     		}
     	},
     	
-    	setIssueDetails: function (data) {
+    	setIssueDetails: function (data, selectedUri) {
     		// generate accordion
     		// item description
     		var html = '<div class="details_section">';
     		html += '<table class="heading"><tr>';
     		html += '<td class="title_desc">Item description</td>';
-    		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
-    		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.dateOpened).format(defaultDateFormat) + '</div></td>';
+    		html += '<td>Author: <div id="author_desc" class="data">' + (data.author == null ? 'Unknown' : data.author.name) + '</div></td>';
+    		html += '<td>Date: <div id="date_desc" class="data">' + (data.date == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</div></td>';
     		html += '<td>Resolution: <div id="resolution_desc" class="data">' + data.resolution + '</div></td>';
     		html += '<td>Status: <div id="status_desc" class="data">' + data.status + '</div></td>';
     		html += '</tr></table>';
     		// content
-    		html += '<div class="content"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
+    		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
     		html += '</div>';
     		
     		// comments
@@ -1025,7 +1171,11 @@ var AlertViz = function(options) {
     			html += '<td>Date: <div id="date_comm_' + i + '" class="data">' + new Date(comment.commentDate).format(defaultDateFormat) + '</div></td>';
     			html += '</tr></table>';
     			// content
-    			html += '<div class="content">' + comment.commentText + '</div>';
+    			
+    			if (comment.commentUri == selectedUri)
+    				html += '<div class="content selected_issue">' + comment.commentText + '</div>';
+    			else
+    				html += '<div class="content">' + comment.commentText + '</div>';
     			html += '</div>';
     		}
     		
@@ -1034,6 +1184,7 @@ var AlertViz = function(options) {
     		// insert html
     		$('#details_wrapper').html(html);
     		jQuery(".content").hide();
+    		jQuery(".selected_issue").show();
     		jQuery(".heading").click(function() {
 			    jQuery(this).next(".content").slideToggle(500);
 			});
@@ -1075,16 +1226,18 @@ var AlertViz = function(options) {
     			html += '<ul class="tree_ul">';
     			for (var i = 0; i < modules.length; i++) {
     				var module = modules[i];
-    				
-    				html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-    				
     				var methods = module.methods;
-    				html += '<ul class="tree_ul">';
-    				for (var j = 0; j < methods.length; j++) {
-    					var method = methods[j];
-    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
-    				}
-    				html += '</ul>';
+    				
+    				if (methods.length > 0) {
+    					html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+	    				html += '<ul class="tree_ul">';
+	    				for (var j = 0; j < methods.length; j++) {
+	    					var method = methods[j];
+	    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
+	    				}
+	    				html += '</ul>';
+    				} else
+    					html += '<li class="tree_li"><a class="tree_a">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</a></li>';
     				
     				html += '</li>';
     			}
@@ -1097,11 +1250,10 @@ var AlertViz = function(options) {
     		}
     		
     		$('#details_wrapper').html(html);
+    		$('.tree_ul').tree();
     		jQuery(".content").hide();
     		jQuery(".heading").click(function() {
-			    jQuery(this).next(".content").slideToggle(500, function () {
-			    	tree();
-			    });
+			    jQuery(this).next(".content").slideToggle(500);
 			});
     	},
     	
@@ -1420,7 +1572,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.bugDescription:
-    				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.id + ')"><table class="item_table">';
+    				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.id + ',\'' + item.url + '\')"><table class="item_table">';
 					
     				// from + date
 					html += '<tr>';
@@ -1454,7 +1606,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.bugComment:
-    				html += '<div class="item-wrapper comment" onclick="viz.searchIssueDetails(' + item.issueID + ')"><table class="item_table">';
+    				html += '<div class="item-wrapper comment" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.url + '\')"><table class="item_table">';
     				
     				// from + date
     				html += '<tr>';
@@ -1584,81 +1736,10 @@ var AlertViz = function(options) {
 	  		generalSearch.removeFromSearch(elem);
 	  		updateUrl();
 	  	},
-	  	selectionClick: function (item, input) {
-	  		if (!$(item).hasClass('person')) 
-	  			return;
-	  		
-	  		$('#popup_search_td').html('<input type="text" id="or_text" class="text" />');
-    		
-    		var currentLabel = $(item).text().substring(1);
-    		
-    		var idx = generalSearch.indexOfLabel('person', currentLabel);
-    		if (idx < 0) return;
-    		
-    		// construct a list of objects which will be edited
-    		var selectedObj = generalSearch.getObjByLabel('person', currentLabel);
-    		var labels = selectedObj.label.split(',');
-    		var values = selectedObj.value.split('|');
-    		var selectedObjs = [];
-    		for (var i = 0; i < labels.length; i++)
-    			selectedObjs.push({label: labels[i], value: values[i], type: selectedObj.type});
-    		
-    		// open a popup to search on new keywords
-    		$('#or_text').autoSuggest('suggest', {
-    			selectedItemProp: 'label',
-    	    	searchObjProps: 'label',
-    	    	selectedValuesProp: 'value',
-    	    	queryParam: 'People',
-    	    	retrieveLimit: false,
-    	    	neverSubmit: true,
-    	    	startText: '',
-    	    	addByWrite: false,
-    	    	asHtmlID: 'or_text',
-    	    	preFill: selectedObjs,
-    	    	selectionAdded: function (elem, data) {
-    	    		generalSearch.addOrTerm('person', idx, data);
-    	    	},
-    	    	selectionRemoved: function (elem, data) {
-    	    		generalSearch.removeTerm('person', data);
-    	    		elem.remove();
-    	    	}
-    		});
-    		
-    		$('#popup_search').bPopup({
-    			onClose: function () {
-    				var values = $('#as-values-or_text').val().replace(/^,|,$/g, '');	// same as trimming commas
-    				if (values.length > 0) {
-    					var currentTerms = generalSearch.getTypeV('person');
-    					
-    					var newValue = currentTerms[idx].value;
-    					var displayStr = currentTerms[idx].label;
-    					
-    					var close = $('<a class="as-close">&times;</a>').click(function(){
-							input.values_input.val(input.values_input.val().replace(newValue + ",",""));
-							input.opts.selectionRemoved.call(this, item);
-							input.input_focus = true;
-							input.focus();
-							return false;
-						});
-    					
-    					var oldValue = $(item).text().substring(1);
-    					item.html(displayStr).prepend(close);
-    					
-    					// replace the current value in the hidden field
-    					// first build the current value
-    					oldValue = oldValue.replace(/,/g, '\|');
-    					var inputValue = $('#as-values-other_text').val();
-    					if (inputValue.search(new RegExp('^' + oldValue + ',')) >= 0) {
-    						// the value is at the begining of the line
-    						$('#as-values-other_text').val(inputValue.replace(new RegExp('^' + oldValue + ','), newValue + ','));
-    					} else {
-    						// somewhere in the middle
-    						// a comma is always at the end
-    						$('#as-values-other_text').val(inputValue.replace(new RegExp(',' + oldValue + ','), ',' + newValue + ','));
-    					}
-    				}
-    			}
-    		});
+	  	formatList: function (data, el) {
+	  		if (data.tooltip != null)
+	  			$(el).attr('title', data.tooltip);	// TODO
+	  		return el;
 	  	}
     });
     

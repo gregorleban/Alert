@@ -737,7 +737,7 @@ public class MessageParser {
 			List<String> keywords = new ArrayList<>();
 			Element keywordsEl = doc.getElementsByTagName("enrychableKeywords").getLength() > 0 ? (Element) doc.getElementsByTagName("enrychableKeywords").item(0) : null;
 			if (keywordsEl != null)
-				keywords.addAll(Arrays.asList(keywordsEl.getTextContent().split("[\\s+,-]")));
+				keywords.addAll(Arrays.asList(keywordsEl.getTextContent().replaceAll("[\\+-]", "").split("[\\s+,-]")));
 			
 			
 			NodeList itemNodes = doc.getElementsByTagName("item");
@@ -749,7 +749,6 @@ public class MessageParser {
 				if (!keywords.isEmpty()) {
 					String content = (String) itemJSon.get("content");
 					for (String keyword : keywords) {
-						keyword = keyword.replaceAll("[\\+-]", "");
 						content = content.replaceAll("(?i)(" + keyword + ")", "<em>$1</em>");
 					}
 					itemJSon.put("content", content);
@@ -954,6 +953,8 @@ public class MessageParser {
 				Node suggNode = suggNodes.item(i);
 				NamedNodeMap attributes = suggNode.getAttributes();
 				
+				JSONObject jsonObj = new JSONObject();
+				
 				String tagName = suggNode.getNodeName();
 				String label;
 				String value;
@@ -969,6 +970,7 @@ public class MessageParser {
 				} else if ("method".equals(tagName) || "file".equals(tagName) || "module".equals(tagName)) {
 					label = attributes.getNamedItem("name").getNodeValue();
 					value = attributes.getNamedItem("uri").getNodeValue();
+					jsonObj.put("tooltip", Utils.escapeHtml(attributes.getNamedItem("tooltip").getNodeValue()));
 					type = "source";
 				} else if ("product".equals(tagName)) {
 					label = attributes.getNamedItem("label").getNodeValue();
@@ -980,7 +982,6 @@ public class MessageParser {
 					type = "issue";
 				} else throw new IllegalArgumentException("An unexpected suggestion node appeared in the KEUI response: " + tagName);
 			
-				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("label", Utils.escapeHtml(label));
 				jsonObj.put("value", Utils.escapeHtml(value));
 				jsonObj.put("type", type);

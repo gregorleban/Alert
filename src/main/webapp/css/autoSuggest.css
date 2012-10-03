@@ -84,20 +84,20 @@ ul.as-selections li.as-selection-item.concept {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F9FF7E), to(#F9FF7E));
 }
 ul.as-selections li.as-selection-item.person {
-	background-color: #ddeefe;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddeefe), to(#bfe0f1));
+	background-color: #bdf;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#bdf), to(#9cf));
 }
 ul.as-selections li.as-selection-item.issue {
-	background-color: #FF6140;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FF6140), to(#AB2400));
+	background-color: #fbb;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fbb), to(#d88));
 }
 ul.as-selections li.as-selection-item.source {
-	background-color: #FFA8AB;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFA8AB), to(#FFA8AB));
+	background-color: #dec;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#dec), to(#ad8));
 }
 ul.as-selections li.as-selection-item.product {
-	background-color: #B9BAFF;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#B9BAFF), to(#B9BAFF));
+	background-color: #ddd;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), to(#ccc));
 }
 ul.as-selections li.as-selection-item:last-child {
 	margin-left: 30px;
@@ -116,45 +116,27 @@ ul.as-selections li.as-selection-item a.as-close {
 }
 
 ul.as-selections li.as-selection-item.blur {
-	color: #666666;
-	background-color: #f4f4f4;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f4f4f4), to(#d5d5d5));
-	border-color: #bbb;
-	border-top-color: #ccc;
-	box-shadow: 0 1px 1px #e9e9e9;
-	-webkit-box-shadow: 0 1px 1px #e9e9e9;
-	-moz-box-shadow: 0 1px 1px #e9e9e9;
+	color: #fff;
+	text-shadow: 0 1px 1px #666;
 }
-
 ul.as-selections li.as-selection-item.blur a.as-close {
-	color: #999;
-}
 
-ul.as-selections li:hover.as-selection-item {
-	color: #2b3840;
-	background-color: #bbd4f1;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#eee), to(#ccc));
-	border-color: #ddd;
-	border-top-color: #eee;
-	margin: 5px !important;
 }
-
 ul.as-selections li:hover.as-selection-item a.as-close {
-	color: #888;
+	color: #fff;
+	text-shadow: 0 1px 1px #666;
 }
-
 ul.as-selections li.as-selection-item.selected {
-	border-color: #ccc
+	color: #fff;
+	text-shadow: 0 1px 1px #666;
 }
-
 ul.as-selections li.as-selection-item a:hover.as-close {
+	color: #f00;
+	text-shadow: 0 1px 1px #666;
+}
+ul.as-selections li.as-selection-item a:active.as-close {
 	color: #666;
 }
-
-ul.as-selections li.as-selection-item a:active.as-close {
-	color: #ccc;
-}
-
 ul.as-selections li.as-original {
 	margin: 8px !important;
 	border: none !important;
@@ -184,20 +166,31 @@ ul.as-list {
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
+	overflow-y:scroll;
+	height:575px
 }
 
-li.as-result-item, li.as-message {
+li.as-result-item, li.as-message{
 	margin: 0 0 0 0;
-	padding: 5px 12px;
-	background-color: transparent;
+	padding: 2px 12px;
 	border: 1px solid #fff;
-	border-bottom: 1px solid #ddd;
 	cursor: pointer;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
-
+li.as-result-item.issue{
+	background-color: #fbb;
+}
+.as-result-item.source{
+	background-color: #dec;
+}
+li.as-result-item.person{
+	background-color: #bdf;
+}
+li.as-result-item.product{
+	background-color: #ddd;
+}
 li:first-child.as-result-item {
 	margin: 0;
 }
@@ -208,22 +201,22 @@ li.as-message {
 }
 
 li.as-result-item.active {
-	background-color: #93b876;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 64%, from(rgb(110, 129, 245)), to(rgb(62, 82, 242)));
-	border-color: #93b876;
+	background-color: #7BA857;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 64%, from(rgb(182, 222, 143)), to(rgb(123, 168, 80)));
+	border-color: #7BA857;
 	color: #fff;
 	text-shadow: 0 1px 2px #666;
 }
 
 li.as-result-item em { 
 	font-style: normal; 
-	background: #444;  
+	background: #900;  
 	padding: 0 2px;
 	color: #fff;
 }
 
 li.as-result-item.active em { 
-	background: #93b876;  
+	background: #900;  
 	color: #fff;
 }
 
@@ -260,6 +253,8 @@ ul.as-list {
 	border: 1px solid #888\9;
 }
 ul.as-selections li.as-selection-item a.as-close {
+	color: #fff;
+	text-shadow: 0 1px 1px #666;
 }
 
 /* Firefox 3.0 Hacks */

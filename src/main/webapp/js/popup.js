@@ -35,10 +35,10 @@
 			
 			return false;
 		});
-		$(popup).mouseleave(function (event) {
+		/*$(popup).mouseleave(function (event) {
 			if ($(popup).css('display') != 'none')
 				$(popup).fadeToggle(fadeDuration);
-		});
+		});*/
 		$(document).click(function (event) {
 			if (event.target != $(popup) && event.target != $(trigger) && $(popup).css('display') != 'none' && $.inArray(event.target, $(popup).find('*')) < 0)
 				$(popup).fadeToggle(fadeDuration);

@@ -539,7 +539,7 @@ public class MessageUtils {
 				if (props.containsKey(key) && Utils.parseBoolean(props.getProperty(key)))
 					qFields.add(key.substring(0, key.length() - 3));
 				
-				if ("issuesChk".equals(key)) {
+				if ("issuesChk".equals(key) && Utils.parseBoolean(props.getProperty(key))) {
 					// get the resolutions and statuses
 					String resolutionsStr = getResolutionsStr(props);
 					String statusesStr = getStatusesStr(props);

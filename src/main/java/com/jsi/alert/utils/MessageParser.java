@@ -20,6 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.activemq.util.ByteArrayInputStream;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -28,6 +30,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class MessageParser {
+	
+	private static final Logger log = LoggerFactory.getLogger(MessageParser.class);
 	
 	private enum ItemType {
 		EMAIL(10),
@@ -41,9 +45,6 @@ public class MessageParser {
 		
 		ItemType(int value) {
 			this.value = value;
-		}
-		public int getValue() {
-			return value;
 		}
 	}
 	
@@ -844,7 +845,7 @@ public class MessageParser {
 		JSONArray tagsArr = new JSONArray();
 		tagsArr.addAll(Arrays.asList(tags));
 		
-		if (type == ItemType.BUG_DESCRIPTION.getValue()) {
+		if (type == ItemType.BUG_DESCRIPTION.value) {
 			Long authorId = node.getAttribute("author").isEmpty() ? null : Long.parseLong(node.getAttribute("author"));
 			int count = Integer.parseInt(node.getAttribute("count"));
 			long threadId = Long.parseLong(node.getAttribute("threadId"));
@@ -866,7 +867,7 @@ public class MessageParser {
 			result.put("time", time);
 			result.put("type", type);
 		}
-		else if (type == ItemType.COMMIT.getValue()) {
+		else if (type == ItemType.COMMIT.value) {
 			long authorId = Long.parseLong(node.getAttribute("author"));
 			result.put("id", id);
 			result.put("type", type);
@@ -876,7 +877,8 @@ public class MessageParser {
 			result.put("authorID", authorId);
 			result.put("content", content);
 		} 
-		else {
+		else if(type == ItemType.EMAIL.value || type == ItemType.POST.value || 
+				type == ItemType.BUG_COMMENT.value || type == ItemType.WIKI_POST.value) {
 			long threadId = Long.parseLong(node.getAttribute("threadId"));
 			int count = Integer.parseInt(node.getAttribute("count"));
 			long senderId = Long.parseLong(node.getAttribute("from"));
@@ -884,9 +886,11 @@ public class MessageParser {
 			
 			String subject = Utils.escapeHtml(node.getElementsByTagName("subject").item(0).getTextContent());
 			
+			// recipients
 			JSONArray recipients = new JSONArray();
-			if (node.getElementsByTagName("to").item(0) != null) {
-				String[] recipientStrV = node.getElementsByTagName("to").item(0).getTextContent().split(",");
+			String recipientsStr = node.getAttribute("to");
+			if (recipientsStr != null && !recipientsStr.isEmpty()) {
+				String[] recipientStrV = recipientsStr.split(",");
 				for (String recIdStr : recipientStrV)
 					recipients.add(Long.parseLong(recIdStr));
 			}
@@ -905,6 +909,9 @@ public class MessageParser {
 			result.put("content", content);
 			result.put("subject", subject);
 			result.put("url", url);
+		}
+		else {
+			log.warn("Unknown item type received: " + type + ", ignoring.");
 		}
 		
 		return result;

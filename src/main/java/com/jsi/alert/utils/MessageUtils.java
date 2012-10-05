@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -44,21 +43,25 @@ public class MessageUtils {
 		"commitsChk",
 		"forumsChk",
 		"mailsChk",
-		"wikisChk",
-		
-		"unconfirmedChk",
-    	"newChk",
-    	"assignedChk",
-    	"resolveChk",
-    	"invalidChk",
-    	"worksChk",
-    	"fixedChk",
-    	"wondChk",
-    	"duplicateChk"
+		"wikisChk"
 	};
 	
-	private static final Set<String> availableResolutions = new HashSet<>(Arrays.asList(new String[] {"None", "Fixed", "WontFix", "Invalid", "Duplicate", "WorksForMe", "Unknown"}));
-	private static final Set<String> availableStatuses = new HashSet<>(Arrays.asList(new String[] {"Open", "Verified", "Assigned", "Resolved", "Closed"}));
+	private static final Set<String> availableResolutions = new HashSet<>(Arrays.asList(new String[] {
+			"None",
+			"Fixed",
+			"WontFix",
+			"Invalid",
+			"Duplicate",
+			"WorksForMe",
+			"Unknown"
+	}));
+	private static final Set<String> availableStatuses = new HashSet<>(Arrays.asList(new String[] {
+			"Open",
+			"Verified",
+			"Assigned",
+			"Resolved",
+			"Closed"
+	}));
 
 	private static MessageFactory msgFactory;
 	
@@ -369,13 +372,17 @@ public class MessageUtils {
 			postTypes.setTextContent("issues");
 			
 			// add status and resolution conditions
-			String resolutionsStr = getResolutionsStr(props);
-			String statusesStr = getStatusesStr(props);
+			List<String> resolutions = getResolutions(props);
+			List<String> statuses = getStatuses(props);
 			
-			if (!resolutionsStr.isEmpty())
+			if (resolutions.size() != availableResolutions.size()) {
+				String resolutionsStr = Utils.toCommaSepStr(resolutions);
 				conditions.addChildElement("issueResolution").setTextContent(resolutionsStr);
-			if (!statusesStr.isEmpty())
+			}
+			if (statuses.size() != availableStatuses.size()) {
+				String statusesStr = Utils.toCommaSepStr(statuses);
 				conditions.addChildElement("issueStatus").setTextContent(statusesStr);
+			}		
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			msg.writeTo(out);
@@ -423,6 +430,8 @@ public class MessageUtils {
 	
 	private static List<String> getStatuses(Properties props) {
 		List<String> result = new ArrayList<>();
+		
+		
 		for (String status : availableStatuses) {
 			String statusKey = status + "Chk";
 			if (props.containsKey(statusKey) && Utils.parseBoolean(props.getProperty(statusKey)))
@@ -430,28 +439,6 @@ public class MessageUtils {
 		}
 		
 		return result;
-	}
-	
-	private static String getResolutionsStr(Properties props) {
-		List<String> resolutions = getResolutions(props);
-		StringBuilder builder = new StringBuilder();
-		for (Iterator<String> it = resolutions.iterator(); it.hasNext();) {
-			builder.append(it.next());
-			if (it.hasNext())
-				builder.append(",");
-		}
-		return builder.toString();
-	}
-	
-	private static String getStatusesStr(Properties props) {
-		List<String> statuses = getStatuses(props);
-		StringBuilder builder = new StringBuilder();
-		for (Iterator<String> it = statuses.iterator(); it.hasNext();) {
-			builder.append(it.next());
-			if (it.hasNext())
-				builder.append(",");
-		}
-		return builder.toString();
 	}
 	
 	/**
@@ -541,13 +528,17 @@ public class MessageUtils {
 				
 				if ("issuesChk".equals(key) && Utils.parseBoolean(props.getProperty(key))) {
 					// get the resolutions and statuses
-					String resolutionsStr = getResolutionsStr(props);
-					String statusesStr = getStatusesStr(props);
+					List<String> resolutions = getResolutions(props);
+					List<String> statuses = getStatuses(props);
 					
-					if (!resolutionsStr.isEmpty())
+					if (resolutions.size() != availableResolutions.size()) {
+						String resolutionsStr = Utils.toCommaSepStr(resolutions);
 						conditions.addChildElement("issueResolution").setTextContent(resolutionsStr);
-					if (!statusesStr.isEmpty())
+					}
+					if (statuses.size() != availableStatuses.size()) {
+						String statusesStr = Utils.toCommaSepStr(statuses);
 						conditions.addChildElement("issueStatus").setTextContent(statusesStr);
+					}	
 				}
 			}
 			

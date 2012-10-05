@@ -1533,7 +1533,10 @@ var AlertViz = function(options) {
     				for (var j = 0; j < toIdList.length; j++)
     					toNameList.push(peopleH[toIdList[j]].name);
     				
-    				html += '<td class="item_header">' + peopleH[item.senderID].name + ' to ' + toNameList.join(', ') + '</td>';
+    				if (toNameList.length > 0)
+    					html += '<td class="item_header">' + peopleH[item.senderID].name + ' to ' + toNameList.join(', ') + '</td>';
+    				else
+    					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
     				
     				// date
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';

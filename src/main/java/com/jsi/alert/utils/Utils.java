@@ -1,5 +1,7 @@
 package com.jsi.alert.utils;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -45,5 +47,21 @@ public class Utils {
 	 */
 	public static String escapeHtml(String input) {
 		return StringEscapeUtils.escapeHtml4(input).replaceAll("\n", "<br />");
+	}
+	
+	/**
+	 * Returns a <code>String</code> representation of the list, where the items are comma separated.
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static String toCommaSepStr(List<String> list) {
+		StringBuilder builder = new StringBuilder();
+		for (Iterator<String> it = list.iterator(); it.hasNext();) {
+			builder.append(it.next());
+			if (it.hasNext())
+				builder.append(",");
+		}
+		return builder.toString();
 	}
 }

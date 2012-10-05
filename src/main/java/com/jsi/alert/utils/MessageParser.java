@@ -745,6 +745,7 @@ public class MessageParser {
 			for (int i = 0; i < itemNodes.getLength(); i++) {
 				Element itemNode = (Element) itemNodes.item(i);
 				JSONObject itemJSon = parseKEUIItem(itemNode);
+				if (itemJSon == null) continue;
 				
 				// emphasize the keywords
 				if (!keywords.isEmpty()) {
@@ -799,7 +800,8 @@ public class MessageParser {
 				Element node = (Element) itemNodes.item(i);
 				
 				JSONObject item = parseKEUIItem(node);
-				items.add(item);
+				if (item != null)
+					items.add(item);
 			}
 			
 			JSONObject info = new JSONObject();
@@ -912,6 +914,7 @@ public class MessageParser {
 		}
 		else {
 			log.warn("Unknown item type received: " + type + ", ignoring.");
+			return null;
 		}
 		
 		return result;

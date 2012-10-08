@@ -17,11 +17,11 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.AlertUser;
+import com.jsi.alert.model.UserPrincipal;
+import com.jsi.alert.service.AuthenticatorService;
 import com.jsi.alert.utils.Configuration;
 import com.jsi.alert.utils.MessageParser;
 import com.jsi.alert.utils.MessageUtils;
-import com.jsi.alert.utils.UserAuthenticator;
 import com.jsi.alert.utils.Utils;
 
 /**
@@ -249,10 +249,10 @@ public class QueryServlet extends MQServlet {
 		// first check if the user is authenticated
 		HttpSession session = request.getSession();
 		
-		boolean isAuthenticated = UserAuthenticator.authenticateUser(session);
+		boolean isAuthenticated = AuthenticatorService.authenticateUser(session);
 		
 		if (isAuthenticated) {
-			AlertUser user = (AlertUser) session.getAttribute(Configuration.USER_PRINCIPAL);
+			UserPrincipal user = (UserPrincipal) session.getAttribute(Configuration.USER_PRINCIPAL);
 			
 			// send a message to Recommender to get the IDs of issues
 			String uuid = user.getUuid();

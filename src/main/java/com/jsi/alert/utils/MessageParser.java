@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.jsi.alert.model.notification.EventNotification;
+import com.jsi.alert.model.notification.IdentityNotification;
+import com.jsi.alert.model.notification.IssueNotification;
+import com.jsi.alert.model.notification.ItemNotification;
+import com.jsi.alert.model.notification.Notification;
 
 public class MessageParser {
 	
@@ -913,7 +920,7 @@ public class MessageParser {
 			result.put("url", url);
 		}
 		else {
-			log.warn("Unknown item type received: " + type + ", ignoring.");
+			log.warn("Unknown item type received: " + type + ", ignoring...");
 			return null;
 		}
 		
@@ -949,8 +956,7 @@ public class MessageParser {
 		try {
 			// parse the suggestions and return JSON
 			JSONArray jsonArray = new JSONArray();
-			DocumentBuilderFactory xmlFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = xmlFactory.newDocumentBuilder();
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document xmlDoc = builder.parse(new ByteArrayInputStream(responseMsg.getBytes("UTF-8")));
 			
 			NodeList suggRootNodes = xmlDoc.getElementsByTagName("suggestions");
@@ -1015,8 +1021,7 @@ public class MessageParser {
 		try {
 			List<Long> result = new ArrayList<>();
 			
-			DocumentBuilderFactory xmlFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = xmlFactory.newDocumentBuilder();
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			Document xmlDoc = builder.parse(new ByteArrayInputStream(msg.getBytes("UTF-8")));
 			
 			Element eventData = (Element) xmlDoc.getElementsByTagName("ns1:eventData").item(0);
@@ -1034,5 +1039,219 @@ public class MessageParser {
 		} catch (Throwable t) {
 			throw new IllegalArgumentException("An unexpected exception occurred while parsing Recommender IssueRecommendation.xml message!", t);
 		}
+	}
+
+	/**
+	 * Parses the notification feed and returns a list of notifications.
+	 * 
+	 * @param response
+	 * @return
+	 */
+	public static List<Notification> parseNotificationRSS(String feed) {
+		try {
+			List<Notification> result = new ArrayList<>();
+			
+			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			Document xmlDoc = builder.parse(new ByteArrayInputStream(feed.getBytes("UTF-8")));
+			
+			Element channel = (Element) xmlDoc.getElementsByTagName("channel").item(0);
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			
+			NodeList fields = channel.getChildNodes();
+			for (int i = 0; i < fields.getLength(); i++) {
+				Node node = fields.item(i);
+				String tag = node.getNodeName();
+				
+				if ("item".equals(tag)) {
+					Element item = (Element) node;
+					Notification notification;
+					
+					// first get all the common attributes
+					// watch out, these fields may be null
+					String title = null;
+					String link = null;
+					Date pubDate = null;
+					
+					NodeList titles = item.getElementsByTagName("title");
+					NodeList links = item.getElementsByTagName("link");
+					NodeList dates = item.getElementsByTagName("pubDate");
+					
+					if (titles.getLength() > 0) title = titles.item(0).getTextContent();
+					if (links.getLength() > 0) link = links.item(0).getTextContent();
+					if (dates.getLength() > 0) pubDate = dateFormat.parse(dates.item(0).getTextContent());
+					
+					// get the specialized attributes
+					Element content = (Element) item.getElementsByTagName("content:encoded").item(0);
+					// content has only 1 child, I can do a switch on it's name
+					
+					Node data = content.getChildNodes().item(0);
+					switch (data.getNodeName()) {
+					case "issue":
+						notification = parseIssueNotification(data);
+						break;
+					case "event":
+						notification = parseEventNotification(data);
+						break;
+					case "identity":
+						notification = parseIdentityNotification(data);
+						break;
+					case "item":
+						notification = parseItemNotification(data);
+						break;
+					default:
+						log.warn("Unknown notification type: " + data.getNodeName());
+						continue;
+					}
+					
+					notification.setTitle(title);
+					notification.setLink(link);
+					notification.setPublishDate(pubDate);
+					
+					result.add(notification);
+				}
+			}
+			return result;
+		} catch (Throwable t) {
+			throw new IllegalArgumentException("Failed to parse notification feed!", t);
+		}
+	}
+
+	/**
+	 * Parses similar item notification.
+	 * 
+	 * @param itemEl
+	 * @return
+	 */
+	private static Notification parseItemNotification(Node itemEl) {
+		ItemNotification result = new ItemNotification();
+		
+		NodeList propNodes = itemEl.getChildNodes();
+		for (int i = 0; i < propNodes.getLength(); i++) {
+			Element node = (Element) propNodes.item(i);
+			String label = node.getNodeName();
+			
+			switch (label) {
+			case "url":
+				result.setUrl(node.getTextContent());
+				break;
+			case "similarity":
+				result.setSimilarity(Double.parseDouble(node.getTextContent()));
+				break;
+			case "shortContent":
+				result.setContent(Utils.escapeHtml(node.getTextContent()));
+				break;
+			case "subject":
+				result.setSubject(Utils.escapeHtml(node.getTextContent()));
+				break;
+			default:
+				log.warn("Unknown property of item notification: " + label + ", ignoring...");
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Parses identity notification.
+	 * 
+	 * @param identityEl
+	 * @return
+	 */
+	private static Notification parseIdentityNotification(Node identityEl) {
+		IdentityNotification result = new IdentityNotification();
+		
+		NodeList props = identityEl.getChildNodes();
+		for (int i = 0; i < props.getLength(); i++) {
+			Element node = (Element) props.item(i);
+			String label = node.getNodeName();
+			
+			switch (label) {
+			case "name":
+				result.setName(node.getTextContent());
+				break;
+			case "profile":
+				NodeList profileUrlList = node.getElementsByTagName("url");
+				if (profileUrlList.getLength() > 0)
+					result.setProfileUrl(profileUrlList.item(0).getTextContent());
+				
+				result.setProfile(node.getTextContent());
+				break;
+			case "imgurl":
+				result.setImageUrl(node.getTextContent());
+				break;
+			default:
+				log.warn("Unknown property of identity notification: " + label + ", ignoring...");
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Parses event notification.
+	 * 
+	 * @param eventEl
+	 * @return
+	 */
+	private static Notification parseEventNotification(Node eventEl) {
+		EventNotification result = new EventNotification();
+		
+		NodeList props = eventEl.getChildNodes();
+		for (int i = 0; i < props.getLength(); i++) {
+			Element node = (Element) props.item(i);
+			String label = node.getNodeName();
+			
+			switch (label) {
+			case "name":
+				result.setName(node.getTextContent());
+				break;
+			case "description":
+				result.setDescription(node.getTextContent());
+				break;
+			case "url":
+				result.setUrl(node.getTextContent());
+				break;
+			default:
+				log.warn("Unknown property of event notification: " + label + ", ignoring...");
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Parses issue notification.
+	 * 
+	 * @param eventEl
+	 * @return
+	 */
+	private static Notification parseIssueNotification(Node issueEl) {
+		IssueNotification result = new IssueNotification();
+		
+		NodeList props = issueEl.getChildNodes();
+		for (int i = 0; i < props.getLength(); i++) {
+			Element node = (Element) props.item(i);
+			String label = node.getNodeName();
+		
+			switch (label) {
+			case "bugid":
+				result.setBugId(node.getTextContent());
+				break;
+			case "subject":
+				result.setSubject(Utils.escapeHtml(node.getTextContent()));
+				break;
+			case "summary":
+				result.setSummary(Utils.escapeHtml(node.getTextContent()));
+				break;
+			case "url":
+				result.setUrl(node.getTextContent());
+				break;
+			default:
+				log.warn("Unknown property of issue notification: " + label + ", ignoring...");
+			}
+		}
+		
+		return result;
 	}
 }

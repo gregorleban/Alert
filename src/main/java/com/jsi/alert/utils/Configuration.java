@@ -19,6 +19,7 @@ public class Configuration {
 	public static boolean LOG_EVENTS;
 	
 	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
+	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER;
 
 	static {
 		// read the properties
@@ -39,6 +40,9 @@ public class Configuration {
 			LOGIN_URL = props.getProperty("url.login.form");
 			LOGOUT_URL = props.getProperty("url.logout.form");
 			AUTHENTICATE_URL = props.getProperty("url.login.authenticate");
+			
+			NOTIFICATION_URL = props.getProperty("url.notifications");
+			NOTIFICATION_PARAMETER = props.getProperty("param.notifications");
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

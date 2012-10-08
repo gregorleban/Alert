@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jsi.alert.model.AlertUser;
+import com.jsi.alert.model.UserPrincipal;
 import com.jsi.alert.utils.Configuration;
 
 /**
@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
 				// create a session and redirect to the index page
 				HttpSession session = request.getSession();
 				
-				AlertUser user = new AlertUser();
+				UserPrincipal user = new UserPrincipal();
 				user.setEmail(email);
 				
 				session.setAttribute(Configuration.USER_PRINCIPAL, user);

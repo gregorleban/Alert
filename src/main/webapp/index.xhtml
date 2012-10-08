@@ -63,30 +63,99 @@
 					 <li><a href="subscribe.xhtml">Subscribe</a></li>
 					 <li><a href="overview.html">Project overview</a></li>
 					 <c:choose>
-					 	<c:when test="#{authenticatorBean.isUserLoggedIn()}">
-					 		<c:if test="#{authenticatorBean.user.admin}">
+					 	<c:when test="#{index.isUserLoggedIn()}">
+					 		<c:if test="#{index.user.admin}">
 					 			<li><a href="admin.html">Administration</a></li>
 					 		</c:if>
 					 		<li>
-					 			<div class='popbox'>
-						  		 <a class="open" href="#">#{authenticatorBean.user.email}</a>
-							 		<div class='collapse'>
-		 					 			<div class='box'>
-		   					 				<div class='arrow'></div>
-		     		 		 				<div class='arrow-border'></div>
-		        			 				<form method="post" id="subForm">
-		        				 				<p>
-													<a href="#{authenticatorBean.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
-													<script type="text/javascript" src="http://output21.rssinclude.com/output?type=js&amp;id=526079&amp;hash=ee25e8943dc9de3f8d68f5bf9e0b5c5c"></script>
-				 								</p>
-		     			    				</form>
-		     			     			</div>
-		     			     		</div>
-		     			     	</div>
+					 			<input type="button" id="notification_btn" class="open" value="#{index.user.email} (#{index.getNNotifications()})" />
+					 			<div id="notification_div">
+					 				<div class='arrow'></div>
+     		 		 				<div class='arrow-border'></div>
+       				 				<p>
+										<a href="#{index.getLogoutUrl()}" style="float:right;text-transform:normalcase;">Logout</a>
+	 								</p>
+     			    				<ul id="notification_list">
+	     			    				<c:forEach items="#{index.notifications}" var="notification">
+	     			    					<li>
+		     			    					<c:choose>
+		     			    						<c:when test="${notification.type == 0}">
+		     			    							<table class="notification event">
+				     			    						<tr>
+				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
+				     			    							<td>${notification.publishDate}</td>
+				     			    						</tr>
+			     			    							<tr>
+			     			    								<td colspan="2"><a href="${notification.url}">${notification.name}</a></td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2">${notification.description}</td>
+			     			    							</tr>
+		     			    							</table>
+		     			    						</c:when>
+		     			    						<c:when test="${notification.type == 1}">
+		     			    							<table class="notification person">
+				     			    						<tr>
+				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
+				     			    							<td>${notification.publishDate}</td>
+				     			    						</tr>
+			     			    							<tr>
+			     			    								<td colspan="2"><a href="${notification.profileUrl}">${notification.name}</a></td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2">${notification.profile}</td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2"><img src="${notification.imageUrl}" alt="(no image)" /></td>
+			     			    							</tr>
+		     			    							</table>
+		     			    						</c:when>
+		     			    						<c:when test="${notification.type == 2}">
+		     			    							<table class="notification issue">
+				     			    						<tr>
+				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
+				     			    							<td>${notification.publishDate}</td>
+				     			    						</tr>
+			     			    							<tr>
+			     			    								<td><a href="${notification.url}">${notification.subject}</a></td>
+			     			    								<td><a href="${notification.url}">${notification.bugId}</a></td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2">${notification.summary}</td>
+			     			    							</tr>
+		     			    							</table>
+		     			    						</c:when>
+		     			    						<c:when test="${notification.type == 3}">
+		     			    							<table class="notification item">
+				     			    						<tr>
+				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
+				     			    							<td>${notification.publishDate}</td>
+				     			    						</tr>
+			     			    							<tr>
+			     			    								<td colspan="2"><a href="${notification.url}">${notification.subject}</a></td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2">${notification.similarity}</td>
+			     			    							</tr>
+			     			    							<tr>
+			     			    								<td colspan="2">${notification.content}</td>
+			     			    							</tr>
+		     			    							</table>
+		     			    						</c:when>
+		     			    					</c:choose>
+	     			    					</li>
+	     			    				</c:forEach>
+     			    				</ul>
+					 			</div>
+					 			<script type="application/javascript">
+					 				<!--
+					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 10, event: 'click'});
+					 				-->
+					 			</script>
 		     			     </li>
 					 	</c:when>
 					 	<c:otherwise>
-					 		<li><a href="#{authenticatorBean.getLoginUrl()}">Login</a></li>
+					 		<li><a href="#{index.getLoginUrl()}">Login</a></li>
 					 	</c:otherwise>
 					 </c:choose>
      			 </ul>

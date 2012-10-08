@@ -2,7 +2,7 @@ package com.jsi.alert.model;
 
 import java.io.Serializable;
 
-public class AlertUser implements Serializable {
+public class UserPrincipal implements Serializable {
 
 	private static final long serialVersionUID = -6511117109181574707L;
 	

@@ -725,7 +725,7 @@ var Search = function (opts) {
 		},
 		
 		addToSearch: function (data) {
-			if (data.type == 'source' || data.type == 'product' || data.type == 'person') {
+			if (data.type == 'source' || data.type == 'product' || data.type == 'person' || data.type == 'issue') {
 				// have to send URI
 				var value = data.value;
 				var label = data.label;
@@ -736,9 +736,8 @@ var Search = function (opts) {
 			}
 		},
 		
-		removeFromSearch: function (elem, label) {
-			// get the type
-	  		var type = null;
+		removeFromSearch: function (elem, data) {
+			var type = null;
 	  		if ($(elem).hasClass('keyword')) {
 	  			type = 'keyword';
 	  		} else if ($(elem).hasClass('person')) {
@@ -751,18 +750,14 @@ var Search = function (opts) {
 	  			type = 'product';
 	  		} else
 	  			type = 'issue';
-	  		
+			
+	  		var label = data.label;
 	  		var array = searchTerms[type];
-	  		if (type == 'concept' || type == 'source' || type == 'product' || type == 'person') {
+	  		if (type == 'source' || type == 'product' || type == 'person' || type == 'issue') {
 	  			var idx = that.indexOfLabel(type, label);
 	  			if (idx >= 0)
 	  				array.splice(idx);
-	  		} else {
-		  		var idx = array.indexOf($(elem).text().substring(1));
-		  		array.splice(idx);
 	  		}
-
-	  		elem.remove();
 		},
 		
 		getSearchStr: function (type) {
@@ -1744,8 +1739,10 @@ var AlertViz = function(options) {
     		}
     	},
 	  	selectionRemoved: function(elem, data) {
-	  		generalSearch.removeFromSearch(elem, data.label);
+	  		generalSearch.removeFromSearch(elem, data);
 	  		updateUrl();
+	  		
+	  		elem.remove();
 	  	},
 	  	formatList: function (data, el) {
 	  		if (data.type == 'source') {
@@ -1817,8 +1814,9 @@ var AlertViz = function(options) {
     		}
     	},
 	  	selectionRemoved: function(elem, data) {
-	  		personSearch.removeFromSearch(elem, data.label);
+	  		personSearch.removeFromSearch(elem, data);
 	  		updateUrl();
+	  		elem.remove();
 	  	}
     });
     

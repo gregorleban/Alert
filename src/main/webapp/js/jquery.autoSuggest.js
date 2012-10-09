@@ -179,7 +179,7 @@
 								selections_holder.children().not(org_li.prev()).removeClass("selected");
 								if(org_li.prev().hasClass("selected")){
 									values_input.val(values_input.val().replace(last+",",""));
-									opts.selectionRemoved.call(this, org_li.prev(), {label: org_li.prev().text().substring(1), value: last});
+									opts.selectionRemoved.call(this, org_li.prev(), {label: $('<div/>').text(org_li.prev().text().substring(1)).html(), value: last});
 								} else {
 //									opts.selectionClick.call(this, org_li.prev());
 									org_li.prev().addClass("selected");		
@@ -408,6 +408,8 @@
 							input.focus();
 							return false;
 						});
+					
+					item.data = data;
 					
 					org_li.before(item.html(data[opts.selectedItemProp]).prepend(close));
 					opts.selectionAdded.call(this, org_li.prev(), data);

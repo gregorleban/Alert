@@ -84,7 +84,7 @@ ul.as-selections li.as-selection-item.concept {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F9FF7E), to(#F9FF7E));
 }
 ul.as-selections li.as-selection-item.person {
-	background-color: #bdf;
+	background-color: #CCE4FD;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#bdf), to(#9cf));
 }
 ul.as-selections li.as-selection-item.issue {
@@ -195,10 +195,9 @@ li:first-child.as-result-item {
 	margin: 0;
 }
 
-.as-results span {
-	font-weight: normal !important;
-	font-size: 11px;
-	color: #666666;
+.as-result-item.source .file_path{
+	font-weight: normal;
+	color: gray;
 }
 
 li.as-message {
@@ -207,23 +206,23 @@ li.as-message {
 }
 
 li.as-result-item.active {
-	background-color: #7BA857;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(190, 190, 190, 0.4)), to(rgba(224, 224, 224, 0.4)));
+	/*background-color: #7BA857;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 64%, from(rgb(182, 222, 143)), to(rgb(123, 168, 80)));
 	border-color: #7BA857;
 	color: #fff;
-	text-shadow: 0 1px 2px #666;
+	text-shadow: 0 1px 2px #666;*/
 }
 
 li.as-result-item em { 
 	font-style: normal; 
-	background: #900;  
+	background: rgba(153, 0, 0, 0.16);  
 	padding: 0 2px;
-	color: #fff;
 }
 
 li.as-result-item.active em { 
-	background: #900;  
-	color: #fff;
+	background: rgba(153, 0, 0, 0.16);
+	/*color: #fff;*/
 }
 
 /* Webkit Hacks  */

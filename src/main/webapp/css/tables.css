@@ -38,37 +38,37 @@
 .item-wrapper.issue .item_table{
 	background-image:url("../img/bug.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position:right;
 	background-size:contain;
 }
 .item-wrapper.comment .item_table{
 	background-image:url("../img/bug.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position: right;
 	background-size:contain;
 }
 .item-wrapper.commit .item_table{
 	background-image:url("../img/commit.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position: right;
 	background-size:contain;
 }
 .item-wrapper.wiki_post .item_table{
 	background-image:url("../img/bulb.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position: right;
 	background-size:contain;
 }
 .item-wrapper.forum_post .item_table{
 	background-image:url("../img/forum.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position: right;
 	background-size:contain;
 }
 .item-wrapper.email .item_table{
 	background-image:url("../img/email.png");
 	background-repeat:no-repeat;
-	background-position:center;
+	background-position: right;
 	background-size:contain;
 }
 .item_table{

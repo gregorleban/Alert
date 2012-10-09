@@ -254,6 +254,10 @@
 							n_data[opts.selectedItemProp] = i_input;
 							n_data[opts.selectedValuesProp] = i_input;	
 							n_data.type = type;
+							
+							if (labelTypeV.length > 2)
+								n_data.tooltip = labelTypeV[2];
+							
 							var lis = $("li", selections_holder).length;
 							add_selected_item(n_data, "00"+(lis+1));
 							input.val("");

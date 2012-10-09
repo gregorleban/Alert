@@ -3,34 +3,25 @@
 		var target = this[0];
 		var toggleTime = config.toggleTime == null ? 500 : config.toggleTime;
 		
-		$(target).find('.tree_li span.toggle').next().hide();
+		$(target).find('.tree_li div.toggle').next().hide();
 		
 		// add a link nudging animation effect to each link
-	    $(target).find('.tree_li span.toggle').hover(function() {
+	    $(target).find('.tree_li div.toggle').hover(function() {
 	        $(this).stop().animate( {
-				fontSize: config.focusSize || '110%',
-				color:"black"
+				fontSize: config.focusSize || '110%'
 	        }, 300);
 	    }, function() {
 	        $(this).stop().animate( {
-				fontSize: '100%',
-				color:"#808080"
+				fontSize: '100%'
 	        }, 300);
 	    });
-	    
-	    // set the cursor of the toggling span elements
-		$(target).find('span.toggle').each(function (idx, el) {
-			$(el).css('cursor', 'pointer');
-		});
 		
 		// prepend a plus sign to signify that the sub-menus aren't expanded
-		$(target).find(".tree_li .toggle").each(function (idx, el) {
-			$(el).prepend("+ ");
-		});
+		$(target).find(".tree_li div.toggle").prepend("+ ");
 		
 		// add a click function that toggles the sub-menu when the corresponding
 		// span element is clicked
-		$(target).find(".tree_li .toggle").click(function() {
+		$(target).find(".tree_li div.toggle").click(function() {
 			$(this).next().toggle(toggleTime);
 			
 			// switch the plus to a minus sign or vice-versa

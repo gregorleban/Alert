@@ -11,6 +11,7 @@ public class Configuration {
 	private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 	
 	public static final String USER_PRINCIPAL = "user";
+	public static final String DEFAULT_DATE_FORMAT = "yy-mm-dd";
 	
 	public static String ACTIVEMQ_URL;
 	public static String KEUI_REQUEST_TOPIC, KEUI_RESPONSE_TOPIC;
@@ -19,7 +20,7 @@ public class Configuration {
 	public static boolean LOG_EVENTS;
 	
 	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
-	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER;
+	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER, NOTIFICATION_DEFAULT_USER;
 
 	static {
 		// read the properties
@@ -28,8 +29,8 @@ public class Configuration {
 		Properties props = new Properties();
 		try {
 			props.load(Configuration.class.getClassLoader().getResourceAsStream("alert.properties"));
-			
-			ACTIVEMQ_URL = props.getProperty("url.activemq");
+
+			ACTIVEMQ_URL = props.getProperty("activemq.url");
 			KEUI_REQUEST_TOPIC = props.getProperty("topic.keui.request");
 			KEUI_RESPONSE_TOPIC = props.getProperty("topic.keui.response");
 			API_REQUEST_TOPIC = props.getProperty("topic.api.request");
@@ -37,12 +38,13 @@ public class Configuration {
 			
 			LOG_EVENTS = Boolean.parseBoolean(props.getProperty("log_events"));
 			
-			LOGIN_URL = props.getProperty("url.login.form");
-			LOGOUT_URL = props.getProperty("url.logout.form");
-			AUTHENTICATE_URL = props.getProperty("url.login.authenticate");
+			LOGIN_URL = props.getProperty("login.form.url");
+			LOGOUT_URL = props.getProperty("logout.form.url");
+			AUTHENTICATE_URL = props.getProperty("login.authenticate.url");
 			
-			NOTIFICATION_URL = props.getProperty("url.notifications");
-			NOTIFICATION_PARAMETER = props.getProperty("param.notifications");
+			NOTIFICATION_URL = props.getProperty("notifications.url");
+			NOTIFICATION_PARAMETER = props.getProperty("notifications.param");
+			NOTIFICATION_DEFAULT_USER = props.containsKey("notifications.param.value") ? props.getProperty("notifications.param.value") : null;
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

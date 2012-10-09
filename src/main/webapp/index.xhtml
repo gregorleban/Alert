@@ -37,7 +37,6 @@
 	<script type="application/javascript" src="js/dynamicgraph.js"></script>
 	<script type="application/javascript" src="js/alertviz.js"></script>
 	<script type="application/javascript" src="js/tabber.js"></script>
-	<script type="application/javascript" src="js/popbox.js"></script>	
 	<script type="application/javascript" src="js/sliding.form.js"></script>
 	<script type="application/javascript" src="js/date.format.js"></script>
 	<script type="application/javascript" src="js/tooltip.js"></script>
@@ -67,7 +66,7 @@
 					 			<li><a href="admin.html">Administration</a></li>
 					 		</c:if>
 					 		<li>
-					 			<input type="button" id="notification_btn" class="open" value="#{index.user.email} (#{index.getNNotifications()})" />
+					 			<input type="button" id="notification_btn" class="notifications_open" value="#{index.user.email} (#{index.getNNotifications()})" />
 					 			<div id="notification_div">
 					 				<div class='arrow'></div>
      		 		 				<div class='arrow-border'></div>
@@ -77,78 +76,22 @@
      			    				<ul id="notification_list">
 	     			    				<c:forEach items="#{index.notifications}" var="notification">
 	     			    					<li>
-		     			    					<c:choose>
-		     			    						<c:when test="${notification.type == 0}">
-		     			    							<table class="notification event">
-				     			    						<tr>
-				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
-				     			    							<td>${notification.publishDate}</td>
-				     			    						</tr>
-			     			    							<tr>
-			     			    								<td colspan="2"><a href="${notification.url}">${notification.name}</a></td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2">${notification.description}</td>
-			     			    							</tr>
-		     			    							</table>
-		     			    						</c:when>
-		     			    						<c:when test="${notification.type == 1}">
-		     			    							<table class="notification person">
-				     			    						<tr>
-				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
-				     			    							<td>${notification.publishDate}</td>
-				     			    						</tr>
-			     			    							<tr>
-			     			    								<td colspan="2"><a href="${notification.profileUrl}">${notification.name}</a></td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2">${notification.profile}</td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2"><img src="${notification.imageUrl}" alt="(no image)" /></td>
-			     			    							</tr>
-		     			    							</table>
-		     			    						</c:when>
-		     			    						<c:when test="${notification.type == 2}">
-		     			    							<table class="notification issue">
-				     			    						<tr>
-				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
-				     			    							<td>${notification.publishDate}</td>
-				     			    						</tr>
-			     			    							<tr>
-			     			    								<td><a href="${notification.url}">${notification.subject}</a></td>
-			     			    								<td><a href="${notification.url}">${notification.bugId}</a></td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2">${notification.summary}</td>
-			     			    							</tr>
-		     			    							</table>
-		     			    						</c:when>
-		     			    						<c:when test="${notification.type == 3}">
-		     			    							<table class="notification item">
-				     			    						<tr>
-				     			    							<td><a href="${notification.link}">${notification.title}</a></td>
-				     			    							<td>${notification.publishDate}</td>
-				     			    						</tr>
-			     			    							<tr>
-			     			    								<td colspan="2"><a href="${notification.url}">${notification.subject}</a></td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2">${notification.similarity}</td>
-			     			    							</tr>
-			     			    							<tr>
-			     			    								<td colspan="2">${notification.content}</td>
-			     			    							</tr>
-		     			    							</table>
-		     			    						</c:when>
-		     			    					</c:choose>
+	     			    						<table class="notification event">
+													<tr>
+		     			    							<td><a href="${notification.link}">${notification.title}</a></td>
+		     			    							<td>${notification.publishDate}</td>
+		     			    						</tr>
+	     			    							<tr>
+	     			    								<td colspan="2">#{notification.content}</td>
+	     			    							</tr>
+     			    							</table>
 	     			    					</li>
 	     			    				</c:forEach>
      			    				</ul>
 					 			</div>
 					 			<script type="application/javascript">
 					 				<!--
-					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 10, event: 'click'});
+					 				$('#notification_div').popup({trigger: '#notification_btn', align: 'center', duration: 'fast', top: 20, event: 'click'});
 					 				-->
 					 			</script>
 		     			     </li>

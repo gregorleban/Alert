@@ -34,6 +34,13 @@ public class NotificationService {
 			params.put(Configuration.NOTIFICATION_PARAMETER, uuid);
 			
 			String response = UniversalService.fetchUrl(Configuration.NOTIFICATION_URL, params, MediaType.TEXT_XML, RequestType.GET);
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Notifications received...");
+				if (Configuration.LOG_EVENTS)
+					log.debug(response);
+			}
+			
 			if (response != null) {
 				return MessageParser.parseNotificationRSS(response);
 			} else {

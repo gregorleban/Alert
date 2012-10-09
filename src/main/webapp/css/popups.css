@@ -93,3 +93,34 @@
 	font-weight:normal !important;
 	font-size:10px !important;
 }
+
+.notifications_open {
+   background:#DDD;
+   border-radius:5px;
+   box-shadow: 0px 0px 2px #CCC;
+   background:-webkit-gradient(linear,left top,left bottom,from(#f4f4f4),to(#e8e8e8));
+   background:-moz-linear-gradient(top,#f4f4f4,#e8e8e8);
+   background:linear-gradient(top,#f4f4f4,#e8e8e8);
+   text-transform:lowercase !important;
+   width:160px !important;
+   margin-top:8px !important;
+   height:20px !important;
+   line-height:20px !important;
+   font-weight:normal !important;
+   font-size:12px !important;
+   float:right !important;
+   margin-right:40px !important;
+}
+
+#notification_div {
+	width: 220px;
+	height: 500px;
+	background-color: #fff;
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow:0px 0px 8px #aaa;
+    -webkit-box-shadow:0px 0px 8px #aaa;
+    box-shadow:0px 0px 8px #aaa;
+    padding:10px;
+}

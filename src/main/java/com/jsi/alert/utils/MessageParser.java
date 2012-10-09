@@ -30,10 +30,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.jsi.alert.model.notification.EventNotification;
-import com.jsi.alert.model.notification.IdentityNotification;
-import com.jsi.alert.model.notification.IssueNotification;
-import com.jsi.alert.model.notification.ItemNotification;
 import com.jsi.alert.model.notification.Notification;
 
 public class MessageParser {
@@ -1094,7 +1090,8 @@ public class MessageParser {
 			
 			Element channel = (Element) xmlDoc.getElementsByTagName("channel").item(0);
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			SimpleDateFormat parseDateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			SimpleDateFormat displayDateFormat = new SimpleDateFormat(Configuration.DEFAULT_DATE_FORMAT);
 			
 			NodeList fields = channel.getChildNodes();
 			for (int i = 0; i < fields.getLength(); i++) {
@@ -1103,7 +1100,7 @@ public class MessageParser {
 				
 				if ("item".equals(tag)) {
 					Element item = (Element) node;
-					Notification notification;
+					Notification notification = new Notification();
 					
 					// first get all the common attributes
 					// watch out, these fields may be null
@@ -1117,11 +1114,12 @@ public class MessageParser {
 					
 					if (titles.getLength() > 0) title = titles.item(0).getTextContent();
 					if (links.getLength() > 0) link = links.item(0).getTextContent();
-					if (dates.getLength() > 0) pubDate = dateFormat.parse(dates.item(0).getTextContent());
+					if (dates.getLength() > 0) pubDate = parseDateFormat.parse(dates.item(0).getTextContent());
 					
 					// get the specialized attributes
 					Element content = (Element) item.getElementsByTagName("content:encoded").item(0);
-					// content has only 1 child, I can do a switch on it's name
+					
+					/*// content has only 1 child, I can do a switch on it's name
 					
 					Node data = content.getChildNodes().item(0);
 					switch (data.getNodeName()) {
@@ -1140,11 +1138,12 @@ public class MessageParser {
 					default:
 						log.warn("Unknown notification type: " + data.getNodeName());
 						continue;
-					}
+					}*/
 					
 					notification.setTitle(title);
 					notification.setLink(link);
-					notification.setPublishDate(pubDate);
+					notification.setPublishDate(displayDateFormat.format(pubDate));
+					notification.setContent(content.getTextContent());
 					
 					result.add(notification);
 				}
@@ -1155,141 +1154,141 @@ public class MessageParser {
 		}
 	}
 
-	/**
-	 * Parses similar item notification.
-	 * 
-	 * @param itemEl
-	 * @return
-	 */
-	private static Notification parseItemNotification(Node itemEl) {
-		ItemNotification result = new ItemNotification();
-		
-		NodeList propNodes = itemEl.getChildNodes();
-		for (int i = 0; i < propNodes.getLength(); i++) {
-			Element node = (Element) propNodes.item(i);
-			String label = node.getNodeName();
-			
-			switch (label) {
-			case "url":
-				result.setUrl(node.getTextContent());
-				break;
-			case "similarity":
-				result.setSimilarity(Double.parseDouble(node.getTextContent()));
-				break;
-			case "shortContent":
-				result.setContent(Utils.escapeHtml(node.getTextContent()));
-				break;
-			case "subject":
-				result.setSubject(Utils.escapeHtml(node.getTextContent()));
-				break;
-			default:
-				log.warn("Unknown property of item notification: " + label + ", ignoring...");
-			}
-		}
-		
-		return result;
-	}
-
-	/**
-	 * Parses identity notification.
-	 * 
-	 * @param identityEl
-	 * @return
-	 */
-	private static Notification parseIdentityNotification(Node identityEl) {
-		IdentityNotification result = new IdentityNotification();
-		
-		NodeList props = identityEl.getChildNodes();
-		for (int i = 0; i < props.getLength(); i++) {
-			Element node = (Element) props.item(i);
-			String label = node.getNodeName();
-			
-			switch (label) {
-			case "name":
-				result.setName(node.getTextContent());
-				break;
-			case "profile":
-				NodeList profileUrlList = node.getElementsByTagName("url");
-				if (profileUrlList.getLength() > 0)
-					result.setProfileUrl(profileUrlList.item(0).getTextContent());
-				
-				result.setProfile(node.getTextContent());
-				break;
-			case "imgurl":
-				result.setImageUrl(node.getTextContent());
-				break;
-			default:
-				log.warn("Unknown property of identity notification: " + label + ", ignoring...");
-			}
-		}
-		
-		return result;
-	}
-
-	/**
-	 * Parses event notification.
-	 * 
-	 * @param eventEl
-	 * @return
-	 */
-	private static Notification parseEventNotification(Node eventEl) {
-		EventNotification result = new EventNotification();
-		
-		NodeList props = eventEl.getChildNodes();
-		for (int i = 0; i < props.getLength(); i++) {
-			Element node = (Element) props.item(i);
-			String label = node.getNodeName();
-			
-			switch (label) {
-			case "name":
-				result.setName(node.getTextContent());
-				break;
-			case "description":
-				result.setDescription(node.getTextContent());
-				break;
-			case "url":
-				result.setUrl(node.getTextContent());
-				break;
-			default:
-				log.warn("Unknown property of event notification: " + label + ", ignoring...");
-			}
-		}
-		
-		return result;
-	}
-
-	/**
-	 * Parses issue notification.
-	 * 
-	 * @param eventEl
-	 * @return
-	 */
-	private static Notification parseIssueNotification(Node issueEl) {
-		IssueNotification result = new IssueNotification();
-		
-		NodeList props = issueEl.getChildNodes();
-		for (int i = 0; i < props.getLength(); i++) {
-			Element node = (Element) props.item(i);
-			String label = node.getNodeName();
-		
-			switch (label) {
-			case "bugid":
-				result.setBugId(node.getTextContent());
-				break;
-			case "subject":
-				result.setSubject(Utils.escapeHtml(node.getTextContent()));
-				break;
-			case "summary":
-				result.setSummary(Utils.escapeHtml(node.getTextContent()));
-				break;
-			case "url":
-				result.setUrl(node.getTextContent());
-				break;
-			default:
-				log.warn("Unknown property of issue notification: " + label + ", ignoring...");
-			}
-		}
-		
-		return result;
-	}
+//	/**
+//	 * Parses similar item notification.
+//	 * 
+//	 * @param itemEl
+//	 * @return
+//	 */
+//	private static Notification parseItemNotification(Node itemEl) {
+//		ItemNotification result = new ItemNotification();
+//		
+//		NodeList propNodes = itemEl.getChildNodes();
+//		for (int i = 0; i < propNodes.getLength(); i++) {
+//			Element node = (Element) propNodes.item(i);
+//			String label = node.getNodeName();
+//			
+//			switch (label) {
+//			case "url":
+//				result.setUrl(node.getTextContent());
+//				break;
+//			case "similarity":
+//				result.setSimilarity(Double.parseDouble(node.getTextContent()));
+//				break;
+//			case "shortContent":
+//				result.setContent(Utils.escapeHtml(node.getTextContent()));
+//				break;
+//			case "subject":
+//				result.setSubject(Utils.escapeHtml(node.getTextContent()));
+//				break;
+//			default:
+//				log.warn("Unknown property of item notification: " + label + ", ignoring...");
+//			}
+//		}
+//		
+//		return result;
+//	}
+//
+//	/**
+//	 * Parses identity notification.
+//	 * 
+//	 * @param identityEl
+//	 * @return
+//	 */
+//	private static Notification parseIdentityNotification(Node identityEl) {
+//		IdentityNotification result = new IdentityNotification();
+//		
+//		NodeList props = identityEl.getChildNodes();
+//		for (int i = 0; i < props.getLength(); i++) {
+//			Element node = (Element) props.item(i);
+//			String label = node.getNodeName();
+//			
+//			switch (label) {
+//			case "name":
+//				result.setName(node.getTextContent());
+//				break;
+//			case "profile":
+//				NodeList profileUrlList = node.getElementsByTagName("url");
+//				if (profileUrlList.getLength() > 0)
+//					result.setProfileUrl(profileUrlList.item(0).getTextContent());
+//				
+//				result.setProfile(node.getTextContent());
+//				break;
+//			case "imgurl":
+//				result.setImageUrl(node.getTextContent());
+//				break;
+//			default:
+//				log.warn("Unknown property of identity notification: " + label + ", ignoring...");
+//			}
+//		}
+//		
+//		return result;
+//	}
+//
+//	/**
+//	 * Parses event notification.
+//	 * 
+//	 * @param eventEl
+//	 * @return
+//	 */
+//	private static Notification parseEventNotification(Node eventEl) {
+//		EventNotification result = new EventNotification();
+//		
+//		NodeList props = eventEl.getChildNodes();
+//		for (int i = 0; i < props.getLength(); i++) {
+//			Element node = (Element) props.item(i);
+//			String label = node.getNodeName();
+//			
+//			switch (label) {
+//			case "name":
+//				result.setName(node.getTextContent());
+//				break;
+//			case "description":
+//				result.setDescription(node.getTextContent());
+//				break;
+//			case "url":
+//				result.setUrl(node.getTextContent());
+//				break;
+//			default:
+//				log.warn("Unknown property of event notification: " + label + ", ignoring...");
+//			}
+//		}
+//		
+//		return result;
+//	}
+//
+//	/**
+//	 * Parses issue notification.
+//	 * 
+//	 * @param eventEl
+//	 * @return
+//	 */
+//	private static Notification parseIssueNotification(Node issueEl) {
+//		IssueNotification result = new IssueNotification();
+//		
+//		NodeList props = issueEl.getChildNodes();
+//		for (int i = 0; i < props.getLength(); i++) {
+//			Element node = (Element) props.item(i);
+//			String label = node.getNodeName();
+//		
+//			switch (label) {
+//			case "bugid":
+//				result.setBugId(node.getTextContent());
+//				break;
+//			case "subject":
+//				result.setSubject(Utils.escapeHtml(node.getTextContent()));
+//				break;
+//			case "summary":
+//				result.setSummary(Utils.escapeHtml(node.getTextContent()));
+//				break;
+//			case "url":
+//				result.setUrl(node.getTextContent());
+//				break;
+//			default:
+//				log.warn("Unknown property of issue notification: " + label + ", ignoring...");
+//			}
+//		}
+//		
+//		return result;
+//	}
 }

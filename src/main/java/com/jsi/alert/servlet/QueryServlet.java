@@ -76,7 +76,7 @@ public class QueryServlet extends MQServlet {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		
 		if (log.isDebugEnabled())
-			log.debug("Received query request...");
+			log.debug("Received query request, params: " + parameterMap.toString() + "...");
 		
 		try {
 			if (!parameterMap.containsKey(TYPE_PARAM))

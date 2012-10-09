@@ -36,7 +36,6 @@ public class MessageUtils {
 	private static final Logger log = LoggerFactory.getLogger(MessageUtils.class);
 	
 	private static final String KEUI_ITEM_SNIP_LEN = "200";
-	private static final String DEFAULT_DATE_FORMAT = "yy-mm-dd";
 	
 	private static final String[] keuiIgnoreKeys = {
 		"issuesChk",
@@ -504,18 +503,18 @@ public class MessageUtils {
 			}
 			
 			if (props.containsKey("from") || props.contains("to")) {
-				SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				SimpleDateFormat format = new SimpleDateFormat(Configuration.DEFAULT_DATE_FORMAT);
 				format.setTimeZone(TimeZone.getTimeZone("UTC"));
 				
 				SOAPElement timeline = conditions.addChildElement("timeline");
 				if (props.containsKey("from")) {
 					Date from = format.parse(props.getProperty("from"));
-					long winTime = from.getTime() + 11644473600000L; // convert to windows time
+					long winTime = Utils.toWindowsTime(from.getTime());
 					timeline.addAttribute(envelope.createName("start"), winTime + "");
 				}
 				if (props.containsKey("to")) {
 					Date to = format.parse(props.getProperty("to"));
-					long winTime = to.getTime() + 11644473600000L;
+					long winTime = Utils.toWindowsTime(to.getTime());
 					timeline.addAttribute(envelope.createName("end"), winTime + "");
 				}
 			}

@@ -90,4 +90,12 @@ public class Utils {
 	public static String getFilePath(String fullPath) {
 		return fullPath.replaceAll(getFileName(fullPath), "");
 	}
+
+	public static long toWindowsTime(long javaTime) {
+		return javaTime + 11644473600000L;
+	}
+	
+	/*public static long toJavaTime(long windowsTime) {
+		return windowsTime - 11644473600000L;
+	}*/
 }

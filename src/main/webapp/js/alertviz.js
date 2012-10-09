@@ -736,7 +736,7 @@ var Search = function (opts) {
 			}
 		},
 		
-		removeFromSearch: function (elem) {
+		removeFromSearch: function (elem, label) {
 			// get the type
 	  		var type = null;
 	  		if ($(elem).hasClass('keyword')) {
@@ -754,7 +754,7 @@ var Search = function (opts) {
 	  		
 	  		var array = searchTerms[type];
 	  		if (type == 'concept' || type == 'source' || type == 'product' || type == 'person') {
-	  			var idx = that.indexOfLabel(type, $(elem).text().substring(1));
+	  			var idx = that.indexOfLabel(type, label);
 	  			if (idx >= 0)
 	  				array.splice(idx);
 	  		} else {
@@ -1743,8 +1743,8 @@ var AlertViz = function(options) {
 	    		updateUrl();
     		}
     	},
-	  	selectionRemoved: function(elem) {
-	  		generalSearch.removeFromSearch(elem);
+	  	selectionRemoved: function(elem, data) {
+	  		generalSearch.removeFromSearch(elem, data.label);
 	  		updateUrl();
 	  	},
 	  	formatList: function (data, el) {
@@ -1816,8 +1816,8 @@ var AlertViz = function(options) {
 	    		updateUrl();
     		}
     	},
-	  	selectionRemoved: function(elem) {
-	  		personSearch.removeFromSearch(elem);
+	  	selectionRemoved: function(elem, data) {
+	  		personSearch.removeFromSearch(elem, data.label);
 	  		updateUrl();
 	  	}
     });

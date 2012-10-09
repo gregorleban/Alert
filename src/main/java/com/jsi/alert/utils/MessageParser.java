@@ -143,8 +143,13 @@ public class MessageParser {
 							file.put("uri", fileProp.getTextContent());
 						else if ("s3:fileAction".equals(label))
 							file.put("action", fileProp.getTextContent());
-						else if ("s3:fileName".equals(label))
-							file.put("name", fileProp.getTextContent());
+						else if ("s3:fileName".equals(label)) {
+							String fullName = fileProp.getTextContent();
+							
+							file.put("name", Utils.getFileName(fullName));
+							file.put("path", Utils.getFilePath(fullName));
+							file.put("fullName", fullName);
+						}
 						else if ("s3:fileBranch".equals(label))
 							file.put("branch", node.getTextContent());
 						else if ("s3:fileModules".equals(label)) {

@@ -1212,13 +1212,11 @@ var AlertViz = function(options) {
     		html += '</div>';
     		
     		// files
-    		html += '<div class="details_section">';
     		html += '<table class="heading"><tr>';
     		html += '<td class="title_comm">Files</td>';
     		html += '</tr></table>';
-    		html += '</div>';
     		
-    		html += '<div class="content" id="files">';
+    		html += '<div class="content" id="files_content">';
     		html += '<ul class="tree_ul">';
     		
     		// create file tree
@@ -1229,7 +1227,7 @@ var AlertViz = function(options) {
     			
     			if (modules.length > 0) {
     				// create a tree of modules
-    				html += '<li class="tree_li"><span class="toggle">' + file.name + ' (' + file.action + ')</span>';
+    				html += '<li class="tree_li"><span class="toggle" title="' + file.fullName + '">' + file.name + ' (' + file.action + ')</span>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
     					var module = modules[moduleIdx];
@@ -1258,7 +1256,7 @@ var AlertViz = function(options) {
     		
     		$('#details_wrapper').html(html);
     		$('.tree_ul').tree({focusSize: '100%'});
-    		jQuery('.content[id != "files"]').hide();
+    		jQuery('.content[id != "files_content"]').hide();
     		jQuery('.heading').click(function() {
 			    jQuery(this).next('.content').slideToggle(500);
 			});
@@ -1738,6 +1736,9 @@ var AlertViz = function(options) {
     	addByWrite: false,
     	selectionAdded: function(elem, data) {
     		if (!settingManually) {
+    			if (data.type == 'source')
+    				$(elem).attr('title', data.tooltip);
+    			
 	    		generalSearch.addToSearch(data);
 	    		updateUrl();
     		}

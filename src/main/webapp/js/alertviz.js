@@ -420,8 +420,8 @@ function getCssValue(clazz, attribute) {
 }
 
 var SocialGraph = function(options){
-	var width = $('#graph-div').width();
-	var height = $('#graph-div').height();
+	var width = $('#' + options.container).width();
+	var height = $('#' + options.container).height();
 	
 	//read CSS attributes
 	var selectedTextClr = getCssValue("selected-node", "color");
@@ -452,17 +452,21 @@ var SocialGraph = function(options){
 	}
 	
 	function hideTooltip() {
-		tooltip.hide();
+		if (tooltip != null)
+			tooltip.hide();
 	}
+	
+	$('#' + options.container).mouseleave(hideTooltip);
 	
 	var that = {
 		graph: DynamicGraph({
-			container: 'graph-div',
+			container: options.container,
 			width: width,
 			height: height,
 			draggable: true,
 			selectionMode: 'single',
 			startDisplayLevel: 50,
+			step: options.step,
 			
 			drawNode: function (context, data) {
 				var pos = data.pos;
@@ -1197,7 +1201,7 @@ var AlertViz = function(options) {
     		html += '<td class="title_desc">Commit comment</td>';
     		
     		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';	// TODO change class
-    		html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
+    		if (data.author != null) html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
     		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.commitDate).format(defaultDateFormat) + '</div></td>';
     		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';		// TODO change class
     		
@@ -1208,52 +1212,55 @@ var AlertViz = function(options) {
     		html += '</div>';
     		
     		// files
+    		html += '<div class="details_section">';
+    		html += '<table class="heading"><tr>';
+    		html += '<td class="title_comm">Files</td>';
+    		html += '</tr></table>';
+    		html += '</div>';
+    		
+    		html += '<div class="content" id="files">';
+    		html += '<ul class="tree_ul">';
+    		
+    		// create file tree
     		var files = data.files;
     		for (var fileIdx = 0; fileIdx < files.length; fileIdx++) {
     			var file = files[fileIdx];
     			var modules = file.modules;
     			
-    			html += '<div class="details_section">';
-    			html += '<table class="heading"><tr>';
-    			html += '<td class="title_comm">File</td>';
-    			html += '<td>Name: <div id="name_file_' + fileIdx + '" class="data">' + file.name + '</div></td>';
-    			html += '<td>Action: <div id="action_file_' + fileIdx + '" class="data">' + file.action + '</div></td>';
-    			html += '</tr></table>';
-    			
-    			html += '<div class="content">';
-    			
-    			// modules
-    			html += '<ul class="tree_ul">';
-    			for (var i = 0; i < modules.length; i++) {
-    				var module = modules[i];
-    				var methods = module.methods;
-    				
-    				if (methods.length > 0) {
-    					html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
-	    				html += '<ul class="tree_ul">';
-	    				for (var j = 0; j < methods.length; j++) {
-	    					var method = methods[j];
-	    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
-	    				}
-	    				html += '</ul>';
-    				} else
-    					html += '<li class="tree_li"><a class="tree_a">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</a></li>';
-    				
-    				html += '</li>';
-    			}
-    			
-    			html += '</ul>';
-    			
-    			
-    			html += '</div>';
-    			html += '</div>';
+    			if (modules.length > 0) {
+    				// create a tree of modules
+    				html += '<li class="tree_li"><span class="toggle">' + file.name + ' (' + file.action + ')</span>';
+    				html += '<ul class="tree_ul">';
+    				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
+    					var module = modules[moduleIdx];
+    					var methods = module.methods;
+    					
+    					if (methods.length > 0) {
+    						// create methods
+        					html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+    	    				html += '<ul class="tree_ul">';
+    	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
+    	    					var method = methods[methodIdx];
+    	    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
+    	    				}
+    	    				html += '</ul>';
+        				} else
+        					html += '<li class="tree_li"><a class="tree_a">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</a></li>';
+    				}
+    				html += '</ul>';
+    			} else	// create leaf
+    				html += '<li class="tree_li"><a class="tree_a">' + file.name + ' (' + file.action + ')</a></li>';
     		}
     		
+    		html += '</ul>';
+    		html += '</div>';
+    		
+    		
     		$('#details_wrapper').html(html);
-    		$('.tree_ul').tree();
-    		jQuery(".content").hide();
-    		jQuery(".heading").click(function() {
-			    jQuery(this).next(".content").slideToggle(500);
+    		$('.tree_ul').tree({focusSize: '100%'});
+    		jQuery('.content[id != "files"]').hide();
+    		jQuery('.heading').click(function() {
+			    jQuery(this).next('.content').slideToggle(500);
 			});
     	},
     	
@@ -1575,7 +1582,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.bugDescription:
-    				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.id + ',\'' + item.url + '\')"><table class="item_table">';
+    				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.entryID + '\')"><table class="item_table">';
 					
     				// from + date
 					html += '<tr>';
@@ -1609,7 +1616,7 @@ var AlertViz = function(options) {
 	    			html += '</table></div>';
     				break;
     			case Type.bugComment:
-    				html += '<div class="item-wrapper comment" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.url + '\')"><table class="item_table">';
+    				html += '<div class="item-wrapper comment" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.entryID + '\')"><table class="item_table">';
     				
     				// from + date
     				html += '<tr>';
@@ -1695,8 +1702,8 @@ var AlertViz = function(options) {
     	createGraph: function(data) {
     		if (socialGraph == null) {
 	    		socialGraph = SocialGraph({
-	    			step: 10,
-	    			container: '#graph-div',    			
+	    			step: 5,
+	    			container: 'graph-div',    			
 	    		});
     		}
     		socialGraph.init(data);
@@ -1740,8 +1747,10 @@ var AlertViz = function(options) {
 	  		updateUrl();
 	  	},
 	  	formatList: function (data, el) {
-	  		if (data.tooltip != null)
-	  			$(el).attr('title', data.tooltip);	// TODO
+	  		if (data.type == 'source') {
+	  			$(el).attr('title', data.tooltip);
+	  			$(el).html($(el).html() + ' <span class="file_path">(' + data.path + ')</span>');
+	  		}
 	  		return el;
 	  	}
     });

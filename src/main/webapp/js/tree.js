@@ -1,18 +1,19 @@
 (function($){
 	$.fn.tree = function (config) {
 		var target = this[0];
+		var toggleTime = config.toggleTime == null ? 500 : config.toggleTime;
 		
 		$(target).find('.tree_li span.toggle').next().hide();
 		
 		// add a link nudging animation effect to each link
 	    $(target).find('.tree_li span.toggle').hover(function() {
 	        $(this).stop().animate( {
-				fontSize:"15px",
+				fontSize: config.focusSize || '110%',
 				color:"black"
 	        }, 300);
 	    }, function() {
 	        $(this).stop().animate( {
-				fontSize:"14px",
+				fontSize: '100%',
 				color:"#808080"
 	        }, 300);
 	    });
@@ -30,7 +31,7 @@
 		// add a click function that toggles the sub-menu when the corresponding
 		// span element is clicked
 		$(target).find(".tree_li .toggle").click(function() {
-			$(this).next().toggle(1000);
+			$(this).next().toggle(toggleTime);
 			
 			// switch the plus to a minus sign or vice-versa
 			var v = $(this).html().substring(0, 1);

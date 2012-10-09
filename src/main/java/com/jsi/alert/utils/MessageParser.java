@@ -975,28 +975,61 @@ public class MessageParser {
 				String label;
 				String value;
 				String type;
-				if ("person".equals(tagName)) {
+				
+				switch (tagName) {
+				case "person":
 					label = attributes.getNamedItem("name").getNodeValue();
 					value = attributes.getNamedItem("account").getNodeValue();
 					type = "person";
-				} else if ("concept".equals(tagName)) {
+					break;
+				case "concept":
 					label = attributes.getNamedItem("label").getNodeValue();
 					value = attributes.getNamedItem("uri").getNodeValue();
 					type = "concept";
-				} else if ("method".equals(tagName) || "file".equals(tagName) || "module".equals(tagName)) {
-					label = attributes.getNamedItem("name").getNodeValue();
-					value = attributes.getNamedItem("uri").getNodeValue();
-					jsonObj.put("tooltip", Utils.escapeHtml(attributes.getNamedItem("tooltip").getNodeValue()));
-					type = "source";
-				} else if ("product".equals(tagName)) {
+					break;
+				case "product":
 					label = attributes.getNamedItem("label").getNodeValue();
 					value = attributes.getNamedItem("uri").getNodeValue();
 					type = "product";
-				} else if ("issue".equals(tagName)) {
+					break;
+				case "issue":
 					label = attributes.getNamedItem("label").getNodeValue();
 					value = label;
 					type = "issue";
-				} else throw new IllegalArgumentException("An unexpected suggestion node appeared in the KEUI response: " + tagName);
+					break;
+				case "file":
+					String fullName = attributes.getNamedItem("name").getNodeValue();
+					
+					label = Utils.getFileName(fullName);
+					value = attributes.getNamedItem("uri").getNodeValue();
+					type = "source";
+					
+					jsonObj.put("path", Utils.getFilePath(fullName));
+					jsonObj.put("tooltip", Utils.escapeHtml(attributes.getNamedItem("tooltip").getNodeValue()));
+					break;
+				case "module":
+					label = attributes.getNamedItem("name").getNodeValue();
+					value = attributes.getNamedItem("uri").getNodeValue();
+					type = "source";
+					
+					String fullPath = Utils.escapeHtml(attributes.getNamedItem("tooltip").getNodeValue());
+					jsonObj.put("path", fullPath);
+					jsonObj.put("tooltip", fullPath);
+					break;
+				case "method":
+					label = attributes.getNamedItem("name").getNodeValue();
+					value = attributes.getNamedItem("uri").getNodeValue();
+					type = "source";
+					
+					String fullPath1 = Utils.escapeHtml(attributes.getNamedItem("tooltip").getNodeValue());
+					jsonObj.put("path", fullPath1);
+					jsonObj.put("tooltip", fullPath1);
+					break;
+				default:
+					log.warn("Invalid suggestion tag: " + tagName + ", ignoring...");
+					continue;
+				}
+				
 			
 				jsonObj.put("label", Utils.escapeHtml(label));
 				jsonObj.put("value", Utils.escapeHtml(value));

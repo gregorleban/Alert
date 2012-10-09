@@ -195,6 +195,12 @@ li:first-child.as-result-item {
 	margin: 0;
 }
 
+.as-results span {
+	font-weight: normal !important;
+	font-size: 11px;
+	color: #666666;
+}
+
 li.as-message {
 	margin: 0;
 	cursor: default;

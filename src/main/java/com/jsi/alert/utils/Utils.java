@@ -64,4 +64,30 @@ public class Utils {
 		}
 		return builder.toString();
 	}
+	
+	/**
+	 * Extracts the file name from the path.
+	 * 
+	 * @param fullPath
+	 * @return
+	 */
+	public static String getFileName(String fullPath) {
+		int slashIdx = fullPath.lastIndexOf("/");
+		if (slashIdx >= 0)
+			return fullPath.substring(slashIdx + 1);
+		else {
+			int backSlashIdx = fullPath.lastIndexOf("\\");
+			return backSlashIdx < 0 ? fullPath : fullPath.substring(backSlashIdx);
+		}
+	}
+	
+	/**
+	 * Extracts the path to the file.
+	 * 
+	 * @param fullPath
+	 * @return
+	 */
+	public static String getFilePath(String fullPath) {
+		return fullPath.replaceAll(getFileName(fullPath), "");
+	}
 }

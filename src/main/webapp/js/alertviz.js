@@ -1617,32 +1617,20 @@ var AlertViz = function(options) {
     				break;
     			case Type.bugDescription:
     				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.entryID + '\')"><table class="item_table">';
-					
+    				
     				// from + date
 					html += '<tr>';
-					html += '<td class="item_header">' + (peopleH[item.authorID] != null ? peopleH[item.authorID].name : 'unknown') + '</td>';
+					html += '<td class="item_header">' + (peopleH[item.authorID] != null ? peopleH[item.authorID].name : 'unknown') + (item.similarity != null ? ' <span class="item_similarity">' + (item.similarity*100).toFixed(0) + '% sim.</span>' : '') + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 	    			
 					// subject + similarity
 					html += '<tr>';
-					if (item.similarity != null) {
-						if (item.url != null)
-							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td class="item_subject">' + item.subject + '</td>';
-						
-						// similarity
-						if (item.similarity != null)
-							html += '<td class="item_similarity">sim: ' + (item.similarity*100).toFixed(0) + '%</td>';
-					}
-					else {
-						if (item.url != null)
-							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
-						
-					}
+					if (item.url != null)
+						html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+					
 					html += '</tr>';
 					
 					// content
@@ -1654,29 +1642,16 @@ var AlertViz = function(options) {
     				
     				// from + date
     				html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_header">' + peopleH[item.senderID].name + (item.similarity != null ? ' <span class="item_similarity">' + (item.similarity*100).toFixed(0) + '% sim.</span>' : '') + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 					
 					// subject + similarity
 					html += '<tr>';
-					if (item.similarity != null) {
-						if (item.url != null)
-							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td class="item_subject">' + item.subject + '</td>';
-						
-						// similarity
-						if (item.similarity != null)
-							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
-					}
-					else {
-						if (item.url != null)
-							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
-						
-					}
+					if (item.url != null)
+						html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
 					html += '</tr>';
     				
 					// content

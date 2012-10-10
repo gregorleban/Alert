@@ -1161,10 +1161,6 @@ var AlertViz = function(options) {
     		html += '<span class="headings_date">' + (data.dateOpened == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</span>';
     		html += '<br /><span class="headings_status">' + data.resolution + ', ' + data.status + '</span>';
     		html += '</td>';
-    		/*html += '<td>Author: <div id="author_desc" class="data">' + (data.author == null ? 'Unknown' : data.author.name) + '</div></td>';
-    		html += '<td>Date: <div id="date_desc" class="data">' +  + '</div></td>';
-    		html += '<td>Resolution: <div id="resolution_desc" class="data">' + data.resolution + '</div></td>';
-    		html += '<td>Status: <div id="status_desc" class="data">' + data.status + '</div></td>';*/
     		html += '</tr></table>';
     		// content
     		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
@@ -1178,8 +1174,6 @@ var AlertViz = function(options) {
     			html += '<div class="details_section">';
     			html += '<table class="heading"><tr>';
     			html += '<td class="title_comm">Comment by <span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
-    			/*html += '<td>Author: <div id="author_comm_' + i + '" class="data">' + comment.person.name + '</div></td>';
-    			html += '<td>Date: <div id="date_comm_' + i + '" class="data">' + new Date(comment.commentDate).format(defaultDateFormat) + '</div></td>';*/
     			html += '</tr></table>';
     			// content
     			

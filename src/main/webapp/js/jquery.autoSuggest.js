@@ -85,6 +85,12 @@
 				var values_input = $('<input type="hidden" class="as-values" name="as_values_'+x+'" id="as-values-'+x+'" />');
 				var prefill_value = "";
 				
+				$(results_ul).mousedown(function (event) { // fix for the scroll bar
+					event.stopPropagation();
+					event.preventDefault();
+					return false;
+				});
+				
 				input.values_input = values_input;
 				input.opts = opts;
 				

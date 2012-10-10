@@ -37,6 +37,9 @@ width:100%;
         rgb(240,240,240) 78%
         );
 }
+.headings_date {
+	float: right;
+}
 .content {
 	color:#333;
     text-shadow:1px 1px 1px #fff;

@@ -1903,5 +1903,30 @@ var AlertViz = function(options) {
 		}
 	});
     
+    $('#step0, #step1, #step2, #step3').keydown(function (event) {
+    	if (event.keyCode == 13) {
+	    	event.stopPropagation();
+	    	event.preventDefault();
+	    	
+	    	var fieldId = $(event.currentTarget).attr('id');
+	    	switch (fieldId) {
+	    	case 'step0':
+	    		that.searchGeneral();
+	    		break;
+	    	case 'step1':
+	    		that.searchIssueId();
+	    		break;
+	    	case 'step2':
+	    		// TODO implement
+	    		break;
+	    	case 'step3':
+	    		// TODO implement
+	    		break;
+	    	}
+	    	
+	    	return false;
+    	}
+    });
+    
     return that;
 };

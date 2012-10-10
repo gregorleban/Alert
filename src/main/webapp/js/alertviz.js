@@ -725,7 +725,7 @@ var Search = function (opts) {
 		},
 		
 		addToSearch: function (data) {
-			if (data.type == 'source' || data.type == 'product' || data.type == 'person' || data.type == 'issue') {
+			if (data.type == 'product' || data.type == 'person' || data.type == 'issue') {
 				// have to send URI
 				var value = data.value;
 				var label = data.label;
@@ -733,6 +733,10 @@ var Search = function (opts) {
 				var array = searchTerms[data.type];
 				if (that.indexOfLabel(data.type, label) < 0)
 					array.push({type: data.type, label: label, value: value});
+			} else if (data.type == 'source') {
+				var array = searchTerms[data.type];
+				if (that.indexOfLabel(data.type, data.label) < 0)
+					array.push({type: data.type, label: data.label, value: data.value, tooltip: data.tooltip});
 			}
 		},
 		
@@ -798,6 +802,7 @@ var AlertViz = function(options) {
     var itemsPerPage = 100;
     
     var socialGraph = null;
+    var chart = null;
     var currentQueryOpts = null;
     
     var normalBarColor = getCssValue('bar-normal', 'background-color');
@@ -828,7 +833,10 @@ var AlertViz = function(options) {
     			generalSearch.addToSearch(data);
             	
         		var label = data.label;
-            	$(selector).val(label + ':' + data.type + '|');
+        		if (data.type == 'source') 
+        			$(selector).val(label + ':' + data.type + ':' + data.tooltip + '|');
+        		else
+        			$(selector).val(label + ':' + data.type + '|');
     		}
     		
     		$(selector).change();
@@ -1189,16 +1197,26 @@ var AlertViz = function(options) {
 			});
     	},
     	
+    	addCommitToSearch: function (name, uri, tooltip) {
+			var event = window.event;
+			event.stopPropagation();
+			event.preventDefault();
+			
+			viz.addToSearchField('other_text', {type: 'source', label: name, value: uri, tooltip: tooltip});
+			
+			return false;
+		},
+    	
     	setCommitDetails: function (data) {
     		// header
     		var html = '<div class="details_section">';
     		html += '<table class="heading"><tr>';
     		html += '<td class="title_desc">Commit comment</td>';
     		
-    		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';	// TODO change class
+    		html += '<td>Committer: <div id="author_desc" class="data">' + data.committer.name + '</div></td>';
     		if (data.author != null) html += '<td>Author: <div id="author_desc" class="data">' + data.author.name + '</div></td>';
     		html += '<td>Date: <div id="date_desc" class="data">' + new Date(data.commitDate).format(defaultDateFormat) + '</div></td>';
-    		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';		// TODO change class
+    		html += '<td>Revision: <div id="resolution_desc" class="data">' + data.revisionTag + '</div></td>';
     		
     		html += '</tr></table>';
     	
@@ -1207,6 +1225,7 @@ var AlertViz = function(options) {
     		html += '</div>';
     		
     		// files
+    		html += '<div class="details_section">';
     		html += '<table class="heading"><tr>';
     		html += '<td class="title_comm">Files</td>';
     		html += '</tr></table>';
@@ -1222,7 +1241,11 @@ var AlertViz = function(options) {
     			
     			if (modules.length > 0) {
     				// create a tree of modules
-    				html += '<li class="tree_li"><span class="toggle" title="' + file.fullName + '">' + file.name + ' (' + file.action + ')</span>';
+    				html += '<li class="tree_li">';
+    				html += '<div class="toggle" title="' + file.fullName + '">';
+    				html += '<span>' + file.name + ' (' + file.action + ')</span>';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '</div>';
     				html += '<ul class="tree_ul">';
     				for (var moduleIdx = 0; moduleIdx < modules.length; moduleIdx++) {
     					var module = modules[moduleIdx];
@@ -1230,22 +1253,40 @@ var AlertViz = function(options) {
     					
     					if (methods.length > 0) {
     						// create methods
-        					html += '<li class="tree_li"><span class="toggle">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+        					html += '<li class="tree_li">';
+        					html += '<div class="toggle">';
+        					html += '<span>' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html +='</div>';
     	    				html += '<ul class="tree_ul">';
     	    				for (var methodIdx = 0; methodIdx < methods.length; methodIdx++) {
     	    					var method = methods[methodIdx];
-    	    					html += '<li class="tree_li"><a class="tree_a">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</a></li>';
+    	    					html += '<li class="tree_li">';
+    	    					html += '<span class="leaf">' + method.methodName + ' (' + method.startLine + '-' + method.endLine + ')</span>';
+    	    					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + method.methodName + '\',\'' + method.methodUri + '\',\'' + file.fullName + '\');" />';
+    	    					html += '</li>';
     	    				}
     	    				html += '</ul>';
-        				} else
-        					html += '<li class="tree_li"><a class="tree_a">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</a></li>';
+    	    				html += '</li>';
+    					} else {
+        					html += '<li class="tree_li">';
+        					html += '<span class="leaf">' + module.name + ' (' + module.startLine + '-' + module.endLine + ')</span>';
+        					html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + module.name + '\',\'' + module.uri + '\',\'' + file.fullName + '\');" />';
+        					html += '</li>';
+    					}
     				}
     				html += '</ul>';
-    			} else	// create leaf
-    				html += '<li class="tree_li"><a class="tree_a">' + file.name + ' (' + file.action + ')</a></li>';
+    				html += '</li>';
+    			} else {	// create leaf
+    				html += '<li class="tree_li">';
+    				html += '<span class="leaf">' + file.name + ' (' + file.action + ')</span>';
+    				html += '<img src="img/search-16.png" alt="Search" onclick="return viz.addCommitToSearch(\'' + file.name + '\',\'' + file.uri + '\',\'' + file.fullName + '\');" />';
+    				html += '</li>';
+    			}
     		}
     		
     		html += '</ul>';
+    		html += '</div>';
     		html += '</div>';
     		
     		
@@ -1730,10 +1771,10 @@ var AlertViz = function(options) {
     	asHtmlID: 'other_text',
     	addByWrite: false,
     	selectionAdded: function(elem, data) {
+    		if (data.type == 'source')
+				$(elem).attr('title', data.tooltip);
+    		
     		if (!settingManually) {
-    			if (data.type == 'source')
-    				$(elem).attr('title', data.tooltip);
-    			
 	    		generalSearch.addToSearch(data);
 	    		updateUrl();
     		}

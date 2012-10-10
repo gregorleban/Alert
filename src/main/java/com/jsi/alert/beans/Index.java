@@ -70,7 +70,8 @@ public class Index {
 			return;
 		}
 		
-		List<Notification> newNotifications = NotificationService.fetchNotifications(user.getUuid());
+		String uuid = Configuration.NOTIFICATION_DEFAULT_USER == null ? user.getUuid() : Configuration.NOTIFICATION_DEFAULT_USER;
+		List<Notification> newNotifications = NotificationService.fetchNotifications(uuid);
 		notifications.addAll(newNotifications);
 	}
 	

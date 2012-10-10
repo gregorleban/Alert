@@ -3,31 +3,14 @@ package com.jsi.alert.model.notification;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class Notification implements Serializable {
+public class Notification implements Serializable {
 	
 	private static final long serialVersionUID = 5418781769222210517L;
 	
-	enum Type {
-		EVENT(0),
-		IDENTITY(1),
-		ISSUE(2),
-		ITEM(3);
-		
-		public final int value;
-		
-		private Type(int value) {
-			this.value = value;
-		}
-	}
-	
-	private int type;
 	private String title;
 	private String link;
-	private Date publishDate;
-	
-	public Notification(Type type) {
-		setType(type.value);
-	}
+	private String publishDate;
+	private String content;
 	
 	public String getTitle() {
 		return title;
@@ -41,16 +24,17 @@ public abstract class Notification implements Serializable {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	public Date getPublishDate() {
+	public String getPublishDate() {
 		return publishDate;
 	}
-	public void setPublishDate(Date publishDate) {
+	public void setPublishDate(String publishDate) {
 		this.publishDate = publishDate;
 	}
-	public int getType() {
-		return type;
+	public String getContent() {
+		return content;
 	}
-	public void setType(int type) {
-		this.type = type;
+	public void setContent(String content) {
+		this.content = content;
 	}
+	
 }

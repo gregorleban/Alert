@@ -1,4 +1,5 @@
 .item_header{
+	padding:4px 4px 0px 6px;
 	width:60%;
     -moz-border-radius:8px 0px 0px 8px;
     -webkit-border-radius:8px 0px 0px 8px;
@@ -13,17 +14,18 @@
     overflow:hidden;
 }
 .item_date{
+	padding:4px 6px 0px 4px;
 	width:40%;
     -moz-border-radius:0px 8px 8px 0px;
     -webkit-border-radius:0px 8px 8px 0px;
     border-radius:0px 8px 8px 0px;
-    text-align:center;
+    text-align: right;
     color:#000;
     font-size:12px;
     text-shadow:1px 1px 1px #ccc;
 }
 .item_subject{
-    padding:4px;
+    padding:2px 6px 2px 6px;
     text-align:left;
     color:#333;
     font-weight:bold;
@@ -32,45 +34,51 @@
     -webkit-border-radius:0px 0px 8px 8px;
     border-radius:0px 0px 8px 8px;
 }
-.item_similarity {
-	
+
+.item_content{
+    padding:0px 6px 4px 6px;
 }
+
+.item_similarity {	
+}
+
 .item-wrapper.issue .item_table{
 	background-image:url("../img/bug.png");
 	background-repeat:no-repeat;
-	background-position:right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
 .item-wrapper.comment .item_table{
 	background-image:url("../img/bug.png");
 	background-repeat:no-repeat;
-	background-position: right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
 .item-wrapper.commit .item_table{
 	background-image:url("../img/commit.png");
 	background-repeat:no-repeat;
-	background-position: right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
 .item-wrapper.wiki_post .item_table{
 	background-image:url("../img/bulb.png");
 	background-repeat:no-repeat;
-	background-position: right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
 .item-wrapper.forum_post .item_table{
 	background-image:url("../img/forum.png");
 	background-repeat:no-repeat;
-	background-position: right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
 .item-wrapper.email .item_table{
 	background-image:url("../img/email.png");
 	background-repeat:no-repeat;
-	background-position: right;
-	background-size:contain;
+	background-position: 96% 16px;
+	background-size: 60px;
 }
+
 .item_table{
 	color:#333;
     text-shadow:1px 1px 1px #fff;
@@ -82,8 +90,8 @@
     -moz-box-shadow:0px 0px 3px #aaa;
     -webkit-box-shadow:0px 0px 3px #aaa;
     box-shadow:0px 0px 3px #aaa;
-    margin:2px 4px 10px 2px;
-    width:97%;
+    margin:2px 2px 5px 2px;
+    width:98%;
     -ms-word-break: break-all;
     word-break: break-all;
     -webkit-hyphens: auto;

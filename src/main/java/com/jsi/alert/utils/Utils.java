@@ -101,10 +101,6 @@ public class Utils {
 		return javaTime + 11644473600000L;
 	}
 	
-	/*public static long toJavaTime(long windowsTime) {
-		return windowsTime - 11644473600000L;
-	}*/
-	
 	/**
 	 * Returns an instance of <code>SimpleDateFormat</code> with format used on the 
 	 * client side.

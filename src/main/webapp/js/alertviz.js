@@ -1903,6 +1903,7 @@ var AlertViz = function(options) {
 		}
 	});
     
+    // search with enter
     $('#step0, #step1, #step2, #step3').keydown(function (event) {
     	if (event.keyCode == 13) {
 	    	event.stopPropagation();

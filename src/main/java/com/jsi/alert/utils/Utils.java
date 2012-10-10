@@ -1,8 +1,11 @@
 package com.jsi.alert.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -15,6 +18,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public class Utils {
 	
 	private static final Random rand = new Random();
+	
+	private static final String CLIENT_DATE_FORMAT = "yyyy-MM-dd";
+	private static final String MESSAGE_DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z";
 	
 	/**
 	 * Generates and returns a request id.
@@ -98,4 +104,27 @@ public class Utils {
 	/*public static long toJavaTime(long windowsTime) {
 		return windowsTime - 11644473600000L;
 	}*/
+	
+	/**
+	 * Returns an instance of <code>SimpleDateFormat</code> with format used on the 
+	 * client side.
+	 * 
+	 * @return
+	 */
+	public static SimpleDateFormat getClientDateFormat() {
+		SimpleDateFormat format = new SimpleDateFormat(CLIENT_DATE_FORMAT);
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return format;
+	}
+	
+	/**
+	 * Returns an instance of <code>SimpleDateFormat</code> with format used in the messages.
+	 * 
+	 * @return
+	 */
+	public static SimpleDateFormat getMessageDateFormat() {
+		SimpleDateFormat format = new SimpleDateFormat(MESSAGE_DATE_FORMAT, Locale.US);
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return format;
+	}
 }

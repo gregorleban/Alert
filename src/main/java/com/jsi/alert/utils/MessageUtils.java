@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
@@ -503,8 +502,7 @@ public class MessageUtils {
 			}
 			
 			if (props.containsKey("from") || props.contains("to")) {
-				SimpleDateFormat format = new SimpleDateFormat(Configuration.DEFAULT_DATE_FORMAT);
-				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				SimpleDateFormat format = Utils.getClientDateFormat();
 				
 				SOAPElement timeline = conditions.addChildElement("timeline");
 				if (props.containsKey("from")) {

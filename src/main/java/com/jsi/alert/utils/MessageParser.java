@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -82,7 +81,7 @@ public class MessageParser {
 			
 			JSONArray filesArr = new JSONArray();
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			SimpleDateFormat dateFormat = Utils.getMessageDateFormat();
 			
 			Node respData = doc.getElementsByTagName("s3:responseData").item(0);
 			NodeList propNodes = respData.getChildNodes();
@@ -238,7 +237,7 @@ public class MessageParser {
 			JSONArray commentsJSon = new JSONArray();
 			JSONArray activitiesJSon = new JSONArray();
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+			SimpleDateFormat dateFormat = Utils.getMessageDateFormat();
 			
 			// parse assigned to
 			Node dataEl = doc.getElementsByTagName("s3:responseData").item(0);
@@ -1090,8 +1089,8 @@ public class MessageParser {
 			
 			Element channel = (Element) xmlDoc.getElementsByTagName("channel").item(0);
 			
-			SimpleDateFormat parseDateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
-			SimpleDateFormat displayDateFormat = new SimpleDateFormat(Configuration.DEFAULT_DATE_FORMAT);
+			SimpleDateFormat parseDateFormat = Utils.getMessageDateFormat();
+			SimpleDateFormat clientDateFormat = Utils.getClientDateFormat();
 			
 			NodeList fields = channel.getChildNodes();
 			for (int i = 0; i < fields.getLength(); i++) {
@@ -1142,7 +1141,7 @@ public class MessageParser {
 					
 					notification.setTitle(title);
 					notification.setLink(link);
-					notification.setPublishDate(displayDateFormat.format(pubDate));
+					notification.setPublishDate(clientDateFormat.format(pubDate));
 					notification.setContent(content.getTextContent());
 					
 					result.add(notification);

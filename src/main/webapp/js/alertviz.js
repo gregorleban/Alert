@@ -802,6 +802,7 @@ var AlertViz = function(options) {
     var itemsPerPage = 100;
     
     var socialGraph = null;
+    var chart = null;
     var currentQueryOpts = null;
     
     var normalBarColor = getCssValue('bar-normal', 'background-color');

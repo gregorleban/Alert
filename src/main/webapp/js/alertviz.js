@@ -1731,6 +1731,14 @@ var AlertViz = function(options) {
     		
     		$('#items-div').html(html);
     		$('#page_td').html(navHtml);
+    		
+    		// set class selected when clicking an item
+    		$('.item-wrapper').click(function (event) {
+    			// first remove the selected class from all the items
+    			$('.item-selected').removeClass('item-selected');
+    			// then add selected class to the item clicked
+    			$(event.currentTarget).addClass('item-selected');
+    		});
     	},
 
     	createGraph: function(data) {

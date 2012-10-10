@@ -35,6 +35,13 @@
 .item_similarity {
 	
 }
+.item-wrapper {
+	cursor: pointer;
+}
+.item-selected .item_table {
+	background-color: #FCDFB8;
+}
+
 .item-wrapper.issue .item_table{
 	background-image:url("../img/bug.png");
 	background-repeat:no-repeat;

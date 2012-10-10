@@ -1,0 +1,21 @@
+-issue status and resolution not working
+
+	• notifications
+		○  use xml to show some items
+		○  fix the layout of the popup
+	•  Check if mail items show recipients
+	•  fix logging in. currently you have to go to localhost:8080/AlertUI/login?email=gleban@gmail.com
+	•  notify the user when the search is in progress/completed
+	•  text box with suggestions
+		○  delete should immediately delete the last item in the list. remove the "selected" class.
+	•  suggestion list
+		○  scrollbar doesn't work. clicking the scrollbar hides it. pressing the down key doesn't scroll the suggestion list
+	•  issue details
+		○  Issue created by {name}             {date}
+		○  Comment by {name}                {date} (make one line)
+		○  bug: text overflow pri commentih in descriptionu
+		○  button with suggest developers to fix the issue. call recommender
+		○  show related posts (the info that you get in the metadata content)
+	• Social graph
+		○ Tooltip sometimes doesn't go away
+	•  reorganize layout of components. first tab shows results + item details. second tab shows social graph, timeline, words

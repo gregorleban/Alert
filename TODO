@@ -6,8 +6,6 @@
 	•  Check if mail items show recipients
 	•  fix logging in. currently you have to go to localhost:8080/AlertUI/login?email=gleban@gmail.com
 	•  notify the user when the search is in progress/completed
-	•  text box with suggestions
-		○  delete should immediately delete the last item in the list. remove the "selected" class.
 	•  suggestion list
 		○  scrollbar doesn't work. clicking the scrollbar hides it. pressing the down key doesn't scroll the suggestion list
 	•  issue details

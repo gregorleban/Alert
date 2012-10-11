@@ -20,6 +20,8 @@ public class Configuration {
 	
 	public static String LOGIN_URL, LOGOUT_URL, AUTHENTICATE_URL;
 	public static String NOTIFICATION_URL, NOTIFICATION_PARAMETER, NOTIFICATION_DEFAULT_USER;
+	
+	public static long REQUEST_TIMEOUT;
 
 	static {
 		// read the properties
@@ -44,6 +46,8 @@ public class Configuration {
 			NOTIFICATION_URL = props.getProperty("notifications.url");
 			NOTIFICATION_PARAMETER = props.getProperty("notifications.param");
 			NOTIFICATION_DEFAULT_USER = props.containsKey("notifications.param.value") ? props.getProperty("notifications.param.value") : null;
+		
+			REQUEST_TIMEOUT = props.containsKey("request.timeout") ? Long.parseLong((String) props.get("request.timeout")) : 10000;
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new RuntimeException(e);

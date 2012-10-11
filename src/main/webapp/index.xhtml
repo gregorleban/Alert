@@ -57,7 +57,7 @@
 			<div id="nav">
 				<ul>
 				     <li><img src="img/logo.png" style="float:left;width:60px;hight:60px;margin-right:10px;"></img></li>
-					 <li id="current"><a href="index.html">Browse</a></li>
+					 <li id="current"><a href="index.xhtml">Browse</a></li>
 					 <li><a href="subscribe.xhtml">Subscribe</a></li>
 					 <li><a href="overview.xhtml">Project overview</a></li>
 					 <c:choose>
@@ -123,7 +123,7 @@
 								<table>
 									<tbody>
 										<tr>
-											<td colspan="8"><input type="text" class="text" id="keyword_text" name="keywords" /></td>
+											<td colspan="8"><input type="text" class="text" id="keyword_text" name="keywords" placeholder="keywords..."  /></td>
 										</tr>
 										<tr>
 											<td colspan="8"><input type="text" class="text" id="other_text" name="other"/></td>
@@ -209,7 +209,7 @@
 											</td>
 										</tr>
 										<tr>
-											<td><input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" /><label> Disjoin keywords</label></td>
+											<td><input class="checkbox" type="checkbox" id="use_or_check" onchange="updateUrl(window.event);" >&nbsp; Keywords are optional</input></td>
 										</tr>
 									</table>
 								</div>

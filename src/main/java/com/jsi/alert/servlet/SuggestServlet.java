@@ -44,7 +44,7 @@ public class SuggestServlet extends MQServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
+	public void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
 		try {

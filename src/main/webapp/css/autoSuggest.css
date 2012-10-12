@@ -167,7 +167,7 @@ ul.as-list {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	overflow-y:scroll;
-	height:575px
+	max-height:575px;
 }
 
 li.as-result-item, li.as-message{

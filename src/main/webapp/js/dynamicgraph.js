@@ -125,7 +125,23 @@ function DynamicGraph (options) {
 				particleSystem.pruneNode(nodeH[nodesToRemove[i]].sysNode);
 		},
 		
-		setData: function (data) {	
+		setData: function (data) {
+			// init references
+			var origNodeH = data.nodeH;
+    		var nodeV = [];
+    		for (var key in origNodeH) {
+    			var node = origNodeH[key];
+    			var neighbourIds = node.neighbours;
+    			var neighbours = [];
+    			for (var i = 0; i < neighbourIds.length; i++) {
+    				neighbours.push(origNodeH[neighbourIds[i]]);
+    			}
+    			node.neighbours = neighbours;
+    			nodeV.push(node);
+    		}
+    		
+    		data.nodes = nodeV;
+			
 			that.clear();
 			var allNodes = data.nodes;
 			var allEdges = data.edges;

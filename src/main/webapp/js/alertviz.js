@@ -896,20 +896,6 @@ var AlertViz = function(options) {
     	
     	setQueryResults: function (data) {
     		if (data.type == 'peopleData') {
-        		var nodeH = data.nodeH;
-        		var nodeV = [];
-        		for (var key in nodeH) {
-        			var node = nodeH[key];
-        			var neighbourIds = node.neighbours;
-        			var neighbours = [];
-        			for (var i = 0; i < neighbourIds.length; i++) {
-        				neighbours.push(nodeH[neighbourIds[i]]);
-        			}
-        			node.neighbours = neighbours;
-        			nodeV.push(node);
-        		}
-        		
-        		data.nodes = nodeV;
         		that.createGraph(data);
         	} else if (data.type == 'timelineData') {
         		that.createTimeline(data);
@@ -1811,8 +1797,19 @@ var AlertViz = function(options) {
 					response(data);
 				}
 			});
+    	},
+    	response: function (event, ui) {
+    		alert('works');
     	}
-    });
+    }).data('autocomplete')._renderItem = function (ul, item) {
+    	var term = this.term.split(' ').join('|');
+		var re = new RegExp("(" + term + ")", "gi") ;
+		var t = item.label.replace(re,"<em>$1</em>");
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append( "<a>" + t + "</a>" )
+		.appendTo( ul );
+    };
     
     $('#issue_id_text').blur(function (event) {
     	updateUrl();

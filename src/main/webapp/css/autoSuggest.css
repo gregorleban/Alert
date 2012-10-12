@@ -207,11 +207,10 @@ li.as-message {
 
 li.as-result-item.active {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(190, 190, 190, 0.4)), to(rgba(224, 224, 224, 0.4)));
-	/*background-color: #7BA857;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 64%, from(rgb(182, 222, 143)), to(rgb(123, 168, 80)));
-	border-color: #7BA857;
-	color: #fff;
-	text-shadow: 0 1px 2px #666;*/
+}
+
+li.as-result-item.active {
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(190, 190, 190, 0.4)), to(rgba(224, 224, 224, 0.4)));
 }
 
 li.as-result-item em { 

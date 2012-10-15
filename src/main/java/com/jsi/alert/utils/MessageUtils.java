@@ -256,9 +256,10 @@ public class MessageUtils {
 			
 			SOAPElement params = queryEl.addChildElement("params");
 			params.addAttribute(envelope.createName("resultData"), "keywordData");
-			params.addAttribute(envelope.createName("keywordCount"), "30");
-			params.addAttribute(envelope.createName("sampleSize"), "-1");
+			params.addAttribute(envelope.createName("keywordCount"), "60");
+			params.addAttribute(envelope.createName("sampleSize"), "50000");
 			params.addAttribute(envelope.createName("keywordMethod"), "localConceptSpV");
+			params.addAttribute(envelope.createName("keywordSource"), "concepts");
 			params.addAttribute(envelope.createName("sortBy"), props.getProperty("sort"));
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

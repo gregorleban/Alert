@@ -896,20 +896,6 @@ var AlertViz = function(options) {
     	
     	setQueryResults: function (data) {
     		if (data.type == 'peopleData') {
-        		var nodeH = data.nodeH;
-        		var nodeV = [];
-        		for (var key in nodeH) {
-        			var node = nodeH[key];
-        			var neighbourIds = node.neighbours;
-        			var neighbours = [];
-        			for (var i = 0; i < neighbourIds.length; i++) {
-        				neighbours.push(nodeH[neighbourIds[i]]);
-        			}
-        			node.neighbours = neighbours;
-        			nodeV.push(node);
-        		}
-        		
-        		data.nodes = nodeV;
         		that.createGraph(data);
         	} else if (data.type == 'timelineData') {
         		that.createTimeline(data);
@@ -1156,11 +1142,11 @@ var AlertViz = function(options) {
     		// item description
     		var html = '<div class="details_section">';
     		html += '<table class="heading"><tr>';
-    		html += '<td class="title_desc">Item description</td>';
-    		html += '<td>Author: <div id="author_desc" class="data">' + (data.author == null ? 'Unknown' : data.author.name) + '</div></td>';
-    		html += '<td>Date: <div id="date_desc" class="data">' + (data.date == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</div></td>';
-    		html += '<td>Resolution: <div id="resolution_desc" class="data">' + data.resolution + '</div></td>';
-    		html += '<td>Status: <div id="status_desc" class="data">' + data.status + '</div></td>';
+    		html += '<td class="title_desc">Issue created by ';
+    		html += '<span class="headings_author">' + (data.author == null ? 'Unknown' : data.author.name) + '</span>';
+    		html += '<span class="headings_date">' + (data.dateOpened == null ? '' : new Date(data.dateOpened).format(defaultDateFormat)) + '</span>';
+    		html += '<br /><span class="headings_status">' + data.resolution + ', ' + data.status + '</span>';
+    		html += '</td>';
     		html += '</tr></table>';
     		// content
     		html += '<div class="content' + (data.url == selectedUri ? ' selected_issue' : '') + '"><table id="item_details"><tr><td colspan="3"><div id="item-accordion">' + data.description + '</div></td></tr></table></div>';
@@ -1173,9 +1159,7 @@ var AlertViz = function(options) {
     			
     			html += '<div class="details_section">';
     			html += '<table class="heading"><tr>';
-    			html += '<td class="title_comm">Comment</td>';
-    			html += '<td>Author: <div id="author_comm_' + i + '" class="data">' + comment.person.name + '</div></td>';
-    			html += '<td>Date: <div id="date_comm_' + i + '" class="data">' + new Date(comment.commentDate).format(defaultDateFormat) + '</div></td>';
+    			html += '<td class="title_comm">Comment by <span class="headings_author">' + comment.person.name + '</span><span class="headings_date">' + new Date(comment.commentDate).format(defaultDateFormat) + '</span></td>';
     			html += '</tr></table>';
     			// content
     			
@@ -1617,32 +1601,20 @@ var AlertViz = function(options) {
     				break;
     			case Type.bugDescription:
     				html += '<div class="item-wrapper issue" onclick="viz.searchIssueDetails(' + item.issueID + ',\'' + item.entryID + '\')"><table class="item_table">';
-					
+    				
     				// from + date
 					html += '<tr>';
-					html += '<td class="item_header">' + (peopleH[item.authorID] != null ? peopleH[item.authorID].name : 'unknown') + '</td>';
+					html += '<td class="item_header">' + (peopleH[item.authorID] != null ? peopleH[item.authorID].name : 'unknown') + (item.similarity != null ? ' <span class="item_similarity">' + (item.similarity*100).toFixed(0) + '% sim.</span>' : '') + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 	    			
 					// subject + similarity
 					html += '<tr>';
-					if (item.similarity != null) {
-						if (item.url != null)
-							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td class="item_subject">' + item.subject + '</td>';
-						
-						// similarity
-						if (item.similarity != null)
-							html += '<td class="item_similarity">sim: ' + (item.similarity*100).toFixed(0) + '%</td>';
-					}
-					else {
-						if (item.url != null)
-							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
-						
-					}
+					if (item.url != null)
+						html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
+					
 					html += '</tr>';
 					
 					// content
@@ -1654,29 +1626,16 @@ var AlertViz = function(options) {
     				
     				// from + date
     				html += '<tr>';
-					html += '<td class="item_header">' + peopleH[item.senderID].name + '</td>';
+					html += '<td class="item_header">' + peopleH[item.senderID].name + (item.similarity != null ? ' <span class="item_similarity">' + (item.similarity*100).toFixed(0) + '% sim.</span>' : '') + '</td>';
 					html += '<td class="item_date">' + new Date(item.time).format(defaultDateFormat) + '</td>';
 					html += '</tr>';
 					
 					// subject + similarity
 					html += '<tr>';
-					if (item.similarity != null) {
-						if (item.url != null)
-							html += '<td class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td class="item_subject">' + item.subject + '</td>';
-						
-						// similarity
-						if (item.similarity != null)
-							html += '<td class="item_similarity">sim: ' + item.similarity + '</td>';
-					}
-					else {
-						if (item.url != null)
-							html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
-						else
-							html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
-						
-					}
+					if (item.url != null)
+						html += '<td colspan="2" class="item_subject"><a href="' + item.url + '" target="_blank">' + item.subject + '</a></td>';
+					else
+						html += '<td colspan="2" class="item_subject">' + item.subject + '</td>';
 					html += '</tr>';
     				
 					// content
@@ -1731,6 +1690,14 @@ var AlertViz = function(options) {
     		
     		$('#items-div').html(html);
     		$('#page_td').html(navHtml);
+    		
+    		// set class selected when clicking an item
+    		$('.item-wrapper').click(function (event) {
+    			// first remove the selected class from all the items
+    			$('.item-selected').removeClass('item-selected');
+    			// then add selected class to the item clicked
+    			$(event.currentTarget).addClass('item-selected');
+    		});
     	},
 
     	createGraph: function(data) {
@@ -1830,8 +1797,19 @@ var AlertViz = function(options) {
 					response(data);
 				}
 			});
+    	},
+    	response: function (event, ui) {
+    		alert('works');
     	}
-    });
+    }).data('autocomplete')._renderItem = function (ul, item) {
+    	var term = this.term.split(' ').join('|');
+		var re = new RegExp("(" + term + ")", "gi") ;
+		var t = item.label.replace(re,"<em>$1</em>");
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append( "<a>" + t + "</a>" )
+		.appendTo( ul );
+    };
     
     $('#issue_id_text').blur(function (event) {
     	updateUrl();
@@ -1919,6 +1897,32 @@ var AlertViz = function(options) {
 			rightItemWidth = $('.item_right').width();
 		}
 	});
+    
+    // search with enter
+    $('#step0, #step1, #step2, #step3').keydown(function (event) {
+    	if (event.keyCode == 13) {
+	    	event.stopPropagation();
+	    	event.preventDefault();
+	    	
+	    	var fieldId = $(event.currentTarget).attr('id');
+	    	switch (fieldId) {
+	    	case 'step0':
+	    		that.searchGeneral();
+	    		break;
+	    	case 'step1':
+	    		that.searchIssueId();
+	    		break;
+	    	case 'step2':
+	    		// TODO implement
+	    		break;
+	    	case 'step3':
+	    		// TODO implement
+	    		break;
+	    	}
+	    	
+	    	return false;
+    	}
+    });
     
     return that;
 };

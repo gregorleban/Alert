@@ -32,8 +32,6 @@ public abstract class MQServlet extends HttpServlet {
 	private static final long serialVersionUID = -5462790358676407606L;
 	
 	private static final Logger log = LoggerFactory.getLogger(MQServlet.class);
-
-	private static final long MAX_RESPONSE_TIME = 10000L;
 	
 	private static final String REQUEST_ID_TAG = "<ns1:eventId>\\d+</ns1:eventId>";
 	private static final Pattern REQUEST_ID_PATTERN = Pattern.compile(REQUEST_ID_TAG);
@@ -114,7 +112,7 @@ public abstract class MQServlet extends HttpServlet {
 		long beginTime = System.currentTimeMillis();
 		while (!requestID.equals(receivedID)) {
 			// check if KEUI is taking too long
-			if (System.currentTimeMillis() - beginTime > MAX_RESPONSE_TIME)
+			if (System.currentTimeMillis() - beginTime > Configuration.REQUEST_TIMEOUT)
 				throw new ServletException(componentKey + " timed out!");
 			
 			Message receivedMsg = consumer.receive(2000);

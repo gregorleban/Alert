@@ -34,12 +34,18 @@
     -webkit-border-radius:0px 0px 8px 8px;
     border-radius:0px 0px 8px 8px;
 }
+.item_similarity {
+	float: right;
+}
 
 .item_content{
     padding:0px 6px 4px 6px;
 }
-
-.item_similarity {	
+.item-wrapper {
+	cursor: pointer;
+}
+.item-selected .item_table {
+	background-color: #FCDFB8;
 }
 
 .item-wrapper.issue .item_table{

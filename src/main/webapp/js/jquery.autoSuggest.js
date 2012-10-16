@@ -85,6 +85,12 @@
 				var values_input = $('<input type="hidden" class="as-values" name="as_values_'+x+'" id="as-values-'+x+'" />');
 				var prefill_value = "";
 				
+				$(results_ul).mousedown(function (event) { // fix for the scroll bar
+					event.stopPropagation();
+					event.preventDefault();
+					return false;
+				});
+				
 				input.values_input = values_input;
 				input.opts = opts;
 				
@@ -177,13 +183,9 @@
 								var last = values_input.val().split(",");
 								last = last[last.length - 2];
 								selections_holder.children().not(org_li.prev()).removeClass("selected");
-								if(org_li.prev().hasClass("selected")){
-									values_input.val(values_input.val().replace(last+",",""));
-									opts.selectionRemoved.call(this, org_li.prev(), {label: $('<div/>').text(org_li.prev().text().substring(1)).html(), value: last});
-								} else {
-//									opts.selectionClick.call(this, org_li.prev());
-									org_li.prev().addClass("selected");		
-								}
+								
+								values_input.val(values_input.val().replace(last+",",""));
+								opts.selectionRemoved.call(this, org_li.prev(), {label: $('<div/>').text(org_li.prev().text().substring(1)).html(), value: last});
 							}
 							if(input.val().length == 1){
 								results_holder.hide();
